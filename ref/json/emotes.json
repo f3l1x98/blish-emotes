@@ -1,0 +1,158 @@
+[
+  {
+    "id": "beckon",
+    "command": "/beckon"
+  },
+  {
+    "id": "bow",
+    "command": "/bow"
+  },
+  {
+    "id": "cheer",
+    "command": "/cheer"
+  },
+  {
+    "id": "cower",
+    "command": "/cower"
+  },
+  {
+    "id": "crossarms",
+    "command": "/crossarms"
+  },
+  {
+    "id": "cry",
+    "command": "/cry"
+  },
+  {
+    "id": "dance",
+    "command": "/dance"
+  },
+  {
+    "id": "facepalm",
+    "command": "/facepalm"
+  },
+  {
+    "id": "geargrind",
+    "command": "/geargrind"
+  },
+  {
+    "id": "hiss",
+    "command": "/hiss"
+  },
+  {
+    "id": "kneel",
+    "command": "/kneel"
+  },
+  {
+    "id": "laugh",
+    "command": "/laugh"
+  },
+  {
+    "id": "magicjuggle",
+    "command": "/magicjuggle"
+  },
+  {
+    "id": "no",
+    "command": "/no"
+  },
+  {
+    "id": "paper",
+    "command": "/paper"
+  },
+  {
+    "id": "playdead",
+    "command": "/playdead"
+  },
+  {
+    "id": "point",
+    "command": "/point"
+  },
+  {
+    "id": "ponder",
+    "command": "/ponder"
+  },
+  {
+    "id": "rank",
+    "command": "/rank"
+  },
+  {
+    "id": "rock",
+    "command": "/rock"
+  },
+  {
+    "id": "rockout",
+    "command": "/rockout"
+  },
+  {
+    "id": "sad",
+    "command": "/sad"
+  },
+  {
+    "id": "salute",
+    "command": "/salute"
+  },
+  {
+    "id": "scissors",
+    "command": "/scissors"
+  },
+  {
+    "id": "serve",
+    "command": "/serve"
+  },
+  {
+    "id": "shiver",
+    "command": "/shiver"
+  },
+  {
+    "id": "shiverplus",
+    "command": "/shiverplus"
+  },
+  {
+    "id": "shrug",
+    "command": "/shrug"
+  },
+  {
+    "id": "shuffle",
+    "command": "/shuffle"
+  },
+  {
+    "id": "sit",
+    "command": "/sit"
+  },
+  {
+    "id": "sleep",
+    "command": "/sleep"
+  },
+  {
+    "id": "step",
+    "command": "/step"
+  },
+  {
+    "id": "stretch",
+    "command": "/stretch"
+  },
+  {
+    "id": "surprised",
+    "command": "/surprised"
+  },
+  {
+    "id": "talk",
+    "command": "/talk"
+  },
+  {
+    "id": "thanks",
+    "command": "/thanks"
+  },
+  {
+    "id": "threaten",
+    "command": "/threaten"
+  },
+  {
+    "id": "wave",
+    "command": "/wave"
+  },
+  {
+    "id": "yes",
+    "command": "/yes"
+  }
+]
