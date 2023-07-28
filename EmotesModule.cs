@@ -183,7 +183,10 @@ namespace BlishEmotesList
         {
             _emoteListMenuStrip?.Dispose();
             _emoteListMenuStrip = new ContextMenuStrip();
-            _emoteListMenuStrip.AddMenuItems(GetEmotesMenuItems());
+            var menuItems = GetEmotesMenuItems();
+            // Sort by text such that list is sorted no matter what locale
+            menuItems.Sort((x, y) => x.Text.CompareTo(y.Text));
+            _emoteListMenuStrip.AddMenuItems(menuItems);
             if (atCornerIcon)
             {
                 _emoteListMenuStrip.Show(_cornerIcon);
