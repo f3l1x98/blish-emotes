@@ -54,7 +54,6 @@ namespace BlishEmotesList
 
         protected override void DefineSettings(SettingCollection settings)
         {
-            Logger.Debug("DefineSettings");
             this.Settings = new ModuleSettings(settings, EmotesResourceManager);
             // TODO SETTINGS IDEAS:
             // USE Strings.Common FOR i18n!!!!!!!!!!!
@@ -146,7 +145,6 @@ namespace BlishEmotesList
 
         protected override async Task LoadAsync()
         {
-            Logger.Debug("LoadAsync");
             try
             {
                 // load emotes
@@ -256,7 +254,6 @@ namespace BlishEmotesList
             if (Gw2ApiManager.HasPermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression, Gw2Sharp.WebApi.V2.Models.TokenPermission.Unlocks }))
             {
                 // load locked emotes
-                // TODO PERHAPS SIMPLY HARDCODE?!?!?
                 _unlockableEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Emotes.IdsAsync());
                 // load unlocked emotes
                 _unlockedEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Account.Emotes.GetAsync());
