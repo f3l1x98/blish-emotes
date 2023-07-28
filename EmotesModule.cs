@@ -172,9 +172,13 @@ namespace BlishEmotesList
             {
                 _emoteListMenuStrip.Show(_cornerIcon);
             }
-            else
+            else if (GameService.Input.Mouse.CursorIsVisible)
             {
                 _emoteListMenuStrip.Show(GameService.Input.Mouse.Position);
+            }
+            else
+            {
+                Logger.Debug("Emote list display conditions failed");
             }
         }
 
@@ -208,6 +212,7 @@ namespace BlishEmotesList
 
         private void UpdateEmotesLock()
         {
+            Logger.Debug("Update emotes locks");
             foreach (var emote in _emotes)
             {
                 // Mark emotes as unlocked
@@ -237,6 +242,7 @@ namespace BlishEmotesList
         {
             if (Gw2ApiManager.HasPermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression, Gw2Sharp.WebApi.V2.Models.TokenPermission.Unlocks }))
             {
+                Logger.Debug("Load emotes from API");
                 // load locked emotes
                 _unlockableEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Emotes.IdsAsync());
                 // load unlocked emotes
