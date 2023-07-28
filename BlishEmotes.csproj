@@ -305,6 +305,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="README.md" />
     <None Include="ref\json\emotes.json" />
     <None Include="ref\_instructions.txt" />
   </ItemGroup>
