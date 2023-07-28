@@ -1,5 +1,6 @@
 ﻿using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
+using felix.BlishEmotes.UI.Presenters;
 using Microsoft.Xna.Framework;
 using System;
 
@@ -7,12 +8,13 @@ namespace felix.BlishEmotes.UI.Views
 {
     internal class SettingsHintView : View
     {
-        private Action OpenSettings;
+        public event EventHandler<EventArgs> OpenSettingsClicked;
+
         private StandardButton _bttnOpenSettings;
 
         public SettingsHintView(Action OpenSettings)
         {
-            this.OpenSettings = OpenSettings;
+            this.WithPresenter(new SettingsHintPresenter(this, OpenSettings));
         }
 
         protected override void Build(Container buildPanel)
@@ -31,7 +33,7 @@ namespace felix.BlishEmotes.UI.Views
 
         private void _bttnOpenSettings_Click(object sender, Blish_HUD.Input.MouseEventArgs e)
         {
-            this.OpenSettings();
+            this.OpenSettingsClicked?.Invoke(this, e);
         }
 
         protected override void Unload()

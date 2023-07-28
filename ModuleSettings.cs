@@ -1,6 +1,7 @@
 ﻿using Blish_HUD.Input;
 using Blish_HUD.Settings;
 using felix.BlishEmotes.Strings;
+using System;
 using System.Collections.Generic;
 using System.Resources;
 
@@ -52,7 +53,7 @@ namespace felix.BlishEmotes
             this.EmotesShortcutsKeybindsMap = new Dictionary<Emote, SettingEntry<KeyBinding>>();
         }
 
-        public bool EmotesLoaded { get; private set; } = false;
+        public event EventHandler<bool> OnEmotesLoaded;
         public void InitEmotesShortcuts(List<Emote> emotes)
         {
             this.EmotesShortcutsKeybindsMap.Clear();
@@ -62,7 +63,7 @@ namespace felix.BlishEmotes
 
                 this.EmotesShortcutsKeybindsMap[emote].Value.Enabled = !emote.Locked;
             }
-            EmotesLoaded = true;
+            OnEmotesLoaded?.Invoke(this, true);
         }
         #endregion
 

@@ -37,7 +37,6 @@ namespace BlishEmotesList
         private CornerIcon _cornerIcon;
         private ContextMenuStrip _emoteListMenuStrip;
         private TabbedWindow2 _settingsWindow;
-        private SettingsWindowView _settingsWindowView;
         #endregion
 
         #region Settings
@@ -55,22 +54,6 @@ namespace BlishEmotesList
         protected override void DefineSettings(SettingCollection settings)
         {
             this.Settings = new ModuleSettings(settings, EmotesResourceManager);
-            // TODO SETTINGS IDEAS:
-            // USE Strings.Common FOR i18n!!!!!!!!!!!
-            // - Enabled/Disable CornerIcon
-            // - Enabled/Disable CornerIcon Categories (-> categorize emotes)
-            /* EXAMPLE CATEGORIES
-    Dance
-    Stunt
-    Greetings
-    Fun
-    Poses
-    Reactions
-    Horror
-    Miscellaneous
-             */
-            // - Emote Wheel
-            // - Emote keybind -> IF THERE IS NO NATIVE SUPPORT ALREADY
 
             // Handlers
             this.Settings.GlobalHideCornerIcon.SettingChanged += (sender, args) =>
@@ -124,8 +107,7 @@ namespace BlishEmotesList
                 SavesPosition = true,
             };
 
-            _settingsWindowView = new SettingsWindowView(this.Settings);
-            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\102391.png"), () => _settingsWindowView, Common.settings_ui_global_tab));
+            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\102391.png"), () => new SettingsWindowView(this.Settings), Common.settings_ui_global_tab));
         }
 
         private void InitCornerIcon()
@@ -133,8 +115,9 @@ namespace BlishEmotesList
             _cornerIcon?.Dispose();
             _cornerIcon = new CornerIcon()
             {
-                Icon = ContentsManager.GetTexture(@"textures/603447.png"),
+                Icon = ContentsManager.GetTexture(@"textures/emotes_icon.png"),
                 BasicTooltipText = Common.cornerIcon_tooltip,
+                Priority = -620003847,
             };
 
             _cornerIcon.Click += delegate
@@ -156,8 +139,6 @@ namespace BlishEmotesList
                 UpdateEmotesLock();
 
                 this.Settings.InitEmotesShortcuts(_emotes);
-                // Update SettingsView
-                _settingsWindowView.DoUpdate();
             }
             catch (Exception e)
             {

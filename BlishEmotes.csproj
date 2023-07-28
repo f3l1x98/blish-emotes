@@ -167,6 +167,8 @@
       <DependentUpon>Emotes.resx</DependentUpon>
     </Compile>
     <Compile Include="UI\Controls\RadialMenu.cs" />
+    <Compile Include="UI\Presenters\SettingsHintPresenter.cs" />
+    <Compile Include="UI\Presenters\SettingsWindowPresenter.cs" />
     <Compile Include="UI\Views\SettingsHintView.cs" />
     <Compile Include="UI\Views\SettingsWindowView.cs" />
   </ItemGroup>
@@ -319,7 +321,7 @@
     <Content Include="ref\textures\102390.png" />
     <Content Include="ref\textures\102391.png" />
     <Content Include="ref\textures\156006.png" />
-    <Content Include="ref\textures\603447.png" />
+    <Content Include="ref\textures\emotes_icon.png" />
     <Content Include="SharpDX.D3DCompiler.dll" />
     <Content Include="SharpDX.D3DCompiler.xml" />
     <Content Include="SharpDX.dll" />
