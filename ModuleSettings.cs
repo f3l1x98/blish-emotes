@@ -54,7 +54,7 @@ namespace felix.BlishEmotes
         }
 
         public event EventHandler<bool> OnEmotesLoaded;
-        public void InitEmotesShortcuts(List<Emote> emotes)
+        public void InitEmotesShortcuts(List<Emote> emotes, Action<Emote> SendEmoteCommand)
         {
             this.EmotesShortcutsKeybindsMap.Clear();
             foreach (Emote emote in emotes)
@@ -62,6 +62,10 @@ namespace felix.BlishEmotes
                 this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.Id, new KeyBinding(), () => _emotesResourceManager.GetString(emote.Id)));
 
                 this.EmotesShortcutsKeybindsMap[emote].Value.Enabled = !emote.Locked;
+                this.EmotesShortcutsKeybindsMap[emote].Value.Activated += delegate
+                {
+                    SendEmoteCommand(emote);
+                };
             }
             OnEmotesLoaded?.Invoke(this, true);
         }

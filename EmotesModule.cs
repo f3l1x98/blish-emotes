@@ -72,14 +72,6 @@ namespace BlishEmotesList
             {
                 ShowEmoteList(false);
             };
-
-            foreach (var entry in this.Settings.EmotesShortcutsKeybindsMap)
-            {
-                entry.Value.Value.Activated += delegate
-                {
-                    SendEmoteCommand(entry.Key);
-                };
-            }
         }
 
         protected override void Initialize()
@@ -138,7 +130,7 @@ namespace BlishEmotesList
                 // Set emotes locked
                 UpdateEmotesLock();
 
-                this.Settings.InitEmotesShortcuts(_emotes);
+                this.Settings.InitEmotesShortcuts(_emotes, SendEmoteCommand);
             }
             catch (Exception e)
             {
