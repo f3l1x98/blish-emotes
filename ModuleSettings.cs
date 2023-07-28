@@ -58,9 +58,9 @@ namespace felix.BlishEmotes
             this.EmotesShortcutsKeybindsMap.Clear();
             foreach (Emote emote in emotes)
             {
-                this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.id, new KeyBinding(), () => _emotesResourceManager.GetString(emote.id)));
+                this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.Id, new KeyBinding(), () => _emotesResourceManager.GetString(emote.Id)));
 
-                this.EmotesShortcutsKeybindsMap[emote].Value.Enabled = !emote.locked;
+                this.EmotesShortcutsKeybindsMap[emote].Value.Enabled = !emote.Locked;
             }
             EmotesLoaded = true;
         }

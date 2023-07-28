@@ -203,8 +203,8 @@ namespace BlishEmotesList
             {
                 var menuItem = new ContextMenuStripItem()
                 {
-                    Text = EmotesResourceManager.GetString(emote.id),
-                    Enabled = !emote.locked,
+                    Text = EmotesResourceManager.GetString(emote.Id),
+                    Enabled = !emote.Locked,
                 };
                 menuItem.Click += delegate
                 {
@@ -220,7 +220,7 @@ namespace BlishEmotesList
             // Send emote command to chat if in game and map closed
             if (GameService.GameIntegration.Gw2Instance.IsInGame && !GameService.Gw2Mumble.UI.IsMapOpen)
             {
-                GameService.GameIntegration.Chat.Send(emote.command);
+                GameService.GameIntegration.Chat.Send(emote.Command);
             }
         }
 
@@ -229,11 +229,11 @@ namespace BlishEmotesList
             foreach (var emote in _emotes)
             {
                 // Mark emotes as unlocked
-                emote.locked = false;
-                if (_unlockableEmotesIds.Contains(emote.id) && !_unlockedEmotesIds.Contains(emote.id))
+                emote.Locked = false;
+                if (_unlockableEmotesIds.Contains(emote.Id) && !_unlockedEmotesIds.Contains(emote.Id))
                 {
                     // Mark emotes as locked
-                    emote.locked = true;
+                    emote.Locked = true;
                 }
             }
         }
@@ -245,7 +245,10 @@ namespace BlishEmotesList
             {
                 fileContents = reader.ReadToEnd();
             }
-            return JsonSerializer.Deserialize<List<Emote>>(fileContents);
+            return JsonSerializer.Deserialize<List<Emote>>(fileContents, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
         }
 
         private async Task LoadEmotesFromApi()
