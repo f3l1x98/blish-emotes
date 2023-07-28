@@ -1,21 +1,18 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
-using Blish_HUD.Input;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
-using felix.BlishEmotesList;
+using felix.BlishEmotes;
 using felix.BlishEmotes.Strings;
+using felix.BlishEmotes.UI.Views;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Resources;
-using System.Runtime;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -27,7 +24,7 @@ namespace BlishEmotesList
 
         private static readonly Logger Logger = Logger.GetLogger<EmoteLisModule>();
 
-        ResourceManager EmotesResourceManager = new ResourceManager("felix.BlishEmotesList.Strings.Emotes", typeof(Common).Assembly);
+        ResourceManager EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
 
         #region Service Managers
         internal SettingsManager SettingsManager => this.ModuleParameters.SettingsManager;
@@ -39,14 +36,12 @@ namespace BlishEmotesList
         #region Controls
         private CornerIcon _cornerIcon;
         private ContextMenuStrip _emoteListMenuStrip;
+        private TabbedWindow2 _settingsWindow;
+        private SettingsWindowView _settingsWindowView;
         #endregion
 
         #region Settings
-        private SettingEntry<bool> _hideCornerIcon;
-        private SettingEntry<KeyBinding> _keyBindToggleEmoteList;
-        private SettingCollection _rootSettings;
-        private SettingCollection _emotesKeybindSubCollection;
-        private Dictionary<string, SettingEntry<KeyBinding>> _keyBindEmotes;
+        private ModuleSettings Settings;
         #endregion
 
         private List<Emote> _emotes;
@@ -54,13 +49,13 @@ namespace BlishEmotesList
         private List<string> _unlockedEmotesIds;
 
 
-         [ImportingConstructor]
+        [ImportingConstructor]
         public EmoteLisModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { }
 
         protected override void DefineSettings(SettingCollection settings)
         {
             Logger.Debug("DefineSettings");
-            _rootSettings = settings;
+            this.Settings = new ModuleSettings(settings);
             // TODO SETTINGS IDEAS:
             // USE Strings.Common FOR i18n!!!!!!!!!!!
             // - Enabled/Disable CornerIcon
@@ -78,55 +73,75 @@ namespace BlishEmotesList
             // - Emote Wheel
             // - Emote keybind -> IF THERE IS NO NATIVE SUPPORT ALREADY
 
-
-            // TODO PERHAPS MOVE INTO OWN SEPARATE SETTINGS WINDOW -> two tabs, one for general settings, one for separate keybinds?!?!
-            _hideCornerIcon = settings.DefineSetting(nameof(_hideCornerIcon), false, () => Common.settings_hideCornerIcon);
-            _keyBindToggleEmoteList = settings.DefineSetting(nameof(_keyBindToggleEmoteList), new KeyBinding(), () => Common.settings_keybindToggleEmoteList);
-
             // Handlers
-            _hideCornerIcon.SettingChanged += (sender, args) => {
+            this.Settings.GlobalHideCornerIcon.SettingChanged += (sender, args) =>
+            {
                 if (args.NewValue)
                 {
-                    _cornerIcon?.Hide();
-                } else
+                    _cornerIcon?.Dispose();
+                }
+                else
                 {
-                    _cornerIcon?.Show();
+                    InitCornerIcon();
                 }
             };
-            _keyBindToggleEmoteList.Value.Enabled = true;
-            _keyBindToggleEmoteList.Value.Activated += delegate {
+            this.Settings.GlobalKeyBindToggleEmoteList.Value.Enabled = true;
+            this.Settings.GlobalKeyBindToggleEmoteList.Value.Activated += delegate
+            {
                 ShowEmoteList(false);
             };
-        }
 
-        private void InitEmotesKeybindSettings()
-        {
-
-            // emote keybind subsection
-            _emotesKeybindSubCollection = _rootSettings.AddSubCollection(nameof(_emotesKeybindSubCollection), true, () => Common.settings_emotesKeybindSubCollection);
-            _emotesKeybindSubCollection.RenderInUi = true;
-            // TODO emotes have to be loaded
-            _keyBindEmotes = new Dictionary<string, SettingEntry<KeyBinding>>();
-            foreach (var emote in _emotes)
+            foreach (var entry in this.Settings.EmotesShortcutsKeybindsMap)
             {
-                var emoteSetting = _emotesKeybindSubCollection.DefineSetting("_keyBind" + emote.id, new KeyBinding(), () => EmotesResourceManager.GetString(emote.id));
-                emoteSetting.Value.Enabled = true;
-                emoteSetting.Value.Activated += delegate {
-                    SendEmoteCommand(emote);
+                entry.Value.Value.Activated += delegate
+                {
+                    SendEmoteCommand(entry.Key);
                 };
-                _keyBindEmotes.Add(emote.id, emoteSetting);
             }
         }
 
         protected override void Initialize()
         {
-            Logger.Debug("Initialize");
             // TODO THE SAME HAS TO BE CALLED IF PERMISSIONS ARE UPDATED
             Gw2ApiManager.SubtokenUpdated += OnApiSubTokenUpdated;
             // Init lists
             _emotes = new List<Emote>();
             _unlockableEmotesIds = new List<string>();
             _unlockedEmotesIds = new List<string>();
+
+            // Init UI
+            if (!this.Settings.GlobalHideCornerIcon.Value)
+            {
+                InitCornerIcon();
+            }
+
+            _settingsWindow = new TabbedWindow2(ContentsManager.GetTexture(@"textures\156006.png"), new Rectangle(35, 36, 920, 760), new Rectangle(90, 15, 783 + 38, 750))
+            {
+                Title = Common.settings_ui_title,
+                Parent = GameService.Graphics.SpriteScreen,
+                Location = new Point(100, 100),
+                Emblem = this.ContentsManager.GetTexture(@"textures\102390.png"),
+                Id = $"{this.Namespace}_SettingsWindow",
+                SavesPosition = true,
+            };
+
+            _settingsWindowView = new SettingsWindowView(this.Settings);
+            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\102391.png"), () => _settingsWindowView, Common.settings_ui_global_tab));
+        }
+
+        private void InitCornerIcon()
+        {
+            _cornerIcon?.Dispose();
+            _cornerIcon = new CornerIcon()
+            {
+                Icon = ContentsManager.GetTexture(@"textures/603447.png"),
+                BasicTooltipText = Common.cornerIcon_tooltip,
+            };
+
+            _cornerIcon.Click += delegate
+            {
+                ShowEmoteList();
+            };
         }
 
         protected override async Task LoadAsync()
@@ -142,38 +157,22 @@ namespace BlishEmotesList
                 // Set emotes locked
                 UpdateEmotesLock();
 
-                InitEmotesKeybindSettings();
-
-
-            } catch (Exception e)
+                this.Settings.InitEmotesShortcuts(_emotes);
+                // Update SettingsView
+                _settingsWindowView.DoUpdate();
+            }
+            catch (Exception e)
             {
                 Logger.Fatal("LoadAsync failed!");
                 Logger.Error(e.ToString());
             }
         }
 
-        protected override void OnModuleLoaded(EventArgs e)
+        public override IView GetSettingsView()
         {
-            Logger.Debug("OnModuleLoaded");
-            _cornerIcon = new CornerIcon()
-            {
-                Icon = ContentsManager.GetTexture(@"textures/603447.png"),
-                BasicTooltipText = Common.cornerIcon_tooltip,
-            };
-
-            _cornerIcon.Click += delegate
-            {
-                ShowEmoteList();
-            };
-            // Base handler must be called
-            base.OnModuleLoaded(e);
+            return new SettingsHintView(_settingsWindow.Show);
         }
 
-        // TODO SEE https://github.com/blish-hud/Pathing/blob/main/PathingModule.cs
-        /*public override IView GetSettingsView()
-        {
-            return new SettingsHintView((_settingsWindow.Show, this.PackInitiator));
-        }*/
         private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
         {
             // load emote information from api
@@ -190,7 +189,8 @@ namespace BlishEmotesList
             if (atCornerIcon)
             {
                 _emoteListMenuStrip.Show(_cornerIcon);
-            } else
+            }
+            else
             {
                 _emoteListMenuStrip.Show(GameService.Input.Mouse.Position);
             }
@@ -203,10 +203,11 @@ namespace BlishEmotesList
             {
                 var menuItem = new ContextMenuStripItem()
                 {
-                    Text = EmotesResourceManager.GetString(emote.id), // TODO TEST LOCALIZATION
+                    Text = EmotesResourceManager.GetString(emote.id),
                     Enabled = !emote.locked,
                 };
-                menuItem.Click += delegate {
+                menuItem.Click += delegate
+                {
                     SendEmoteCommand(emote);
                 };
                 items.Add(menuItem);
@@ -237,18 +238,6 @@ namespace BlishEmotesList
             }
         }
 
-        private async Task LoadEmotesFromApi()
-        {
-            if (Gw2ApiManager.HasPermissions(new [] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression, Gw2Sharp.WebApi.V2.Models.TokenPermission.Unlocks }))
-            {
-                // load locked emotes
-                // TODO PERHAPS SIMPLY HARDCODE?!?!?
-                _unlockableEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Emotes.IdsAsync());
-                // load unlocked emotes
-                _unlockedEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Account.Emotes.GetAsync());
-            }
-        }
-
         private List<Emote> LoadEmotesResource()
         {
             string fileContents;
@@ -259,13 +248,31 @@ namespace BlishEmotesList
             return JsonSerializer.Deserialize<List<Emote>>(fileContents);
         }
 
+        private async Task LoadEmotesFromApi()
+        {
+            if (Gw2ApiManager.HasPermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression, Gw2Sharp.WebApi.V2.Models.TokenPermission.Unlocks }))
+            {
+                // load locked emotes
+                // TODO PERHAPS SIMPLY HARDCODE?!?!?
+                _unlockableEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Emotes.IdsAsync());
+                // load unlocked emotes
+                _unlockedEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Account.Emotes.GetAsync());
+            }
+            else
+            {
+                _unlockableEmotesIds.Clear();
+                _unlockedEmotesIds.Clear();
+            }
+        }
+
         /// <inheritdoc />
         protected override void Unload()
         {
             Gw2ApiManager.SubtokenUpdated -= OnApiSubTokenUpdated;
-            _keyBindToggleEmoteList.Value.Enabled = false;
+            this.Settings.Unload();
             // Unload here
             _cornerIcon?.Dispose();
+            _settingsWindow?.Dispose();
 
             // All static members must be manually unset
         }

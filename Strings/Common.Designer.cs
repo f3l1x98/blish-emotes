@@ -81,18 +81,36 @@ namespace felix.BlishEmotes.Strings {
         /// <summary>
         ///   Looks up a localized string similar to Hide Corner Icon.
         /// </summary>
-        public static string settings_hideCornerIcon {
+        public static string settings_global_hideCornerIcon {
             get {
-                return ResourceManager.GetString("settings_hideCornerIcon", resourceCulture);
+                return ResourceManager.GetString("settings_global_hideCornerIcon", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Toggle emote list.
         /// </summary>
-        public static string settings_keybindToggleEmoteList {
+        public static string settings_global_keybindToggleEmoteList {
             get {
-                return ResourceManager.GetString("settings_keybindToggleEmoteList", resourceCulture);
+                return ResourceManager.GetString("settings_global_keybindToggleEmoteList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Global Settings.
+        /// </summary>
+        public static string settings_ui_global_tab {
+            get {
+                return ResourceManager.GetString("settings_ui_global_tab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emotes Settings.
+        /// </summary>
+        public static string settings_ui_title {
+            get {
+                return ResourceManager.GetString("settings_ui_title", resourceCulture);
             }
         }
     }

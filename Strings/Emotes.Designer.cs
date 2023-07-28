@@ -61,7 +61,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to beckon.
+        ///   Looks up a localized string similar to Beckon.
         /// </summary>
         internal static string beckon {
             get {
@@ -70,7 +70,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to bow.
+        ///   Looks up a localized string similar to Bow.
         /// </summary>
         internal static string bow {
             get {
@@ -79,7 +79,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to cheer.
+        ///   Looks up a localized string similar to Cheer.
         /// </summary>
         internal static string cheer {
             get {
@@ -88,7 +88,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to cower.
+        ///   Looks up a localized string similar to Cower.
         /// </summary>
         internal static string cower {
             get {
@@ -97,7 +97,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to crossarms.
+        ///   Looks up a localized string similar to Crossarms.
         /// </summary>
         internal static string crossarms {
             get {
@@ -106,7 +106,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to cry.
+        ///   Looks up a localized string similar to Cry.
         /// </summary>
         internal static string cry {
             get {
@@ -115,7 +115,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to dance.
+        ///   Looks up a localized string similar to Dance.
         /// </summary>
         internal static string dance {
             get {
@@ -124,7 +124,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to facepalm.
+        ///   Looks up a localized string similar to Facepalm.
         /// </summary>
         internal static string facepalm {
             get {
@@ -133,7 +133,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to geargrind.
+        ///   Looks up a localized string similar to Geargrind.
         /// </summary>
         internal static string geargrind {
             get {
@@ -142,7 +142,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to hiss.
+        ///   Looks up a localized string similar to Hiss.
         /// </summary>
         internal static string hiss {
             get {
@@ -151,7 +151,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to kneel.
+        ///   Looks up a localized string similar to Kneel.
         /// </summary>
         internal static string kneel {
             get {
@@ -160,7 +160,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to laugh.
+        ///   Looks up a localized string similar to Laugh.
         /// </summary>
         internal static string laugh {
             get {
@@ -169,7 +169,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to magicjuggle.
+        ///   Looks up a localized string similar to Magic Juggle.
         /// </summary>
         internal static string magicjuggle {
             get {
@@ -178,7 +178,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to no.
+        ///   Looks up a localized string similar to No.
         /// </summary>
         internal static string no {
             get {
@@ -187,7 +187,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to paper.
+        ///   Looks up a localized string similar to Paper.
         /// </summary>
         internal static string paper {
             get {
@@ -196,7 +196,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to playdead.
+        ///   Looks up a localized string similar to Playdead.
         /// </summary>
         internal static string playdead {
             get {
@@ -205,7 +205,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to point.
+        ///   Looks up a localized string similar to Point.
         /// </summary>
         internal static string point {
             get {
@@ -214,7 +214,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ponder.
+        ///   Looks up a localized string similar to Ponder.
         /// </summary>
         internal static string ponder {
             get {
@@ -223,7 +223,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to rank.
+        ///   Looks up a localized string similar to Rank.
         /// </summary>
         internal static string rank {
             get {
@@ -232,7 +232,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to rock.
+        ///   Looks up a localized string similar to Rock.
         /// </summary>
         internal static string rock {
             get {
@@ -241,7 +241,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to rockout.
+        ///   Looks up a localized string similar to Rockout.
         /// </summary>
         internal static string rockout {
             get {
@@ -250,7 +250,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to sad.
+        ///   Looks up a localized string similar to Sad.
         /// </summary>
         internal static string sad {
             get {
@@ -259,7 +259,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to salute.
+        ///   Looks up a localized string similar to Salute.
         /// </summary>
         internal static string salute {
             get {
@@ -268,7 +268,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to scissors.
+        ///   Looks up a localized string similar to Scissors.
         /// </summary>
         internal static string scissors {
             get {
@@ -277,7 +277,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to serve.
+        ///   Looks up a localized string similar to Serve.
         /// </summary>
         internal static string serve {
             get {
@@ -286,7 +286,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to shiver.
+        ///   Looks up a localized string similar to Shiver.
         /// </summary>
         internal static string shiver {
             get {
@@ -295,7 +295,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to shiverplus.
+        ///   Looks up a localized string similar to Shiver plus.
         /// </summary>
         internal static string shiverplus {
             get {
@@ -304,7 +304,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to shrug.
+        ///   Looks up a localized string similar to Shrug.
         /// </summary>
         internal static string shrug {
             get {
@@ -313,7 +313,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to shuffle.
+        ///   Looks up a localized string similar to Shuffle.
         /// </summary>
         internal static string shuffle {
             get {
@@ -322,7 +322,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to sit.
+        ///   Looks up a localized string similar to Sit.
         /// </summary>
         internal static string sit {
             get {
@@ -331,7 +331,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to sleep.
+        ///   Looks up a localized string similar to Sleep.
         /// </summary>
         internal static string sleep {
             get {
@@ -340,7 +340,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to step.
+        ///   Looks up a localized string similar to Step.
         /// </summary>
         internal static string step {
             get {
@@ -349,7 +349,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to stretch.
+        ///   Looks up a localized string similar to Stretch.
         /// </summary>
         internal static string stretch {
             get {
@@ -358,7 +358,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to surprised.
+        ///   Looks up a localized string similar to Surprised.
         /// </summary>
         internal static string surprised {
             get {
@@ -367,7 +367,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to talk.
+        ///   Looks up a localized string similar to Talk.
         /// </summary>
         internal static string talk {
             get {
@@ -376,7 +376,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to thanks.
+        ///   Looks up a localized string similar to Thanks.
         /// </summary>
         internal static string thanks {
             get {
@@ -385,7 +385,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to threaten.
+        ///   Looks up a localized string similar to Threaten.
         /// </summary>
         internal static string threaten {
             get {
@@ -394,7 +394,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to wave.
+        ///   Looks up a localized string similar to Wave.
         /// </summary>
         internal static string wave {
             get {
@@ -403,7 +403,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to yes.
+        ///   Looks up a localized string similar to Yes.
         /// </summary>
         internal static string yes {
             get {

@@ -118,120 +118,120 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="beckon" xml:space="preserve">
-    <value>beckon</value>
+    <value>Beckon</value>
   </data>
   <data name="bow" xml:space="preserve">
-    <value>bow</value>
+    <value>Bow</value>
   </data>
   <data name="cheer" xml:space="preserve">
-    <value>cheer</value>
+    <value>Cheer</value>
   </data>
   <data name="cower" xml:space="preserve">
-    <value>cower</value>
+    <value>Cower</value>
   </data>
   <data name="crossarms" xml:space="preserve">
-    <value>crossarms</value>
+    <value>Crossarms</value>
   </data>
   <data name="cry" xml:space="preserve">
-    <value>cry</value>
+    <value>Cry</value>
   </data>
   <data name="dance" xml:space="preserve">
-    <value>dance</value>
+    <value>Dance</value>
   </data>
   <data name="facepalm" xml:space="preserve">
-    <value>facepalm</value>
+    <value>Facepalm</value>
   </data>
   <data name="geargrind" xml:space="preserve">
-    <value>geargrind</value>
+    <value>Geargrind</value>
   </data>
   <data name="hiss" xml:space="preserve">
-    <value>hiss</value>
+    <value>Hiss</value>
   </data>
   <data name="kneel" xml:space="preserve">
-    <value>kneel</value>
+    <value>Kneel</value>
   </data>
   <data name="laugh" xml:space="preserve">
-    <value>laugh</value>
+    <value>Laugh</value>
   </data>
   <data name="magicjuggle" xml:space="preserve">
-    <value>magicjuggle</value>
+    <value>Magic Juggle</value>
   </data>
   <data name="no" xml:space="preserve">
-    <value>no</value>
+    <value>No</value>
   </data>
   <data name="paper" xml:space="preserve">
-    <value>paper</value>
+    <value>Paper</value>
   </data>
   <data name="playdead" xml:space="preserve">
-    <value>playdead</value>
+    <value>Playdead</value>
   </data>
   <data name="point" xml:space="preserve">
-    <value>point</value>
+    <value>Point</value>
   </data>
   <data name="ponder" xml:space="preserve">
-    <value>ponder</value>
+    <value>Ponder</value>
   </data>
   <data name="rank" xml:space="preserve">
-    <value>rank</value>
+    <value>Rank</value>
   </data>
   <data name="rock" xml:space="preserve">
-    <value>rock</value>
+    <value>Rock</value>
   </data>
   <data name="rockout" xml:space="preserve">
-    <value>rockout</value>
+    <value>Rockout</value>
   </data>
   <data name="sad" xml:space="preserve">
-    <value>sad</value>
+    <value>Sad</value>
   </data>
   <data name="salute" xml:space="preserve">
-    <value>salute</value>
+    <value>Salute</value>
   </data>
   <data name="scissors" xml:space="preserve">
-    <value>scissors</value>
+    <value>Scissors</value>
   </data>
   <data name="serve" xml:space="preserve">
-    <value>serve</value>
+    <value>Serve</value>
   </data>
   <data name="shiver" xml:space="preserve">
-    <value>shiver</value>
+    <value>Shiver</value>
   </data>
   <data name="shiverplus" xml:space="preserve">
-    <value>shiverplus</value>
+    <value>Shiver plus</value>
   </data>
   <data name="shrug" xml:space="preserve">
-    <value>shrug</value>
+    <value>Shrug</value>
   </data>
   <data name="shuffle" xml:space="preserve">
-    <value>shuffle</value>
+    <value>Shuffle</value>
   </data>
   <data name="sit" xml:space="preserve">
-    <value>sit</value>
+    <value>Sit</value>
   </data>
   <data name="sleep" xml:space="preserve">
-    <value>sleep</value>
+    <value>Sleep</value>
   </data>
   <data name="step" xml:space="preserve">
-    <value>step</value>
+    <value>Step</value>
   </data>
   <data name="stretch" xml:space="preserve">
-    <value>stretch</value>
+    <value>Stretch</value>
   </data>
   <data name="surprised" xml:space="preserve">
-    <value>surprised</value>
+    <value>Surprised</value>
   </data>
   <data name="talk" xml:space="preserve">
-    <value>talk</value>
+    <value>Talk</value>
   </data>
   <data name="thanks" xml:space="preserve">
-    <value>thanks</value>
+    <value>Thanks</value>
   </data>
   <data name="threaten" xml:space="preserve">
-    <value>threaten</value>
+    <value>Threaten</value>
   </data>
   <data name="wave" xml:space="preserve">
-    <value>wave</value>
+    <value>Wave</value>
   </data>
   <data name="yes" xml:space="preserve">
-    <value>yes</value>
+    <value>Yes</value>
   </data>
 </root>

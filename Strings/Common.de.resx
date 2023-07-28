@@ -117,7 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="settings_hideCornerIcon" xml:space="preserve">
+  <data name="cornerIcon_tooltip" xml:space="preserve">
+    <value>Emoteliste öffnen</value>
+  </data>
+  <data name="settings_emotesKeybindSubCollection" xml:space="preserve">
+    <value>Emote Tastenkombinationen</value>
+  </data>
+  <data name="settings_global_hideCornerIcon" xml:space="preserve">
     <value>Symbol ausblenden</value>
+  </data>
+  <data name="settings_global_keybindToggleEmoteList" xml:space="preserve">
+    <value>Emoteliste Tastennkombination</value>
+  </data>
+  <data name="settings_ui_global_tab" xml:space="preserve">
+    <value>Globale Einstellungen</value>
+  </data>
+  <data name="settings_ui_title" xml:space="preserve">
+    <value>Emotes Einstellungen</value>
   </data>
 </root>

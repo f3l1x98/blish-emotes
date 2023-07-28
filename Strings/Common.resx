@@ -123,10 +123,16 @@
   <data name="settings_emotesKeybindSubCollection" xml:space="preserve">
     <value>Emote Keybinds</value>
   </data>
-  <data name="settings_hideCornerIcon" xml:space="preserve">
+  <data name="settings_global_hideCornerIcon" xml:space="preserve">
     <value>Hide Corner Icon</value>
   </data>
-  <data name="settings_keybindToggleEmoteList" xml:space="preserve">
+  <data name="settings_global_keybindToggleEmoteList" xml:space="preserve">
     <value>Toggle emote list</value>
+  </data>
+  <data name="settings_ui_global_tab" xml:space="preserve">
+    <value>Global Settings</value>
+  </data>
+  <data name="settings_ui_title" xml:space="preserve">
+    <value>Emotes Settings</value>
   </data>
 </root>

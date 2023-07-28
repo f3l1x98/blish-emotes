@@ -7,9 +7,13 @@
 
   "description": "Blish HUD module for UI assisted emotes",
   "dependencies": {
-    "bh.blishhud": ">=0.5.2"
+    "bh.blishhud": ">=1.0.0"
   },
   "api_permissions": {
+    "account": {
+      "optional": true,
+      "details": "Needed if you want to disable locked emotes."
+    },
     "progression": {
       "optional": true,
       "details": "Needed if you want to disable locked emotes."
@@ -19,7 +23,7 @@
       "details": "Needed if you want to disable locked emotes."
     }
   },
-  "url": "https://github.com/felix/blish-emotes",
+  "url": "https://github.com/f3l1x98/blish-emotes",
   "contributors": [
     {
       "name": "f3l1x",
