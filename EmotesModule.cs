@@ -24,7 +24,7 @@ namespace BlishEmotesList
 
         private static readonly Logger Logger = Logger.GetLogger<EmoteLisModule>();
 
-        ResourceManager EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
+        public ResourceManager EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
 
         #region Service Managers
         internal SettingsManager SettingsManager => this.ModuleParameters.SettingsManager;
@@ -41,7 +41,7 @@ namespace BlishEmotesList
         #endregion
 
         #region Settings
-        private ModuleSettings Settings;
+        public ModuleSettings Settings;
         #endregion
 
         private List<Emote> _emotes;
@@ -55,7 +55,7 @@ namespace BlishEmotesList
         protected override void DefineSettings(SettingCollection settings)
         {
             Logger.Debug("DefineSettings");
-            this.Settings = new ModuleSettings(settings);
+            this.Settings = new ModuleSettings(settings, EmotesResourceManager);
             // TODO SETTINGS IDEAS:
             // USE Strings.Common FOR i18n!!!!!!!!!!!
             // - Enabled/Disable CornerIcon

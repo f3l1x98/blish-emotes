@@ -9,13 +9,14 @@ namespace felix.BlishEmotes
     public class ModuleSettings
     {
 
-        ResourceManager EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
+        private ResourceManager _emotesResourceManager;
 
-        public ModuleSettings(SettingCollection settings)
+        public ModuleSettings(SettingCollection settings, ResourceManager emotesResourceManager)
         {
             this.RootSettings = settings;
             DefineGlobalSettings(settings);
             DefineEmotesKeybindSettings(settings);
+            _emotesResourceManager = emotesResourceManager;
         }
         public SettingCollection RootSettings { get; private set; }
 
@@ -57,7 +58,7 @@ namespace felix.BlishEmotes
             this.EmotesShortcutsKeybindsMap.Clear();
             foreach (Emote emote in emotes)
             {
-                this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.id, new KeyBinding(), () => EmotesResourceManager.GetString(emote.id)));
+                this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.id, new KeyBinding(), () => _emotesResourceManager.GetString(emote.id)));
 
                 this.EmotesShortcutsKeybindsMap[emote].Value.Enabled = !emote.locked;
             }
