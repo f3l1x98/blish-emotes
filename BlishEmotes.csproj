@@ -335,6 +335,8 @@
       <LastGenOutput>Common.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Strings\Emotes.de.resx" />
+    <EmbeddedResource Include="Strings\Emotes.es.resx" />
+    <EmbeddedResource Include="Strings\Emotes.fr.resx" />
     <EmbeddedResource Include="Strings\Emotes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Emotes.Designer.cs</LastGenOutput>
