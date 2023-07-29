@@ -1,0 +1,67 @@
+name: Build Blish Emotes
+
+on:
+  push:
+    branches:
+      - master
+  
+jobs:
+  build-vs-solution:
+    runs-on: windows-2019
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Restore referenced packages
+        run: msbuild ".\BlishEmotes.sln" -t:restore -p:RestorePackagesConfig=true
+
+      - name: Build VS Solution
+        run: msbuild ".\BlishEmotes.sln" -t:rebuild -property:Configuration=Release
+
+      - name: Copy module up
+        run: xcopy .\bin\x64\Release\BlishEmotes.bhm .
+        
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: BlishEmotes
+          path: |
+            .\BlishEmotes.bhm
+            .\manifest.json
+          retention-days: 5
+
+  create-release:
+    needs: build-vs-solution
+    permissions: write-all
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: BlishEmotes
+          path: ./
+
+      - name: Read manifest json
+        run: echo "MANIFEST_JSON=$(jq -c . < manifest.json)" >> "$GITHUB_ENV"
+
+      - name: Extract version from manifest
+        id: version_extractor
+        run: |
+          echo 'VERSION=${{ fromJson(env.MANIFEST_JSON).version }}' >> "$GITHUB_OUTPUT"
+
+      - name: Create tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: '${{ steps.version_extractor.outputs.VERSION }}'
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          artifacts: "./BlishEmotes.bhm"
