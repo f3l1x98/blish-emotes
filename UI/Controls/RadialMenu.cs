@@ -44,6 +44,7 @@ namespace felix.BlishEmotes.UI.Controls
         private int _maxRadialDiameter = 0;
 
         private Label _noEmotesLabel;
+        private Label _selectedEmoteLabel;
         private Point RadialSpawnPoint = default;
         private float _debugLineThickness = 2;
 
@@ -61,9 +62,22 @@ namespace felix.BlishEmotes.UI.Controls
             {
                 Parent = this,
                 Location = new Point(0, 0),
+                Size = new Point(800, 500),
                 Font = GameService.Content.DefaultFont32,
                 Text = "No Emotes found!",
                 TextColor = Color.Red,
+            };
+
+            _selectedEmoteLabel = new Label()
+            {
+                Parent = this,
+                Location = new Point(0, 0),
+                Size = new Point(200, 50),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Font = GameService.Content.DefaultFont32,
+                Text = "",
+                BackgroundColor = Color.Black * 0.5f
             };
         }
 
@@ -86,52 +100,38 @@ namespace felix.BlishEmotes.UI.Controls
                 _noEmotesLabel.Hide();
             }
 
-            // TODO DEBUG HELPER LIKE RADIAL MOUNT
-            float r = (float)(_iconSize * Math.Sqrt(2) / 2);
-            if (Helper.IsDebugEnabled())
-            {
-                // Draw debug lines 
-                var spawnPointVec = RadialSpawnPoint.ToVector2();
-                var rectpos = spawnPointVec - new Vector2(_iconSize / 2, _iconSize / 2);
-                spriteBatch.DrawRectangle(rectpos, new Size2(_iconSize, _iconSize), Color.Red, _debugLineThickness);
-                spriteBatch.DrawCircle(spawnPointVec, 1, 50, Color.Red, _debugLineThickness);
-                spriteBatch.DrawCircle(spawnPointVec, r, 50, Color.Red, _debugLineThickness);
-            }
+            // Create RadialEmote wrapper for each emote
             double currentAngle = 0.0;
             double sweepAngle = Math.PI * 2 / _emotes.Count; // Divide 360deg or 2PIrad between emotes
-
-            // Create RadialEmote wrapper for each emote
             foreach (var emote in _emotes)
             {
-                var angleMid = currentAngle + sweepAngle / 2;
-                var angleEnd = currentAngle + sweepAngle;
+                var midAngle = currentAngle + sweepAngle / 2;
+                var endAngle = currentAngle + sweepAngle;
 
-                int x = (int)Math.Round(_radius + _radius * Math.Cos(angleMid));
-                int y = (int)Math.Round(_radius + _radius * Math.Sin(angleMid));
+                int x = (int)Math.Round(_radius + _radius * Math.Cos(midAngle));
+                int y = (int)Math.Round(_radius + _radius * Math.Sin(midAngle));
 
                 if (Helper.IsDebugEnabled())
                 {
                     // Draw debug lines separating the sections between emotes
-                    float xDebugInner = (float)Math.Round(r * Math.Cos(currentAngle)) + RadialSpawnPoint.X;
-                    float yDebugInner = (float)Math.Round(r * Math.Sin(currentAngle)) + RadialSpawnPoint.Y;
                     var debugRadiusOuter = 250;
                     float xDebugOuter = (float)Math.Round(2 * debugRadiusOuter * Math.Cos(currentAngle)) + RadialSpawnPoint.X;
                     float yDebugOuter = (float)Math.Round(2 * debugRadiusOuter * Math.Sin(currentAngle)) + RadialSpawnPoint.Y;
-                    spriteBatch.DrawLine(new Vector2(xDebugInner, yDebugInner), new Vector2(xDebugOuter, yDebugOuter), Color.Red, _debugLineThickness);
+                    spriteBatch.DrawLine(new Vector2(RadialSpawnPoint.X, RadialSpawnPoint.Y), new Vector2(xDebugOuter, yDebugOuter), Color.Red, _debugLineThickness);
                 }
 
                 _radialEmotes.Add(new RadialEmote()
                 {
                     Emote = emote,
                     StartAngle = currentAngle,
-                    EndAngle = angleEnd,
+                    EndAngle = endAngle,
                     X = x,
                     Y = y,
                     Text = _helper.EmotesResourceManager.GetString(emote.Id),
-                    //Texture = _textureCache.GetMountImgFile(mount),
+                    Texture = emote.Texture,
                 });
 
-                currentAngle = angleEnd;
+                currentAngle = endAngle;
             }
 
             // Calc angle between mouse pos and radial center
@@ -148,12 +148,16 @@ namespace felix.BlishEmotes.UI.Controls
             foreach (var radialEmote in _radialEmotes)
             {
                 // Mark as selected
+                // TODO CAN YOU SELECT LOCKED ONES?!?!?!? (aka should the label in the middle display them, even though they cannot be used)
                 radialEmote.Selected = radialEmote.StartAngle <= angle && radialEmote.EndAngle > angle;
+                if (radialEmote.Selected)
+                {
+                    _selectedEmoteLabel.Text = radialEmote.Text;
+                }
 
                 // TODO SWITCH TO DrawOnCtrl TO DRAW TEXTURE 
-                //spriteBatch.DrawOnCtrl(this, radialEmote.Texture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, radialEmote.Emote.Locked ? Color.Gray : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
-                spriteBatch.DrawStringOnCtrl(this, radialEmote.Text.Substring(0, 1), GameService.Content.DefaultFont32, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), radialEmote.Emote.Locked ? Color.Red : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value), false, HorizontalAlignment.Center, VerticalAlignment.Middle);
-
+                spriteBatch.DrawOnCtrl(this, radialEmote.Texture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, radialEmote.Emote.Locked ? Color.Gray * 0.5f : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
+                //spriteBatch.DrawStringOnCtrl(this, radialEmote.Text.Substring(0, 1), GameService.Content.DefaultFont32, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), radialEmote.Emote.Locked ? Color.Red : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value), false, HorizontalAlignment.Center, VerticalAlignment.Middle);
             }
 
             base.PaintBeforeChildren(spriteBatch, bounds);
@@ -172,7 +176,7 @@ namespace felix.BlishEmotes.UI.Controls
 
             // Calc max radial menu radius/size
             _maxRadialDiameter = Math.Min(GameService.Graphics.SpriteScreen.Width, GameService.Graphics.SpriteScreen.Height);
-            _iconSize = (int)(_maxRadialDiameter / 4 * _settings.RadialIconSizeModifier.Value);
+            _iconSize = (int)(_maxRadialDiameter / 8 * _settings.RadialIconSizeModifier.Value);
             // TODO perhaps adjust radius due to more sections than mounts
             _radius = (int)((_maxRadialDiameter / 2 - _iconSize / 2) * _settings.RadialRadiusModifier.Value);
             Size = new Point(_maxRadialDiameter, _maxRadialDiameter);
@@ -191,6 +195,9 @@ namespace felix.BlishEmotes.UI.Controls
 
             // Set location of this control using calculated spawn point (Location is upper left corner not center, aka RadialSpawnPoint)
             Location = new Point(RadialSpawnPoint.X - _radius - _iconSize / 2, RadialSpawnPoint.Y - _radius - _iconSize / 2);
+
+            // Set Location of selected emote label to roughly center of radial menu
+            _selectedEmoteLabel.Location = new Point(RadialSpawnPoint.X - this.Location.X - _selectedEmoteLabel.Size.X / 2, RadialSpawnPoint.Y - this.Location.Y - _selectedEmoteLabel.Size.Y / 2 - 20);
         }
 
         private async Task HandleHidden(object sender, EventArgs e)
