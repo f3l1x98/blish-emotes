@@ -22,7 +22,7 @@ jobs:
         run: msbuild ".\BlishEmotes.sln" -t:rebuild -property:Configuration=Release
 
       - name: Copy module up
-        run: xcopy .\BlishEmotes\bin\x64\Release\BlishEmotes.bhm .
+        run: xcopy .\bin\x64\Release\BlishEmotes.bhm .
         
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
