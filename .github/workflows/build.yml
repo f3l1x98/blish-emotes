@@ -51,27 +51,3 @@ jobs:
         id: version_extractor
         run: |
           echo 'TEST'
-          #echo 'MANIFEST_JSON<<EOF' >> $GITHUB_ENV
-          #cat ./manifest.json >> $GITHUB_ENV
-          #echo 'EOF' >> $GITHUB_ENV
-          #echo '${{ env.MANIFEST_JSON }}'
-          echo "PACKAGE_JSON=$(jq -c . < manifest.json)"
-          # VER=${{ fromJson(env.MANIFEST_JSON).version }}
-          # echo 'VERSION=$VER' >> GITHUB_OUTPUT
-
-#      - name: Version readout test
-#        run: echo '${{ steps.version_extractor.outputs.VERSION }}'
-
-#      - name: Create tag
-#        id: tag_version
-#        uses: mathieudutour/github-tag-action@v6.1
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          custom_tag: "0.0.0"
-
-#      - name: Create release
-#        uses: ncipollo/release-action@v1
-#        with:
-#          tag: ${{ steps.tag_version.outputs.new_tag }}
-#          name: Release ${{ steps.tag_version.outputs.new_tag }}
-#          artifacts: "./BlishEmotes.bhm"
