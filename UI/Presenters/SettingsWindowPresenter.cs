@@ -22,6 +22,7 @@ namespace felix.BlishEmotes.UI
         {
             this.View.GlobalSettingsViewContainer.Show(new SettingsView(this.Model.GlobalSettings));
             this.View.EmotesShortcutsSettingsViewContainer.Show(new SettingsView(this.Model.EmotesShortcutsSettings));
+            this.View.RadialMenuSettingsViewContainer.Show(new SettingsView(this.Model.RadialMenuSettings));
         }
 
         private void Model_EmotesSettingsLoaded(object sender, bool e)
