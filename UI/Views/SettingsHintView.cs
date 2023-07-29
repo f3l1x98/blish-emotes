@@ -1,5 +1,6 @@
 ﻿using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
+using felix.BlishEmotes.Strings;
 using felix.BlishEmotes.UI.Presenters;
 using Microsoft.Xna.Framework;
 using System;
@@ -21,7 +22,7 @@ namespace felix.BlishEmotes.UI.Views
         {
             _bttnOpenSettings = new StandardButton()
             {
-                Text = "Open Settings",
+                Text = Common.settings_button,
                 Width = 192,
                 Parent = buildPanel,
             };
