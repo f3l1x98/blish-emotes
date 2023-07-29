@@ -52,15 +52,12 @@ jobs:
         run: |
           echo 'VERSION=${{ fromJson(env.MANIFEST_JSON).version }}' >> "$GITHUB_OUTPUT"
 
-      - name: Version readout test
-        run: echo '${{ steps.version_extractor.outputs.VERSION }}'
-
       - name: Create tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: "0.0.0"
+          custom_tag: '${{ steps.version_extractor.outputs.VERSION }}'
 
       - name: Create release
         uses: ncipollo/release-action@v1
