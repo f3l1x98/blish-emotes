@@ -47,4 +47,4 @@ jobs:
         id: version_extractor
         run: |
           echo "MANIFEST_JSON=$(jq -c . < manifest.json)" >> $GITHUB_ENV
-          echo '${{ fromJson(env.MANIFEST_JSON).version }}'
+          echo '${{ env.MANIFEST_JSON }}'
