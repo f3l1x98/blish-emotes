@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Resources;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -24,7 +23,7 @@ namespace BlishEmotesList
 
         private static readonly Logger Logger = Logger.GetLogger<EmoteLisModule>();
 
-        public ResourceManager EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
+        private Helper _helper;
 
         #region Service Managers
         internal SettingsManager SettingsManager => this.ModuleParameters.SettingsManager;
@@ -49,11 +48,14 @@ namespace BlishEmotesList
 
 
         [ImportingConstructor]
-        public EmoteLisModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { }
+        public EmoteLisModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters)
+        {
+            _helper = new Helper();
+        }
 
         protected override void DefineSettings(SettingCollection settings)
         {
-            this.Settings = new ModuleSettings(settings, EmotesResourceManager);
+            this.Settings = new ModuleSettings(settings, _helper);
 
             // Handlers
             this.Settings.GlobalHideCornerIcon.SettingChanged += (sender, args) =>
@@ -130,7 +132,7 @@ namespace BlishEmotesList
                 // Set emotes locked
                 UpdateEmotesLock();
 
-                this.Settings.InitEmotesShortcuts(_emotes, SendEmoteCommand);
+                this.Settings.InitEmotesShortcuts(_emotes);
             }
             catch (Exception e)
             {
@@ -181,25 +183,16 @@ namespace BlishEmotesList
             {
                 var menuItem = new ContextMenuStripItem()
                 {
-                    Text = EmotesResourceManager.GetString(emote.Id),
+                    Text = _helper.EmotesResourceManager.GetString(emote.Id),
                     Enabled = !emote.Locked,
                 };
                 menuItem.Click += delegate
                 {
-                    SendEmoteCommand(emote);
+                    _helper.SendEmoteCommand(emote);
                 };
                 items.Add(menuItem);
             }
             return items;
-        }
-
-        private void SendEmoteCommand(Emote emote)
-        {
-            // Send emote command to chat if in game and map closed
-            if (GameService.GameIntegration.Gw2Instance.IsInGame && !GameService.Gw2Mumble.UI.IsMapOpen)
-            {
-                GameService.GameIntegration.Chat.Send(emote.Command);
-            }
         }
 
         private void UpdateEmotesLock()

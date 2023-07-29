@@ -3,21 +3,21 @@ using Blish_HUD.Settings;
 using felix.BlishEmotes.Strings;
 using System;
 using System.Collections.Generic;
-using System.Resources;
 
 namespace felix.BlishEmotes
 {
     public class ModuleSettings
     {
 
-        private ResourceManager _emotesResourceManager;
+        private Helper _helper;
 
-        public ModuleSettings(SettingCollection settings, ResourceManager emotesResourceManager)
+        public ModuleSettings(SettingCollection settings, Helper helper)
         {
+            this._helper = helper;
             this.RootSettings = settings;
             DefineGlobalSettings(settings);
             DefineEmotesKeybindSettings(settings);
-            _emotesResourceManager = emotesResourceManager;
+            DefineRadialMenuSettings(settings);
         }
         public SettingCollection RootSettings { get; private set; }
 
@@ -31,7 +31,6 @@ namespace felix.BlishEmotes
         private void DefineGlobalSettings(SettingCollection settings)
         {
             this.GlobalSettings = settings.AddSubCollection(GLOBAL_SETTINGS);
-            this.GlobalSettings.RenderInUi = true;
 
             this.GlobalHideCornerIcon = this.GlobalSettings.DefineSetting(nameof(this.GlobalHideCornerIcon), false, () => Common.settings_global_hideCornerIcon);
             this.GlobalKeyBindToggleEmoteList = this.GlobalSettings.DefineSetting(nameof(this.GlobalKeyBindToggleEmoteList), new KeyBinding(), () => Common.settings_global_keybindToggleEmoteList);
@@ -48,27 +47,54 @@ namespace felix.BlishEmotes
         private void DefineEmotesKeybindSettings(SettingCollection settings)
         {
             this.EmotesShortcutsSettings = settings.AddSubCollection(EMOTES_SHORTCUT_SETTINGS);
-            this.EmotesShortcutsSettings.RenderInUi = true;
 
             this.EmotesShortcutsKeybindsMap = new Dictionary<Emote, SettingEntry<KeyBinding>>();
         }
 
         public event EventHandler<bool> OnEmotesLoaded;
-        public void InitEmotesShortcuts(List<Emote> emotes, Action<Emote> SendEmoteCommand)
+        public void InitEmotesShortcuts(List<Emote> emotes)
         {
             this.EmotesShortcutsKeybindsMap.Clear();
             foreach (Emote emote in emotes)
             {
-                this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.Id, new KeyBinding(), () => _emotesResourceManager.GetString(emote.Id)));
+                this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.Id, new KeyBinding(), () => _helper.EmotesResourceManager.GetString(emote.Id)));
 
                 this.EmotesShortcutsKeybindsMap[emote].Value.Enabled = !emote.Locked;
                 this.EmotesShortcutsKeybindsMap[emote].Value.Activated += delegate
                 {
-                    SendEmoteCommand(emote);
+                    _helper.SendEmoteCommand(emote);
                 };
             }
             OnEmotesLoaded?.Invoke(this, true);
         }
+        #endregion
+
+        #region RadialMenuSettings
+        private const string RADIAL_MENU_SETTINGS = "radial-menu-settings";
+        public SettingCollection RadialMenuSettings { get; private set; }
+
+        public SettingEntry<bool> SpawnAtCursor { get; private set; }
+
+        public SettingEntry<KeyBinding> ToggleActionCameraKeyBind { get; private set; }
+
+        public SettingEntry<float> RadialRadiusModifier { get; private set; }
+        public SettingEntry<float> RadialIconSizeModifier { get; private set; }
+        public SettingEntry<float> RadialIconOpacity { get; private set; }
+
+        private void DefineRadialMenuSettings(SettingCollection settings)
+        {
+            this.RadialMenuSettings = settings.AddSubCollection(RADIAL_MENU_SETTINGS);
+
+            this.SpawnAtCursor = this.RadialMenuSettings.DefineSetting(nameof(this.SpawnAtCursor), false, () => Common.settings_radial_spawnAtCursor);
+            this.ToggleActionCameraKeyBind = this.RadialMenuSettings.DefineSetting(nameof(this.ToggleActionCameraKeyBind), new KeyBinding(), () => Common.settings_radial_actionCamKeybind);
+            this.RadialRadiusModifier = this.RadialMenuSettings.DefineSetting(nameof(this.RadialRadiusModifier), 0.5f, () => Common.settings_radial_radiusModifier);
+            this.RadialRadiusModifier.SetRange(0.2f, 1.0f);
+            this.RadialIconSizeModifier = this.RadialMenuSettings.DefineSetting(nameof(this.RadialIconSizeModifier), 0.5f, () => Common.settings_radial_iconSizeModifier);
+            this.RadialIconSizeModifier.SetRange(0.5f, 1.0f);
+            this.RadialIconOpacity = this.RadialMenuSettings.DefineSetting(nameof(this.RadialIconOpacity), 0.5f, () => Common.settings_radial_iconOpacity);
+            this.RadialIconOpacity.SetRange(0.5f, 1.0f);
+        }
+
         #endregion
 
         public void Unload()
