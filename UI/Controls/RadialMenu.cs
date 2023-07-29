@@ -100,7 +100,8 @@ namespace felix.BlishEmotes.UI.Controls
             }
 
             // Create RadialEmote wrapper for each emote
-            double currentAngle = 0.0;
+            double startAngle = Math.PI * Math.Floor(0.75 * 360) / 180.0; // start at 270deg (aka -90deg, aka at the top)
+            double currentAngle = startAngle;
             double sweepAngle = Math.PI * 2 / _emotes.Count; // Divide 360deg or 2PIrad between emotes
             foreach (var emote in _emotes)
             {
@@ -137,8 +138,8 @@ namespace felix.BlishEmotes.UI.Controls
             var mousePos = Input.Mouse.Position;
             var diff = mousePos - RadialSpawnPoint;
             var angle = Math.Atan2(diff.Y, diff.X);
-            // Ensure positive angle
-            while (angle < 0.0)
+            // Handle multiple of 2PI
+            while (angle < startAngle)
             {
                 angle += Math.PI * 2;
             }
