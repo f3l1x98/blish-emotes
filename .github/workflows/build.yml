@@ -48,7 +48,7 @@ jobs:
         run: |
           echo "MANIFEST_JSON=$(jq -c . < manifest.json)" >> "$GITHUB_ENV"
           VER=${{ fromJson(env.MANIFEST_JSON).version }}
-          echo 'VERSION=$VER' >> GITHUB_OUTPUT
+          echo 'VERSION=$VER' >> "$GITHUB_OUTPUT"
 
       - name: Version readout test
         run: echo '${{ steps.version_extractor.outputs.VERSION }}'
