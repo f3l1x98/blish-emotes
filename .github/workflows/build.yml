@@ -46,14 +46,5 @@ jobs:
       - name: Extract version from manifest
         id: version_extractor
         run: |
-          delimiter="$(openssl rand -hex 8)"
-          JSON="$(cat ./manifest.json)"
-          echo "MANIFEST_JSON<<${delimiter}" >> "$GITHUB_ENV"
-          echo "$JSON" >> "$GITHUB_ENV"
-          echo "${delimiter}" >> "$GITHUB_ENV"
-
-          VER=${{ fromJson(env.MANIFEST_JSON).version }}
-          echo 'VERSION=$VER' >> "$GITHUB_OUTPUT"
-
-      - name: Version readout test
-        run: echo '${{ steps.version_extractor.outputs.VERSION }}'
+          echo "MANIFEST_JSON=$(jq -c . < manifest.json)" >> $GITHUB_ENV
+          echo '${{ fromJson(env.MANIFEST_JSON).version }}'
