@@ -323,6 +323,7 @@
     <Content Include="ref\textures\102391.png" />
     <Content Include="ref\textures\156006.png" />
     <Content Include="ref\textures\emotes_icon.png" />
+    <Content Include="ref\textures\emote_fallback.png" />
     <Content Include="SharpDX.D3DCompiler.dll" />
     <Content Include="SharpDX.D3DCompiler.xml" />
     <Content Include="SharpDX.dll" />

@@ -263,10 +263,15 @@ namespace BlishEmotesList
             {
                 fileContents = reader.ReadToEnd();
             }
-            return JsonSerializer.Deserialize<List<Emote>>(fileContents, new JsonSerializerOptions
+            var emotes = JsonSerializer.Deserialize<List<Emote>>(fileContents, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
+            foreach (var emote in emotes)
+            {
+                emote.Texture = ContentsManager.GetTexture(@"textures/" + emote.Id + ".png", ContentsManager.GetTexture(@"textures/emote_fallback.png"));
+            }
+            return emotes;
         }
 
         private async Task LoadEmotesFromApi()
