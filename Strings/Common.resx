@@ -139,13 +139,13 @@
     <value>Action camera keybind</value>
   </data>
   <data name="settings_radial_iconOpacity" xml:space="preserve">
-    <value>Radial menu icon opacity</value>
+    <value>Icon opacity</value>
   </data>
   <data name="settings_radial_iconSizeModifier" xml:space="preserve">
-    <value>Radial menu icon size modifier</value>
+    <value>Icon size modifier</value>
   </data>
   <data name="settings_radial_radiusModifier" xml:space="preserve">
-    <value>Radial menu radius modifier</value>
+    <value>Radius modifier</value>
   </data>
   <data name="settings_radial_spawnAtCursor" xml:space="preserve">
     <value>Spawn at cursor</value>

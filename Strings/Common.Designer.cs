@@ -124,7 +124,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Radial menu icon opacity.
+        ///   Looks up a localized string similar to Icon opacity.
         /// </summary>
         public static string settings_radial_iconOpacity {
             get {
@@ -133,7 +133,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Radial menu icon size modifier.
+        ///   Looks up a localized string similar to Icon size modifier.
         /// </summary>
         public static string settings_radial_iconSizeModifier {
             get {
@@ -142,7 +142,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Radial menu radius modifier.
+        ///   Looks up a localized string similar to Radius modifier.
         /// </summary>
         public static string settings_radial_radiusModifier {
             get {
