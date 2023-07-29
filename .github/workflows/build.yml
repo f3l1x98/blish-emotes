@@ -49,6 +49,8 @@ jobs:
           echo 'MANIFEST_JSON<<EOF' >> $GITHUB_ENV
           cat ./manifest.json >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
+          echo '${{ env.MANIFEST_JSON }}'
+          echo "PACKAGE_JSON=$(jq -c . < manifest.json)"
           VER=${{ fromJson(env.MANIFEST_JSON).version }}
           echo 'VERSION=$VER' >> GITHUB_OUTPUT
 
