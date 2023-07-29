@@ -129,6 +129,9 @@
   <data name="settings_global_keybindToggleEmoteList" xml:space="preserve">
     <value>Toggle emote list</value>
   </data>
+  <data name="settings_global_useRadialMenu" xml:space="preserve">
+    <value>Use radial menu</value>
+  </data>
   <data name="settings_radial_actionCamKeybind" xml:space="preserve">
     <value>Action camera keybind</value>
   </data>

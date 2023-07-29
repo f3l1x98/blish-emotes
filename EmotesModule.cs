@@ -6,6 +6,7 @@ using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using felix.BlishEmotes;
 using felix.BlishEmotes.Strings;
+using felix.BlishEmotes.UI.Controls;
 using felix.BlishEmotes.UI.Views;
 using Microsoft.Xna.Framework;
 using System;
@@ -36,6 +37,7 @@ namespace BlishEmotesList
         private CornerIcon _cornerIcon;
         private ContextMenuStrip _emoteListMenuStrip;
         private TabbedWindow2 _settingsWindow;
+        private RadialMenu _radialMenu;
         #endregion
 
         #region Settings
@@ -72,7 +74,20 @@ namespace BlishEmotesList
             this.Settings.GlobalKeyBindToggleEmoteList.Value.Enabled = true;
             this.Settings.GlobalKeyBindToggleEmoteList.Value.Activated += delegate
             {
-                ShowEmoteList(false);
+                if (!GameService.GameIntegration.Gw2Instance.IsInGame)
+                {
+                    Logger.Debug("Disabled outside game.");
+                    return;
+                }
+                if (this.Settings.GlobalUseRadialMenu.Value)
+                {
+                    // TODO
+                    _radialMenu?.Show();
+                }
+                else
+                {
+                    ShowEmoteList(false);
+                }
             };
         }
 
@@ -120,6 +135,14 @@ namespace BlishEmotesList
             };
         }
 
+        protected override void OnModuleLoaded(EventArgs e)
+        {
+            DrawUI();
+
+            // Base handler must be called
+            base.OnModuleLoaded(e);
+        }
+
         protected override async Task LoadAsync()
         {
             try
@@ -133,6 +156,7 @@ namespace BlishEmotesList
                 UpdateEmotesLock();
 
                 this.Settings.InitEmotesShortcuts(_emotes);
+                DrawUI();
             }
             catch (Exception e)
             {
@@ -146,6 +170,34 @@ namespace BlishEmotesList
             return new SettingsHintView(_settingsWindow.Show);
         }
 
+        protected override void Update(GameTime gameTime)
+        {
+            // Hide radial menu
+            if (_radialMenu.Visible && !this.Settings.GlobalKeyBindToggleEmoteList.Value.IsTriggering)
+            {
+                _radialMenu.Hide();
+            }
+        }
+
+        private void DrawUI()
+        {
+            _emoteListMenuStrip?.Dispose();
+
+            _emoteListMenuStrip = new ContextMenuStrip();
+            var menuItems = GetEmotesMenuItems();
+            // Sort by text such that list is sorted no matter what locale
+            menuItems.Sort((x, y) => x.Text.CompareTo(y.Text));
+            _emoteListMenuStrip.AddMenuItems(menuItems);
+
+            _radialMenu?.Dispose();
+            // Init radial menu
+            _radialMenu = new RadialMenu(_helper, this.Settings, _emotes)
+            {
+                Parent = GameService.Graphics.SpriteScreen
+            };
+
+        }
+
         private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
         {
             // load emote information from api
@@ -156,19 +208,13 @@ namespace BlishEmotesList
 
         private void ShowEmoteList(bool atCornerIcon = true)
         {
-            _emoteListMenuStrip?.Dispose();
-            _emoteListMenuStrip = new ContextMenuStrip();
-            var menuItems = GetEmotesMenuItems();
-            // Sort by text such that list is sorted no matter what locale
-            menuItems.Sort((x, y) => x.Text.CompareTo(y.Text));
-            _emoteListMenuStrip.AddMenuItems(menuItems);
             if (atCornerIcon)
             {
-                _emoteListMenuStrip.Show(_cornerIcon);
+                _emoteListMenuStrip?.Show(_cornerIcon);
             }
             else if (GameService.Input.Mouse.CursorIsVisible)
             {
-                _emoteListMenuStrip.Show(GameService.Input.Mouse.Position);
+                _emoteListMenuStrip?.Show(GameService.Input.Mouse.Position);
             }
             else
             {
@@ -248,6 +294,7 @@ namespace BlishEmotesList
             // Unload here
             _cornerIcon?.Dispose();
             _settingsWindow?.Dispose();
+            _radialMenu?.Dispose();
 
             // All static members must be manually unset
         }

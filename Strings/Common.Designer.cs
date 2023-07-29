@@ -97,6 +97,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use radial menu.
+        /// </summary>
+        public static string settings_global_useRadialMenu {
+            get {
+                return ResourceManager.GetString("settings_global_useRadialMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Action camera keybind.
         /// </summary>
         public static string settings_radial_actionCamKeybind {

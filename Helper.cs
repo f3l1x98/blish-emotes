@@ -13,6 +13,15 @@ namespace felix.BlishEmotes
     {
         private static readonly Logger Logger = Logger.GetLogger<Helper>();
 
+        public static bool IsDebugEnabled()
+        {
+            var isDebug = false;
+#if DEBUG
+            isDebug = true;
+#endif
+            return isDebug || GameService.Debug.EnableAdditionalDebugDisplay.Value;
+        }
+
         public ResourceManager EmotesResourceManager { get; private set; }
 
         public Helper()

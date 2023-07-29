@@ -27,6 +27,7 @@ namespace felix.BlishEmotes
 
         public SettingEntry<bool> GlobalHideCornerIcon { get; private set; }
         public SettingEntry<KeyBinding> GlobalKeyBindToggleEmoteList { get; private set; }
+        public SettingEntry<bool> GlobalUseRadialMenu { get; private set; }
 
         private void DefineGlobalSettings(SettingCollection settings)
         {
@@ -34,6 +35,7 @@ namespace felix.BlishEmotes
 
             this.GlobalHideCornerIcon = this.GlobalSettings.DefineSetting(nameof(this.GlobalHideCornerIcon), false, () => Common.settings_global_hideCornerIcon);
             this.GlobalKeyBindToggleEmoteList = this.GlobalSettings.DefineSetting(nameof(this.GlobalKeyBindToggleEmoteList), new KeyBinding(), () => Common.settings_global_keybindToggleEmoteList);
+            this.GlobalUseRadialMenu = this.GlobalSettings.DefineSetting(nameof(this.GlobalUseRadialMenu), false, () => Common.settings_global_useRadialMenu);
         }
         #endregion
 
@@ -73,9 +75,9 @@ namespace felix.BlishEmotes
         private const string RADIAL_MENU_SETTINGS = "radial-menu-settings";
         public SettingCollection RadialMenuSettings { get; private set; }
 
-        public SettingEntry<bool> SpawnAtCursor { get; private set; }
+        public SettingEntry<bool> RadialSpawnAtCursor { get; private set; }
 
-        public SettingEntry<KeyBinding> ToggleActionCameraKeyBind { get; private set; }
+        public SettingEntry<KeyBinding> RadialToggleActionCameraKeyBind { get; private set; }
 
         public SettingEntry<float> RadialRadiusModifier { get; private set; }
         public SettingEntry<float> RadialIconSizeModifier { get; private set; }
@@ -85,8 +87,8 @@ namespace felix.BlishEmotes
         {
             this.RadialMenuSettings = settings.AddSubCollection(RADIAL_MENU_SETTINGS);
 
-            this.SpawnAtCursor = this.RadialMenuSettings.DefineSetting(nameof(this.SpawnAtCursor), false, () => Common.settings_radial_spawnAtCursor);
-            this.ToggleActionCameraKeyBind = this.RadialMenuSettings.DefineSetting(nameof(this.ToggleActionCameraKeyBind), new KeyBinding(), () => Common.settings_radial_actionCamKeybind);
+            this.RadialSpawnAtCursor = this.RadialMenuSettings.DefineSetting(nameof(this.RadialSpawnAtCursor), false, () => Common.settings_radial_spawnAtCursor);
+            this.RadialToggleActionCameraKeyBind = this.RadialMenuSettings.DefineSetting(nameof(this.RadialToggleActionCameraKeyBind), new KeyBinding(), () => Common.settings_radial_actionCamKeybind);
             this.RadialRadiusModifier = this.RadialMenuSettings.DefineSetting(nameof(this.RadialRadiusModifier), 0.5f, () => Common.settings_radial_radiusModifier);
             this.RadialRadiusModifier.SetRange(0.2f, 1.0f);
             this.RadialIconSizeModifier = this.RadialMenuSettings.DefineSetting(nameof(this.RadialIconSizeModifier), 0.5f, () => Common.settings_radial_iconSizeModifier);
