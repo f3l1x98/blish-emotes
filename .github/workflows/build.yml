@@ -46,12 +46,4 @@ jobs:
       - name: Extract version from manifest
         id: version_extractor
         run: |
-          cat manifest.json
-          echo "AFTER CAT"
-          echo "MANIFEST_JSON=$(jq -c . < manifest.json)"
-          echo "AFTER 1"
-          echo "MANIFEST_JSON=$(jq -c . < manifest.json)" >> "$GITHUB_ENV"
-          echo "AFTER 2"
-          echo "$MANIFEST_JSON"
-          echo "AFTER 3"
-          echo '${{ env.MANIFEST_JSON }}'
+          echo '${{ fromJson($(jq -c . < manifest.json)).version }}'
