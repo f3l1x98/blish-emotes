@@ -16,9 +16,7 @@ namespace felix.BlishEmotes.UI.Controls
         public double StartAngle { get; set; }
         public double EndAngle { get; set; }
         public Emote Emote { get; set; }
-        // TODO FOR LATER
         public Texture2D Texture { get; set; }
-        // FOR NOW
         public string Text { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
@@ -46,6 +44,7 @@ namespace felix.BlishEmotes.UI.Controls
         private Label _noEmotesLabel;
         private Label _selectedEmoteLabel;
         private Point RadialSpawnPoint = default;
+
         private float _debugLineThickness = 2;
 
         public RadialMenu(Helper helper, ModuleSettings settings, List<Emote> emotes)
@@ -155,9 +154,8 @@ namespace felix.BlishEmotes.UI.Controls
                     _selectedEmoteLabel.Text = radialEmote.Text;
                 }
 
-                // TODO SWITCH TO DrawOnCtrl TO DRAW TEXTURE 
+                // Draw emote texture
                 spriteBatch.DrawOnCtrl(this, radialEmote.Texture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, radialEmote.Emote.Locked ? Color.Gray * 0.5f : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
-                //spriteBatch.DrawStringOnCtrl(this, radialEmote.Text.Substring(0, 1), GameService.Content.DefaultFont32, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), radialEmote.Emote.Locked ? Color.Red : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value), false, HorizontalAlignment.Center, VerticalAlignment.Middle);
             }
 
             base.PaintBeforeChildren(spriteBatch, bounds);
@@ -209,12 +207,12 @@ namespace felix.BlishEmotes.UI.Controls
                 _isActionCamToggled = false;
                 Logger.Debug("HandleHidden turned back on action cam");
             }
-            // TODO send emote
+            // send emote command
             var selected = SelectedEmote;
             if (selected != null)
             {
+                Logger.Debug("Sending command for " + selected.Emote.Id);
                 //_helper.SendEmoteCommand(selected.Emote);
-                Logger.Debug("SENDING COMMAND FOR: " + selected.Emote.Id);
             }
         }
     }

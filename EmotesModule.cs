@@ -81,7 +81,6 @@ namespace BlishEmotesList
                 }
                 if (this.Settings.GlobalUseRadialMenu.Value)
                 {
-                    // TODO
                     _radialMenu?.Show();
                 }
                 else
@@ -117,22 +116,6 @@ namespace BlishEmotesList
             };
 
             _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\102391.png"), () => new SettingsWindowView(this.Settings), Common.settings_ui_global_tab));
-        }
-
-        private void InitCornerIcon()
-        {
-            _cornerIcon?.Dispose();
-            _cornerIcon = new CornerIcon()
-            {
-                Icon = ContentsManager.GetTexture(@"textures/emotes_icon.png"),
-                BasicTooltipText = Common.cornerIcon_tooltip,
-                Priority = -620003847,
-            };
-
-            _cornerIcon.Click += delegate
-            {
-                ShowEmoteList();
-            };
         }
 
         protected override void OnModuleLoaded(EventArgs e)
@@ -177,6 +160,22 @@ namespace BlishEmotesList
             {
                 _radialMenu.Hide();
             }
+        }
+
+        private void InitCornerIcon()
+        {
+            _cornerIcon?.Dispose();
+            _cornerIcon = new CornerIcon()
+            {
+                Icon = ContentsManager.GetTexture(@"textures/emotes_icon.png"),
+                BasicTooltipText = Common.cornerIcon_tooltip,
+                Priority = -620003847,
+            };
+
+            _cornerIcon.Click += delegate
+            {
+                ShowEmoteList();
+            };
         }
 
         private void DrawUI()
