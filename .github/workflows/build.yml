@@ -10,6 +10,10 @@ jobs:
     runs-on: windows-2019
 
     steps:
+      - name: Test
+        run: |
+          echo "TEST 1"
+          echo "TEST 2"
       - uses: actions/checkout@v3
 
       - name: Add msbuild to PATH
@@ -46,10 +50,11 @@ jobs:
       - name: Extract version from manifest
         id: version_extractor
         run: |
-          echo 'MANIFEST_JSON<<EOF' >> $GITHUB_ENV
-          cat ./manifest.json >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
-          echo '${{ env.MANIFEST_JSON }}'
+          echo 'TEST'
+          #echo 'MANIFEST_JSON<<EOF' >> $GITHUB_ENV
+          #cat ./manifest.json >> $GITHUB_ENV
+          #echo 'EOF' >> $GITHUB_ENV
+          #echo '${{ env.MANIFEST_JSON }}'
           echo "PACKAGE_JSON=$(jq -c . < manifest.json)"
           # VER=${{ fromJson(env.MANIFEST_JSON).version }}
           # echo 'VERSION=$VER' >> GITHUB_OUTPUT
