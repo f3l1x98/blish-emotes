@@ -147,7 +147,6 @@ namespace felix.BlishEmotes.UI.Controls
             foreach (var radialEmote in _radialEmotes)
             {
                 // Mark as selected
-                // TODO CAN YOU SELECT LOCKED ONES?!?!?!? (aka should the label in the middle display them, even though they cannot be used)
                 radialEmote.Selected = radialEmote.StartAngle <= angle && radialEmote.EndAngle > angle;
                 if (radialEmote.Selected)
                 {
@@ -165,7 +164,7 @@ namespace felix.BlishEmotes.UI.Controls
         private async Task HandleShown(object sender, EventArgs e)
         {
             Logger.Debug("HandleShown entered");
-            if (!GameService.Input.Mouse.CursorIsVisible && !_settings.RadialToggleActionCameraKeyBind.IsNull) // IsNull check is wrong -> check if PrimaryKey None
+            if (!GameService.Input.Mouse.CursorIsVisible && !_settings.RadialToggleActionCameraKeyBind.IsNull)
             {
                 _isActionCamToggled = true;
                 await _helper.TriggerKeybind(_settings.RadialToggleActionCameraKeyBind);
@@ -212,7 +211,7 @@ namespace felix.BlishEmotes.UI.Controls
             if (selected != null)
             {
                 Logger.Debug("Sending command for " + selected.Emote.Id);
-                //_helper.SendEmoteCommand(selected.Emote);
+                _helper.SendEmoteCommand(selected.Emote);
             }
         }
     }

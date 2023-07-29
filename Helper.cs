@@ -31,6 +31,11 @@ namespace felix.BlishEmotes
 
         public void SendEmoteCommand(Emote emote)
         {
+            if (emote.Locked)
+            {
+                Logger.Debug("SendEmoteCommand: Emote locked.");
+                return;
+            }
             // Send emote command to chat if in game and map closed
             if (GameService.GameIntegration.Gw2Instance.IsInGame && !GameService.Gw2Mumble.UI.IsMapOpen)
             {
