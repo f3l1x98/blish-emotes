@@ -120,6 +120,9 @@
   <data name="cornerIcon_tooltip" xml:space="preserve">
     <value>Open emotes list</value>
   </data>
+  <data name="settings_button" xml:space="preserve">
+    <value>Open Settings</value>
+  </data>
   <data name="settings_emotesKeybindSubCollection" xml:space="preserve">
     <value>Emote Keybinds</value>
   </data>

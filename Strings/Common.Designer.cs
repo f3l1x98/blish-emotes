@@ -70,6 +70,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Settings.
+        /// </summary>
+        public static string settings_button {
+            get {
+                return ResourceManager.GetString("settings_button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emote Keybinds.
         /// </summary>
         public static string settings_emotesKeybindSubCollection {
