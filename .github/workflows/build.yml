@@ -46,4 +46,5 @@ jobs:
       - name: Extract version from manifest
         id: version_extractor
         run: |
-          echo '${{ fromJson($(jq -c . < manifest.json)).version }}'
+          JSON=$(jq -c . < manifest.json)
+          echo "$JSON"
