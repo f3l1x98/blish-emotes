@@ -8,6 +8,7 @@ namespace felix.BlishEmotes.UI.Views
     {
         public ViewContainer GlobalSettingsViewContainer { get; private set; }
         public ViewContainer EmotesShortcutsSettingsViewContainer { get; private set; }
+        public ViewContainer RadialMenuSettingsViewContainer { get; private set; }
 
         public SettingsWindowView(ModuleSettings settings) : base()
         {
@@ -27,6 +28,14 @@ namespace felix.BlishEmotes.UI.Views
             {
                 Parent = buildPanel,
                 Location = new Point(350, 0),
+                Width = 350,
+                HeightSizingMode = SizingMode.AutoSize,
+            };
+
+            RadialMenuSettingsViewContainer = new ViewContainer()
+            {
+                Parent = buildPanel,
+                Location = new Point(350, 300),
                 Width = 350,
                 HeightSizingMode = SizingMode.AutoSize,
             };

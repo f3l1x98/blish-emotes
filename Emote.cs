@@ -1,5 +1,6 @@
 ﻿using Blish_HUD;
 using felix.BlishEmotes.Strings;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Runtime.Serialization;
@@ -27,6 +28,7 @@ namespace felix.BlishEmotes
         [JsonProperty("command", Required = Required.Always)] public string Command { get; set; }
         [JsonProperty("locked", DefaultValueHandling = DefaultValueHandling.Populate)] public bool Locked { get; set; } = false;
         [JsonConverter(typeof(StringEnumConverter)), JsonProperty("category", Required = Required.Always)] public Category Category { get; set; }
+        [JsonIgnore] public Texture2D Texture { get; set; }
     }
 
     public static class CategoryExtensions

@@ -6,6 +6,7 @@ using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using felix.BlishEmotes;
 using felix.BlishEmotes.Strings;
+using felix.BlishEmotes.UI.Controls;
 using felix.BlishEmotes.UI.Views;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -15,6 +16,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Resources;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BlishEmotesList
@@ -25,7 +27,7 @@ namespace BlishEmotesList
 
         private static readonly Logger Logger = Logger.GetLogger<EmoteLisModule>();
 
-        public ResourceManager EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
+        private Helper _helper;
 
         #region Service Managers
         internal SettingsManager SettingsManager => this.ModuleParameters.SettingsManager;
@@ -38,6 +40,7 @@ namespace BlishEmotesList
         private CornerIcon _cornerIcon;
         private ContextMenuStrip _emoteListMenuStrip;
         private TabbedWindow2 _settingsWindow;
+        private RadialMenu _radialMenu;
         #endregion
 
         #region Settings
@@ -50,11 +53,14 @@ namespace BlishEmotesList
 
 
         [ImportingConstructor]
-        public EmoteLisModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { }
+        public EmoteLisModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters)
+        {
+            _helper = new Helper();
+        }
 
         protected override void DefineSettings(SettingCollection settings)
         {
-            this.Settings = new ModuleSettings(settings, EmotesResourceManager);
+            this.Settings = new ModuleSettings(settings, _helper);
 
             // Handlers
             this.Settings.GlobalHideCornerIcon.SettingChanged += (sender, args) =>
@@ -71,7 +77,19 @@ namespace BlishEmotesList
             this.Settings.GlobalKeyBindToggleEmoteList.Value.Enabled = true;
             this.Settings.GlobalKeyBindToggleEmoteList.Value.Activated += delegate
             {
-                ShowEmoteList(false);
+                if (!GameService.GameIntegration.Gw2Instance.IsInGame)
+                {
+                    Logger.Debug("Disabled outside game.");
+                    return;
+                }
+                if (this.Settings.GlobalUseRadialMenu.Value)
+                {
+                    _radialMenu?.Show();
+                }
+                else
+                {
+                    ShowEmoteList(false);
+                }
             };
         }
 
@@ -103,6 +121,50 @@ namespace BlishEmotesList
             _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\102391.png"), () => new SettingsWindowView(this.Settings), Common.settings_ui_global_tab));
         }
 
+        protected override void OnModuleLoaded(EventArgs e)
+        {
+            DrawUI();
+
+            // Base handler must be called
+            base.OnModuleLoaded(e);
+        }
+
+        protected override async Task LoadAsync()
+        {
+            try
+            {
+                // load emotes
+                _emotes = LoadEmotesResource();
+                // load emote information from api
+                await LoadEmotesFromApi();
+
+                // Set emotes locked
+                UpdateEmotesLock();
+
+                this.Settings.InitEmotesShortcuts(_emotes);
+                DrawUI();
+            }
+            catch (Exception e)
+            {
+                Logger.Fatal("LoadAsync failed!");
+                Logger.Error(e.ToString());
+            }
+        }
+
+        public override IView GetSettingsView()
+        {
+            return new SettingsHintView(_settingsWindow.Show);
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            // Hide radial menu
+            if (_radialMenu.Visible && !this.Settings.GlobalKeyBindToggleEmoteList.Value.IsTriggering)
+            {
+                _radialMenu.Hide();
+            }
+        }
+
         private void InitCornerIcon()
         {
             _cornerIcon?.Dispose();
@@ -119,30 +181,21 @@ namespace BlishEmotesList
             };
         }
 
-        protected override async Task LoadAsync()
+        private void DrawUI()
         {
-            try
+            _emoteListMenuStrip?.Dispose();
+
+            _emoteListMenuStrip = new ContextMenuStrip();
+            var menuItems = this.Settings.GlobalUseCategories.Value ? GetCategoryMenuItems() : GetEmotesMenuItems(_emotes);
+            _emoteListMenuStrip.AddMenuItems(menuItems);
+
+            _radialMenu?.Dispose();
+            // Init radial menu
+            _radialMenu = new RadialMenu(_helper, this.Settings, _emotes)
             {
-                // load emotes
-                _emotes = LoadEmotesResource();
-                // load emote information from api
-                await LoadEmotesFromApi();
+                Parent = GameService.Graphics.SpriteScreen
+            };
 
-                // Set emotes locked
-                UpdateEmotesLock();
-
-                this.Settings.InitEmotesShortcuts(_emotes, SendEmoteCommand);
-            }
-            catch (Exception e)
-            {
-                Logger.Fatal("LoadAsync failed!");
-                Logger.Error(e.ToString());
-            }
-        }
-
-        public override IView GetSettingsView()
-        {
-            return new SettingsHintView(_settingsWindow.Show);
         }
 
         private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
@@ -155,17 +208,13 @@ namespace BlishEmotesList
 
         private void ShowEmoteList(bool atCornerIcon = true)
         {
-            _emoteListMenuStrip?.Dispose();
-            _emoteListMenuStrip = new ContextMenuStrip();
-            var menuItems = this.Settings.GlobalUseCategories.Value ? GetCategoryMenuItems() : GetEmotesMenuItems(_emotes);
-            _emoteListMenuStrip.AddMenuItems(menuItems);
             if (atCornerIcon)
             {
-                _emoteListMenuStrip.Show(_cornerIcon);
+                _emoteListMenuStrip?.Show(_cornerIcon);
             }
             else if (GameService.Input.Mouse.CursorIsVisible)
             {
-                _emoteListMenuStrip.Show(GameService.Input.Mouse.Position);
+                _emoteListMenuStrip?.Show(GameService.Input.Mouse.Position);
             }
             else
             {
@@ -198,27 +247,18 @@ namespace BlishEmotesList
             {
                 var menuItem = new ContextMenuStripItem()
                 {
-                    Text = EmotesResourceManager.GetString(emote.Id),
+                    Text = _helper.EmotesResourceManager.GetString(emote.Id),
                     Enabled = !emote.Locked,
                 };
                 menuItem.Click += delegate
                 {
-                    SendEmoteCommand(emote);
+                    _helper.SendEmoteCommand(emote);
                 };
                 items.Add(menuItem);
             }
             // Sort by text such that list is sorted no matter what locale
             items.Sort((x, y) => x.Text.CompareTo(y.Text));
             return items;
-        }
-
-        private void SendEmoteCommand(Emote emote)
-        {
-            // Send emote command to chat if in game and map closed
-            if (GameService.GameIntegration.Gw2Instance.IsInGame && !GameService.Gw2Mumble.UI.IsMapOpen)
-            {
-                GameService.GameIntegration.Chat.Send(emote.Command);
-            }
         }
 
         private void UpdateEmotesLock()
@@ -243,7 +283,12 @@ namespace BlishEmotesList
             {
                 fileContents = reader.ReadToEnd();
             }
-            return JsonConvert.DeserializeObject<List<Emote>>(fileContents);
+            var emotes = JsonConvert.DeserializeObject<List<Emote>>(fileContents);
+            foreach (var emote in emotes)
+            {
+                emote.Texture = ContentsManager.GetTexture(@"textures/" + emote.Id + ".png", ContentsManager.GetTexture(@"textures/missing-texture.png"));
+            }
+            return emotes;
         }
 
         private async Task LoadEmotesFromApi()
@@ -271,6 +316,7 @@ namespace BlishEmotesList
             // Unload here
             _cornerIcon?.Dispose();
             _settingsWindow?.Dispose();
+            _radialMenu?.Dispose();
 
             // All static members must be manually unset
         }

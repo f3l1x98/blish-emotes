@@ -155,6 +155,7 @@
   <ItemGroup>
     <Compile Include="Emote.cs" />
     <Compile Include="EmotesModule.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="ModuleSettings.cs" />
     <Compile Include="Strings\Common.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -166,6 +167,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Emotes.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\RadialMenu.cs" />
     <Compile Include="UI\Presenters\SettingsHintPresenter.cs" />
     <Compile Include="UI\Presenters\SettingsWindowPresenter.cs" />
     <Compile Include="UI\Views\SettingsHintView.cs" />
@@ -322,14 +324,13 @@
     <Content Include="ref\textures\102391.png" />
     <Content Include="ref\textures\156006.png" />
     <Content Include="ref\textures\emotes_icon.png" />
+    <Content Include="ref\textures\missing-texture.png" />
     <Content Include="SharpDX.D3DCompiler.dll" />
     <Content Include="SharpDX.D3DCompiler.xml" />
     <Content Include="SharpDX.dll" />
     <Content Include="SharpDX.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\Controls\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Strings\Common.de.resx" />
     <EmbeddedResource Include="Strings\Common.resx">
