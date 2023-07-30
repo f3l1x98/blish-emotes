@@ -183,7 +183,7 @@ namespace BlishEmotesList
                 categorySubMenu.AddMenuItems(GetEmotesMenuItems(emotesForCategory));
                 var menuItem = new ContextMenuStripItem()
                 {
-                    Text = categoryEnum.ToString(),//EmotesResourceManager.GetString(),
+                    Text = categoryEnum.Label(),
                     Submenu = categorySubMenu,
                 };
                 items.Add(menuItem);
