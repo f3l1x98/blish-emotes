@@ -132,6 +132,9 @@
   <data name="settings_global_keybindToggleEmoteList" xml:space="preserve">
     <value>Toggle emote list</value>
   </data>
+  <data name="settings_global_useCategories" xml:space="preserve">
+    <value>Split into categories</value>
+  </data>
   <data name="settings_ui_global_tab" xml:space="preserve">
     <value>Global Settings</value>
   </data>

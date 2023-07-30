@@ -106,6 +106,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Split into categories.
+        /// </summary>
+        public static string settings_global_useCategories {
+            get {
+                return ResourceManager.GetString("settings_global_useCategories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Global Settings.
         /// </summary>
         public static string settings_ui_global_tab {
