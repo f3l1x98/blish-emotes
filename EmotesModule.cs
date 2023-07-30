@@ -8,12 +8,12 @@ using felix.BlishEmotes;
 using felix.BlishEmotes.Strings;
 using felix.BlishEmotes.UI.Views;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Resources;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BlishEmotesList
@@ -224,10 +224,7 @@ namespace BlishEmotesList
             {
                 fileContents = reader.ReadToEnd();
             }
-            return JsonSerializer.Deserialize<List<Emote>>(fileContents, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            return JsonConvert.DeserializeObject<List<Emote>>(fileContents);
         }
 
         private async Task LoadEmotesFromApi()
