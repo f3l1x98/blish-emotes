@@ -286,7 +286,7 @@ namespace BlishEmotesList
             var emotes = JsonConvert.DeserializeObject<List<Emote>>(fileContents);
             foreach (var emote in emotes)
             {
-                emote.Texture = ContentsManager.GetTexture(@"textures/" + emote.Id + ".png", ContentsManager.GetTexture(@"textures/emote_fallback.png"));
+                emote.Texture = ContentsManager.GetTexture(@"textures/" + emote.Id + ".png", ContentsManager.GetTexture(@"textures/missing-texture.png"));
             }
             return emotes;
         }
