@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 using System.Resources;
 using System.Threading.Tasks;
 
@@ -156,9 +157,7 @@ namespace BlishEmotesList
         {
             _emoteListMenuStrip?.Dispose();
             _emoteListMenuStrip = new ContextMenuStrip();
-            var menuItems = GetEmotesMenuItems();
-            // Sort by text such that list is sorted no matter what locale
-            menuItems.Sort((x, y) => x.Text.CompareTo(y.Text));
+            var menuItems = this.Settings.GlobalUseCategories.Value ? GetCategoryMenuItems() : GetEmotesMenuItems(_emotes);
             _emoteListMenuStrip.AddMenuItems(menuItems);
             if (atCornerIcon)
             {
@@ -174,10 +173,28 @@ namespace BlishEmotesList
             }
         }
 
-        private List<ContextMenuStripItem> GetEmotesMenuItems()
+        private List<ContextMenuStripItem> GetCategoryMenuItems()
         {
             var items = new List<ContextMenuStripItem>();
-            foreach (var emote in _emotes)
+            foreach (Category categoryEnum in Enum.GetValues(typeof(Category)))
+            {
+                var emotesForCategory = _emotes.Where(emote => emote.Category == categoryEnum).ToList();
+                var categorySubMenu = new ContextMenuStrip();
+                categorySubMenu.AddMenuItems(GetEmotesMenuItems(emotesForCategory));
+                var menuItem = new ContextMenuStripItem()
+                {
+                    Text = categoryEnum.ToString(),//EmotesResourceManager.GetString(),
+                    Submenu = categorySubMenu,
+                };
+                items.Add(menuItem);
+            }
+            return items;
+        }
+
+        private List<ContextMenuStripItem> GetEmotesMenuItems(List<Emote> emotes)
+        {
+            var items = new List<ContextMenuStripItem>();
+            foreach (var emote in emotes)
             {
                 var menuItem = new ContextMenuStripItem()
                 {
@@ -190,6 +207,8 @@ namespace BlishEmotesList
                 };
                 items.Add(menuItem);
             }
+            // Sort by text such that list is sorted no matter what locale
+            items.Sort((x, y) => x.Text.CompareTo(y.Text));
             return items;
         }
 
