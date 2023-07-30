@@ -175,8 +175,7 @@ namespace felix.BlishEmotes.UI.Controls
             // Calc max radial menu radius/size
             _maxRadialDiameter = Math.Min(GameService.Graphics.SpriteScreen.Width, GameService.Graphics.SpriteScreen.Height);
             _iconSize = (int)(_maxRadialDiameter / 8 * _settings.RadialIconSizeModifier.Value);
-            // TODO perhaps adjust radius due to more sections than mounts
-            _radius = (int)((_maxRadialDiameter * (2.0 / 3.0) - _iconSize / 2) * _settings.RadialRadiusModifier.Value);
+            _radius = (int)((_maxRadialDiameter * (3.0 / 4.0) - _iconSize / 2) * _settings.RadialRadiusModifier.Value);
             Size = new Point(_maxRadialDiameter, _maxRadialDiameter);
 
             // Set spawn point
