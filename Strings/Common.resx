@@ -120,6 +120,27 @@
   <data name="cornerIcon_tooltip" xml:space="preserve">
     <value>Open emotes list</value>
   </data>
+  <data name="emote_categoryDance" xml:space="preserve">
+    <value>Dance</value>
+  </data>
+  <data name="emote_categoryFun" xml:space="preserve">
+    <value>Fun</value>
+  </data>
+  <data name="emote_categoryGreeting" xml:space="preserve">
+    <value>Greeting</value>
+  </data>
+  <data name="emote_categoryMiscellaneous" xml:space="preserve">
+    <value>Miscellaneous</value>
+  </data>
+  <data name="emote_categoryPose" xml:space="preserve">
+    <value>Pose</value>
+  </data>
+  <data name="emote_categoryReaction" xml:space="preserve">
+    <value>Reaction</value>
+  </data>
+  <data name="settings_button" xml:space="preserve">
+    <value>Open Settings</value>
+  </data>
   <data name="settings_emotesKeybindSubCollection" xml:space="preserve">
     <value>Emote Keybinds</value>
   </data>
@@ -128,6 +149,9 @@
   </data>
   <data name="settings_global_keybindToggleEmoteList" xml:space="preserve">
     <value>Toggle emote list</value>
+  </data>
+  <data name="settings_global_useCategories" xml:space="preserve">
+    <value>Split into categories</value>
   </data>
   <data name="settings_ui_global_tab" xml:space="preserve">
     <value>Global Settings</value>

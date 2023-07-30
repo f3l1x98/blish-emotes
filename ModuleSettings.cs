@@ -27,6 +27,7 @@ namespace felix.BlishEmotes
 
         public SettingEntry<bool> GlobalHideCornerIcon { get; private set; }
         public SettingEntry<KeyBinding> GlobalKeyBindToggleEmoteList { get; private set; }
+        public SettingEntry<bool> GlobalUseCategories { get; private set; }
 
         private void DefineGlobalSettings(SettingCollection settings)
         {
@@ -35,6 +36,7 @@ namespace felix.BlishEmotes
 
             this.GlobalHideCornerIcon = this.GlobalSettings.DefineSetting(nameof(this.GlobalHideCornerIcon), false, () => Common.settings_global_hideCornerIcon);
             this.GlobalKeyBindToggleEmoteList = this.GlobalSettings.DefineSetting(nameof(this.GlobalKeyBindToggleEmoteList), new KeyBinding(), () => Common.settings_global_keybindToggleEmoteList);
+            this.GlobalUseCategories = this.GlobalSettings.DefineSetting(nameof(this.GlobalUseCategories), false, () => Common.settings_global_useCategories);
         }
         #endregion
 
