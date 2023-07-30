@@ -155,7 +155,7 @@ namespace felix.BlishEmotes.UI.Controls
                 }
 
                 // Draw emote texture
-                spriteBatch.DrawOnCtrl(this, radialEmote.Texture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, radialEmote.Emote.Locked ? Color.Gray * 0.5f : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
+                spriteBatch.DrawOnCtrl(this, radialEmote.Texture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, radialEmote.Emote.Locked ? Color.DarkGray * 0.5f : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
             }
 
             base.PaintBeforeChildren(spriteBatch, bounds);
@@ -176,7 +176,7 @@ namespace felix.BlishEmotes.UI.Controls
             _maxRadialDiameter = Math.Min(GameService.Graphics.SpriteScreen.Width, GameService.Graphics.SpriteScreen.Height);
             _iconSize = (int)(_maxRadialDiameter / 8 * _settings.RadialIconSizeModifier.Value);
             // TODO perhaps adjust radius due to more sections than mounts
-            _radius = (int)((_maxRadialDiameter / 2 - _iconSize / 2) * _settings.RadialRadiusModifier.Value);
+            _radius = (int)((_maxRadialDiameter * (2.0 / 3.0) - _iconSize / 2) * _settings.RadialRadiusModifier.Value);
             Size = new Point(_maxRadialDiameter, _maxRadialDiameter);
 
             // Set spawn point

@@ -90,7 +90,7 @@ namespace felix.BlishEmotes
             this.RadialSpawnAtCursor = this.RadialMenuSettings.DefineSetting(nameof(this.RadialSpawnAtCursor), false, () => Common.settings_radial_spawnAtCursor);
             this.RadialToggleActionCameraKeyBind = this.RadialMenuSettings.DefineSetting(nameof(this.RadialToggleActionCameraKeyBind), new KeyBinding(), () => Common.settings_radial_actionCamKeybind);
             this.RadialRadiusModifier = this.RadialMenuSettings.DefineSetting(nameof(this.RadialRadiusModifier), 0.5f, () => Common.settings_radial_radiusModifier);
-            this.RadialRadiusModifier.SetRange(0.2f, 1.0f);
+            this.RadialRadiusModifier.SetRange(0.25f, 0.75f);
             this.RadialIconSizeModifier = this.RadialMenuSettings.DefineSetting(nameof(this.RadialIconSizeModifier), 0.5f, () => Common.settings_radial_iconSizeModifier);
             this.RadialIconSizeModifier.SetRange(0.5f, 1.0f);
             this.RadialIconOpacity = this.RadialMenuSettings.DefineSetting(nameof(this.RadialIconOpacity), 0.5f, () => Common.settings_radial_iconOpacity);
