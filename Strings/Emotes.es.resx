@@ -204,6 +204,9 @@
   <data name="shuffle" xml:space="preserve">
     <value>Mezclador</value>
   </data>
+  <data name="sipcoffee" xml:space="preserve">
+    <value>Tomar café</value>
+  </data>
   <data name="sit" xml:space="preserve">
     <value>Sentarse</value>
   </data>
