@@ -145,6 +145,11 @@
     "command": "/shuffle"
   },
   {
+    "id": "sipcoffee",
+    "category": "miscellaneous",
+    "command": "/sipcoffee"
+  },
+  {
     "id": "sit",
     "category": "pose",
     "command": "/sit"
