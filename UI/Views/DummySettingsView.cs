@@ -7,15 +7,15 @@ using System;
 
 namespace felix.BlishEmotes.UI.Views
 {
-    internal class SettingsHintView : View
+    internal class DummySettingsView : View
     {
         public event EventHandler<EventArgs> OpenSettingsClicked;
 
         private StandardButton _bttnOpenSettings;
 
-        public SettingsHintView(Action OpenSettings)
+        public DummySettingsView(Action OpenSettings)
         {
-            this.WithPresenter(new SettingsHintPresenter(this, OpenSettings));
+            this.WithPresenter(new DummySettingsPresenter(this, OpenSettings));
         }
 
         protected override void Build(Container buildPanel)

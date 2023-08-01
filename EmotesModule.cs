@@ -108,7 +108,7 @@ namespace BlishEmotesList
                 InitCornerIcon();
             }
 
-            _settingsWindow = new TabbedWindow2(ContentsManager.GetTexture(@"textures\156006.png"), new Rectangle(35, 36, 920, 760), new Rectangle(90, 15, 783 + 38, 750))
+            _settingsWindow = new TabbedWindow2(ContentsManager.GetTexture(@"textures\156006.png"), new Rectangle(35, 36, 900, 640), new Rectangle(95, 42, 783 + 38, 592))
             {
                 Title = Common.settings_ui_title,
                 Parent = GameService.Graphics.SpriteScreen,
@@ -118,7 +118,10 @@ namespace BlishEmotesList
                 SavesPosition = true,
             };
 
-            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\102391.png"), () => new SettingsWindowView(this.Settings), Common.settings_ui_global_tab));
+            // Settings
+            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\155052.png"), () => new GlobalSettingsView(this.Settings), Common.settings_ui_global_tab));
+            // Emote Hotkey settings
+            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\156734+155150.png"), () => new EmoteHotkeySettingsView(this.Settings), Common.settings_ui_emoteHotkeys_tab));
         }
 
         protected override void OnModuleLoaded(EventArgs e)
@@ -153,7 +156,7 @@ namespace BlishEmotesList
 
         public override IView GetSettingsView()
         {
-            return new SettingsHintView(_settingsWindow.Show);
+            return new DummySettingsView(_settingsWindow.Show);
         }
 
         protected override void Update(GameTime gameTime)

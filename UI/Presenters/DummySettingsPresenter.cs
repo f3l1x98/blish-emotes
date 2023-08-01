@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Presenters
 {
-    internal class SettingsHintPresenter : Presenter<SettingsHintView, Action>
+    internal class DummySettingsPresenter : Presenter<DummySettingsView, Action>
     {
-        public SettingsHintPresenter(SettingsHintView view, Action model) : base(view, model) { }
+        public DummySettingsPresenter(DummySettingsView view, Action model) : base(view, model) { }
 
         protected override Task<bool> Load(IProgress<string> progress)
         {

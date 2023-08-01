@@ -73,6 +73,7 @@ namespace felix.BlishEmotes
         }
         #endregion
 
+
         #region RadialMenuSettings
         private const string RADIAL_MENU_SETTINGS = "radial-menu-settings";
         public SettingCollection RadialMenuSettings { get; private set; }
