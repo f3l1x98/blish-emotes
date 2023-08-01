@@ -232,6 +232,28 @@ namespace felix.BlishEmotes.UI.Views
             };
             _radiusModifierTrackBar.ValueChanged += delegate { this._settings.RadialRadiusModifier.Value = _radiusModifierTrackBar.Value / 100.0f; };
 
+            // RadialInnerRadiusPercentage
+            var _innerRadiusPercentageRow = CreateRowPanel(_radialPanel);
+            Label _innerRadiusPercentageLabel = new Label()
+            {
+                Parent = _innerRadiusPercentageRow,
+                Text = Common.settings_radial_innerRadiusPercentage,
+                Size = new Point(_labelWidth, _height),
+                Location = new Point(0, 0),
+                BasicTooltipText = Common.settings_radial_innerRadiusPercentage_description,
+            };
+            TrackBar _innerRadiusPercentageTrackBar = new TrackBar()
+            {
+                Parent = _innerRadiusPercentageRow,
+                Value = this._settings.RadialInnerRadiusPercentage.Value * 100.0f,
+                MinValue = 0,
+                MaxValue = 50,
+                Size = new Point(_controlWidth, _height),
+                Location = new Point(_labelWidth + _padding, 0),
+                BasicTooltipText = Common.settings_radial_innerRadiusPercentage_description,
+            };
+            _innerRadiusPercentageTrackBar.ValueChanged += delegate { this._settings.RadialInnerRadiusPercentage.Value = _innerRadiusPercentageTrackBar.Value / 100.0f; };
+
             // RadialIconSizeModifier
             var _iconSizeModifierRow = CreateRowPanel(_radialPanel);
             Label _iconSizeModifierLabel = new Label()

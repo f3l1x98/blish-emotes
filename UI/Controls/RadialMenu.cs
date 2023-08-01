@@ -33,10 +33,11 @@ namespace felix.BlishEmotes.UI.Controls
         private List<Emote> _emotes;
 
         private List<RadialEmote> _radialEmotes = new List<RadialEmote>();
-        private RadialEmote SelectedEmote => _radialEmotes.Single(m => m.Selected);
+        private RadialEmote SelectedEmote => _radialEmotes.SingleOrDefault(m => m.Selected);
 
         private bool _isActionCamToggled;
 
+        private int _innerRadius = 100;
         private int _radius = 0;
         private int _iconSize = 0;
         private int _maxRadialDiameter = 0;
@@ -89,6 +90,7 @@ namespace felix.BlishEmotes.UI.Controls
         public override void PaintBeforeChildren(SpriteBatch spriteBatch, Rectangle bounds)
         {
             _radialEmotes.Clear();
+            _selectedEmoteLabel.Text = "";
             if (_emotes.Count == 0)
             {
                 _noEmotesLabel.Show();
@@ -101,6 +103,11 @@ namespace felix.BlishEmotes.UI.Controls
 
             // Create RadialEmote wrapper for each emote
             double startAngle = Math.PI * Math.Floor(0.75 * 360) / 180.0; // start at 270deg (aka -90deg, aka at the top)
+            if (Helper.IsDebugEnabled())
+            {
+                // Draw inner circle where emote selection is disabled
+                spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), _innerRadius, 50, Color.Red, _debugLineThickness);
+            }
             double currentAngle = startAngle;
             double sweepAngle = Math.PI * 2 / _emotes.Count; // Divide 360deg or 2PIrad between emotes
             foreach (var emote in _emotes)
@@ -114,10 +121,12 @@ namespace felix.BlishEmotes.UI.Controls
                 if (Helper.IsDebugEnabled())
                 {
                     // Draw debug lines separating the sections between emotes
+                    float xDebugInner = (float)Math.Round(_innerRadius * Math.Cos(currentAngle)) + RadialSpawnPoint.X;
+                    float yDebugInner = (float)Math.Round(_innerRadius * Math.Sin(currentAngle)) + RadialSpawnPoint.Y;
                     var debugRadiusOuter = 250;
                     float xDebugOuter = (float)Math.Round(2 * debugRadiusOuter * Math.Cos(currentAngle)) + RadialSpawnPoint.X;
                     float yDebugOuter = (float)Math.Round(2 * debugRadiusOuter * Math.Sin(currentAngle)) + RadialSpawnPoint.Y;
-                    spriteBatch.DrawLine(new Vector2(RadialSpawnPoint.X, RadialSpawnPoint.Y), new Vector2(xDebugOuter, yDebugOuter), Color.Red, _debugLineThickness);
+                    spriteBatch.DrawLine(new Vector2(xDebugInner, yDebugInner), new Vector2(xDebugOuter, yDebugOuter), Color.Red, _debugLineThickness);
                 }
 
                 _radialEmotes.Add(new RadialEmote()
@@ -144,14 +153,20 @@ namespace felix.BlishEmotes.UI.Controls
                 angle += Math.PI * 2;
             }
 
+            var length = new Vector2(diff.Y, diff.X).Length();
+
             // Draw each RadialEmote and mark selected
             foreach (var radialEmote in _radialEmotes)
             {
-                // Mark as selected
-                radialEmote.Selected = radialEmote.StartAngle <= angle && radialEmote.EndAngle > angle;
-                if (radialEmote.Selected)
+                // Only mark as selected if far enough from center away (in order to be able to close radial without selecting emote)
+                if (length >= _innerRadius)
                 {
-                    _selectedEmoteLabel.Text = radialEmote.Text;
+                    // Mark as selected
+                    radialEmote.Selected = radialEmote.StartAngle <= angle && radialEmote.EndAngle > angle;
+                    if (radialEmote.Selected)
+                    {
+                        _selectedEmoteLabel.Text = radialEmote.Text;
+                    }
                 }
 
                 // Draw emote texture
@@ -176,6 +191,7 @@ namespace felix.BlishEmotes.UI.Controls
             _maxRadialDiameter = Math.Min(GameService.Graphics.SpriteScreen.Width, GameService.Graphics.SpriteScreen.Height);
             _iconSize = (int)(_maxRadialDiameter / 8 * _settings.RadialIconSizeModifier.Value);
             _radius = (int)((_maxRadialDiameter * (3.0 / 4.0) - _iconSize / 2) * _settings.RadialRadiusModifier.Value);
+            _innerRadius = (int)(_radius * _settings.RadialInnerRadiusPercentage.Value);
             Size = new Point(_maxRadialDiameter, _maxRadialDiameter);
 
             // Set spawn point

@@ -83,6 +83,7 @@ namespace felix.BlishEmotes
         public SettingEntry<KeyBinding> RadialToggleActionCameraKeyBind { get; private set; }
 
         public SettingEntry<float> RadialRadiusModifier { get; private set; }
+        public SettingEntry<float> RadialInnerRadiusPercentage { get; private set; }
         public SettingEntry<float> RadialIconSizeModifier { get; private set; }
         public SettingEntry<float> RadialIconOpacity { get; private set; }
 
@@ -94,6 +95,8 @@ namespace felix.BlishEmotes
             this.RadialToggleActionCameraKeyBind = this.RadialMenuSettings.DefineSetting(nameof(this.RadialToggleActionCameraKeyBind), new KeyBinding(), () => Common.settings_radial_actionCamKeybind);
             this.RadialRadiusModifier = this.RadialMenuSettings.DefineSetting(nameof(this.RadialRadiusModifier), 0.5f, () => Common.settings_radial_radiusModifier);
             this.RadialRadiusModifier.SetRange(0.25f, 0.75f);
+            this.RadialInnerRadiusPercentage = this.RadialMenuSettings.DefineSetting(nameof(this.RadialInnerRadiusPercentage), 0.25f, () => Common.settings_radial_innerRadiusPercentage, () => Common.settings_radial_innerRadiusPercentage_description);
+            this.RadialInnerRadiusPercentage.SetRange(0.0f, 0.5f);
             this.RadialIconSizeModifier = this.RadialMenuSettings.DefineSetting(nameof(this.RadialIconSizeModifier), 0.5f, () => Common.settings_radial_iconSizeModifier);
             this.RadialIconSizeModifier.SetRange(0.5f, 1.0f);
             this.RadialIconOpacity = this.RadialMenuSettings.DefineSetting(nameof(this.RadialIconOpacity), 0.5f, () => Common.settings_radial_iconOpacity);
