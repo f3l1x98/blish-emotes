@@ -223,6 +223,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emote Hotkeys.
+        /// </summary>
+        public static string settings_ui_emoteHotkeys_tab {
+            get {
+                return ResourceManager.GetString("settings_ui_emoteHotkeys_tab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Global Settings.
         /// </summary>
         public static string settings_ui_global_tab {
