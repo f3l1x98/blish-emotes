@@ -226,7 +226,7 @@ namespace felix.BlishEmotes.UI.Views
                 Parent = _radiusModifierRow,
                 Value = this._settings.RadialRadiusModifier.Value * 100.0f,
                 MinValue = 25,
-                MaxValue = 75,
+                MaxValue = 50,
                 Size = new Point(_controlWidth, _height),
                 Location = new Point(_labelWidth + _padding, 0),
             };
