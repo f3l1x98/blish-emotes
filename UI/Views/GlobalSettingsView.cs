@@ -16,8 +16,6 @@ namespace felix.BlishEmotes.UI.Views
         private FlowPanel _globalPanel;
         private FlowPanel _radialPanel;
 
-        private FlowPanel _useCategoriesRow;
-
         private const int _labelWidth = 200;
         private const int _controlWidth = 150;
         private const int _height = 20;
@@ -26,23 +24,6 @@ namespace felix.BlishEmotes.UI.Views
         public GlobalSettingsView(ModuleSettings settings) : base()
         {
             this._settings = settings;
-        }
-
-        protected override Task<bool> Load(IProgress<string> progress)
-        {
-            this._settings.GlobalUseRadialMenu.SettingChanged += OnUseRadialMenuSettingChanged;
-            return base.Load(progress);
-        }
-
-        private void OnUseRadialMenuSettingChanged(object sender, ValueChangedEventArgs<bool> e)
-        {
-            if (e.NewValue)
-            {
-                this._useCategoriesRow?.Hide();
-            } else
-            {
-                this._useCategoriesRow?.Show();
-            }
         }
 
         private FlowPanel CreatePanel(Container parent, Point location, int width)
@@ -151,8 +132,7 @@ namespace felix.BlishEmotes.UI.Views
 
             // GlobalUseCategories
             // -> PERHAPS ONLY DISPLAY IF !GlobalUseRadialMenu
-            _useCategoriesRow = CreateRowPanel(_globalPanel);
-            _useCategoriesRow.Visible = !this._settings.GlobalUseRadialMenu.Value;
+            var _useCategoriesRow = CreateRowPanel(_globalPanel);
             Label _useCategoriesLabel = new Label()
             {
                 Parent = _useCategoriesRow,
@@ -297,11 +277,8 @@ namespace felix.BlishEmotes.UI.Views
 
         protected override void Unload()
         {
-            this._settings.GlobalUseRadialMenu.SettingChanged -= OnUseRadialMenuSettingChanged;
-
             this._globalPanel?.Dispose();
             this._radialPanel?.Dispose();
-            this._useCategoriesRow?.Dispose();
         }
     }
 }
