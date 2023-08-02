@@ -74,6 +74,11 @@ namespace BlishEmotesList
                     InitCornerIcon();
                 }
             };
+            this.Settings.GlobalUseCategories.SettingChanged += delegate
+            {
+                // Redraw UI due to switch between using categories and full list
+                DrawUI();
+            };
             this.Settings.GlobalKeyBindToggleEmoteList.Value.Enabled = true;
             this.Settings.GlobalKeyBindToggleEmoteList.Value.Activated += delegate
             {
