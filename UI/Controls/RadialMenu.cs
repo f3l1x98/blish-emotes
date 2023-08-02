@@ -170,7 +170,7 @@ namespace felix.BlishEmotes.UI.Controls
                 }
 
                 // Draw emote texture
-                spriteBatch.DrawOnCtrl(this, radialEmote.Texture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, radialEmote.Emote.Locked ? Color.DarkGray * 0.5f : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
+                spriteBatch.DrawOnCtrl(this, radialEmote.Texture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, radialEmote.Emote.Locked ? Color.White * 0.25f : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
             }
 
             base.PaintBeforeChildren(spriteBatch, bounds);
