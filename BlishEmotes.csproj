@@ -325,6 +325,7 @@
     <Content Include="ref\textures\155052.png" />
     <Content Include="ref\textures\156006.png" />
     <Content Include="ref\textures\156734+155150.png" />
+    <Content Include="ref\textures\2107931.png" />
     <Content Include="ref\textures\emotes_icon.png" />
     <Content Include="ref\textures\missing-texture.png" />
     <Content Include="SharpDX.D3DCompiler.dll" />
@@ -332,7 +333,9 @@
     <Content Include="SharpDX.dll" />
     <Content Include="SharpDX.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ref\textures\emotes\" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Strings\Common.de.resx" />
     <EmbeddedResource Include="Strings\Common.resx">

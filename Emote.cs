@@ -29,6 +29,8 @@ namespace felix.BlishEmotes
         [JsonProperty("locked", DefaultValueHandling = DefaultValueHandling.Populate)] public bool Locked { get; set; } = false;
         [JsonConverter(typeof(StringEnumConverter)), JsonProperty("category", Required = Required.Always)] public Category Category { get; set; }
         [JsonIgnore] public Texture2D Texture { get; set; }
+
+        [JsonIgnore] public string TextureRef => $"{Id}.png";
     }
 
     public static class CategoryExtensions

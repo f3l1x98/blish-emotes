@@ -199,7 +199,7 @@ namespace BlishEmotesList
 
             _radialMenu?.Dispose();
             // Init radial menu
-            _radialMenu = new RadialMenu(_helper, this.Settings, _emotes)
+            _radialMenu = new RadialMenu(_helper, this.Settings, _emotes, ContentsManager.GetTexture(@"textures/2107931.png")) // 2107931.png // 2378287.png
             {
                 Parent = GameService.Graphics.SpriteScreen
             };
@@ -294,7 +294,7 @@ namespace BlishEmotesList
             var emotes = JsonConvert.DeserializeObject<List<Emote>>(fileContents);
             foreach (var emote in emotes)
             {
-                emote.Texture = ContentsManager.GetTexture(@"textures/" + emote.Id + ".png", ContentsManager.GetTexture(@"textures/missing-texture.png"));
+                emote.Texture = ContentsManager.GetTexture(@"textures/emotes/" + emote.TextureRef, ContentsManager.GetTexture(@"textures/missing-texture.png"));
             }
             return emotes;
         }

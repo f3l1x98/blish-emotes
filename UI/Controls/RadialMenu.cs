@@ -31,6 +31,7 @@ namespace felix.BlishEmotes.UI.Controls
         private Helper _helper;
         private ModuleSettings _settings;
         private List<Emote> _emotes;
+        private Texture2D _lockedTexture;
 
         private List<RadialEmote> _radialEmotes = new List<RadialEmote>();
         private RadialEmote SelectedEmote => _radialEmotes.SingleOrDefault(m => m.Selected);
@@ -48,11 +49,12 @@ namespace felix.BlishEmotes.UI.Controls
 
         private float _debugLineThickness = 2;
 
-        public RadialMenu(Helper helper, ModuleSettings settings, List<Emote> emotes)
+        public RadialMenu(Helper helper, ModuleSettings settings, List<Emote> emotes, Texture2D LockedTexture)
         {
             this._helper = helper;
             this._settings = settings;
             this._emotes = emotes;
+            this._lockedTexture = LockedTexture;
             Visible = false;
             Padding = Blish_HUD.Controls.Thickness.Zero;
             Shown += async (sender, e) => await HandleShown(sender, e);
@@ -171,6 +173,11 @@ namespace felix.BlishEmotes.UI.Controls
 
                 // Draw emote texture
                 spriteBatch.DrawOnCtrl(this, radialEmote.Texture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, radialEmote.Emote.Locked ? Color.White * 0.25f : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
+                // Draw locked texture
+                if (radialEmote.Emote.Locked)
+                {
+                    spriteBatch.DrawOnCtrl(this, _lockedTexture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, Color.White * _settings.RadialIconOpacity.Value);
+                }
             }
 
             base.PaintBeforeChildren(spriteBatch, bounds);
