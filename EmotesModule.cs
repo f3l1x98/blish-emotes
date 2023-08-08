@@ -301,18 +301,27 @@ namespace BlishEmotesList
 
         private async Task LoadEmotesFromApi()
         {
-            if (Gw2ApiManager.HasPermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression, Gw2Sharp.WebApi.V2.Models.TokenPermission.Unlocks }))
+            try
             {
-                Logger.Debug("Load emotes from API");
-                // load locked emotes
-                _unlockableEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Emotes.IdsAsync());
-                // load unlocked emotes
-                _unlockedEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Account.Emotes.GetAsync());
-            }
-            else
+                if (Gw2ApiManager.HasPermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression, Gw2Sharp.WebApi.V2.Models.TokenPermission.Unlocks }))
+                {
+                    Logger.Debug("Load emotes from API");
+                    // load locked emotes
+                    _unlockableEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Emotes.IdsAsync());
+                    // load unlocked emotes
+                    _unlockedEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Account.Emotes.GetAsync());
+                }
+                else
+                {
+                    _unlockableEmotesIds.Clear();
+                    _unlockedEmotesIds.Clear();
+                }
+            } catch (Exception e)
             {
-                _unlockableEmotesIds.Clear();
-                _unlockedEmotesIds.Clear();
+                Logger.Warn("Failed to fetch emotes from API");
+                Logger.Debug(e.Message);
+                _unlockableEmotesIds = new List<string>();
+                _unlockedEmotesIds = new List<string>();
             }
         }
 
