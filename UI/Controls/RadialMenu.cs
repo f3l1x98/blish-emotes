@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Controls
 {
-    // Heavily "inspired" by https://github.com/manlaan/BlishHud-Mounts/blob/main/Controls/DrawRadial.cs
+    // Based on https://github.com/manlaan/BlishHud-Mounts/blob/main/Controls/DrawRadial.cs by bennieboj
     internal class RadialEmote
     {
         public double StartAngle { get; set; }
