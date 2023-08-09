@@ -176,7 +176,7 @@ namespace felix.BlishEmotes.UI.Controls
                 // Draw locked texture
                 if (radialEmote.Emote.Locked)
                 {
-                    spriteBatch.DrawOnCtrl(this, _lockedTexture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, Color.White * _settings.RadialIconOpacity.Value);
+                    spriteBatch.DrawOnCtrl(this, _lockedTexture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
                 }
             }
 
