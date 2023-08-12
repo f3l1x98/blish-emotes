@@ -120,6 +120,27 @@
   <data name="cornerIcon_tooltip" xml:space="preserve">
     <value>Emoteliste öffnen</value>
   </data>
+  <data name="emote_categoryDance" xml:space="preserve">
+    <value>Tanzen</value>
+  </data>
+  <data name="emote_categoryFun" xml:space="preserve">
+    <value>Spaß</value>
+  </data>
+  <data name="emote_categoryGreeting" xml:space="preserve">
+    <value>Grüße</value>
+  </data>
+  <data name="emote_categoryMiscellaneous" xml:space="preserve">
+    <value>Verschiedenes</value>
+  </data>
+  <data name="emote_categoryPose" xml:space="preserve">
+    <value>Pose</value>
+  </data>
+  <data name="emote_categoryReaction" xml:space="preserve">
+    <value>Reaktion</value>
+  </data>
+  <data name="settings_button" xml:space="preserve">
+    <value>Einstellungen öffnen</value>
+  </data>
   <data name="settings_emotesKeybindSubCollection" xml:space="preserve">
     <value>Emote Tastenkombinationen</value>
   </data>
@@ -128,6 +149,36 @@
   </data>
   <data name="settings_global_keybindToggleEmoteList" xml:space="preserve">
     <value>Emoteliste Tastennkombination</value>
+  </data>
+  <data name="settings_global_useCategories" xml:space="preserve">
+    <value>Kategorien aktivieren</value>
+  </data>
+  <data name="settings_global_useRadialMenu" xml:space="preserve">
+    <value>Radialmenü verwenden</value>
+  </data>
+  <data name="settings_radial_actionCamKeybind" xml:space="preserve">
+    <value>Actionkamera Tastenkombination</value>
+  </data>
+  <data name="settings_radial_iconOpacity" xml:space="preserve">
+    <value>Icon Opacity</value>
+  </data>
+  <data name="settings_radial_iconSizeModifier" xml:space="preserve">
+    <value>Icon Größenmodifikator</value>
+  </data>
+  <data name="settings_radial_innerRadiusPercentage" xml:space="preserve">
+    <value>Deaktivierter Radius Prozent</value>
+  </data>
+  <data name="settings_radial_innerRadiusPercentage_description" xml:space="preserve">
+    <value>Definiert den Radius, in dem keine Emotes ausgewählt werden, im Verhältnis zum radialen Radius</value>
+  </data>
+  <data name="settings_radial_radiusModifier" xml:space="preserve">
+    <value>Radiusmodifikator</value>
+  </data>
+  <data name="settings_radial_spawnAtCursor" xml:space="preserve">
+    <value>Am Cursor anzeigen</value>
+  </data>
+  <data name="settings_ui_emoteHotkeys_tab" xml:space="preserve">
+    <value>Emote Tastenkombinationen</value>
   </data>
   <data name="settings_ui_global_tab" xml:space="preserve">
     <value>Globale Einstellungen</value>

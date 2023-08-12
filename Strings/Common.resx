@@ -151,7 +151,7 @@
     <value>Toggle emote list</value>
   </data>
   <data name="settings_global_useCategories" xml:space="preserve">
-    <value>Split into categories</value>
+    <value>Enable categories</value>
   </data>
   <data name="settings_global_useRadialMenu" xml:space="preserve">
     <value>Use radial menu</value>
