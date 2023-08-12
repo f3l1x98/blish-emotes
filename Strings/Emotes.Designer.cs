@@ -322,6 +322,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sip coffee.
+        /// </summary>
+        internal static string sipcoffee {
+            get {
+                return ResourceManager.GetString("sipcoffee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sit.
         /// </summary>
         internal static string sit {

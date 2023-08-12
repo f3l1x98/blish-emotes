@@ -155,6 +155,7 @@
   <ItemGroup>
     <Compile Include="Emote.cs" />
     <Compile Include="EmotesModule.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="ModuleSettings.cs" />
     <Compile Include="Strings\Common.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -166,10 +167,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Emotes.resx</DependentUpon>
     </Compile>
-    <Compile Include="UI\Presenters\SettingsHintPresenter.cs" />
-    <Compile Include="UI\Presenters\SettingsWindowPresenter.cs" />
-    <Compile Include="UI\Views\SettingsHintView.cs" />
-    <Compile Include="UI\Views\SettingsWindowView.cs" />
+    <Compile Include="UI\Controls\RadialMenu.cs" />
+    <Compile Include="UI\Presenters\DummySettingsPresenter.cs" />
+    <Compile Include="UI\Presenters\EmoteHotkeySettingsPresenter.cs" />
+    <Compile Include="UI\Views\DummySettingsView.cs" />
+    <Compile Include="UI\Views\EmoteHotkeySettingsView.cs" />
+    <Compile Include="UI\Views\GlobalSettingsView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AsyncClipboardService, Version=1.7.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -319,17 +322,58 @@
     <Content Include="mgfxc.exe" />
     <Content Include="mgfxc.pdb" />
     <Content Include="ref\textures\102390.png" />
-    <Content Include="ref\textures\102391.png" />
+    <Content Include="ref\textures\155052.png" />
     <Content Include="ref\textures\156006.png" />
+    <Content Include="ref\textures\156734+155150.png" />
+    <Content Include="ref\textures\2107931.png" />
+    <Content Include="ref\textures\emotes\beckon.png" />
+    <Content Include="ref\textures\emotes\bow.png" />
+    <Content Include="ref\textures\emotes\cheer.png" />
+    <Content Include="ref\textures\emotes\cower.png" />
+    <Content Include="ref\textures\emotes\crossarms.png" />
+    <Content Include="ref\textures\emotes\cry.png" />
+    <Content Include="ref\textures\emotes\dance.png" />
+    <Content Include="ref\textures\emotes\facepalm.png" />
+    <Content Include="ref\textures\emotes\geargrind.png" />
+    <Content Include="ref\textures\emotes\hiss.png" />
+    <Content Include="ref\textures\emotes\kneel.png" />
+    <Content Include="ref\textures\emotes\laugh.png" />
+    <Content Include="ref\textures\emotes\magicjuggle.png" />
+    <Content Include="ref\textures\emotes\no.png" />
+    <Content Include="ref\textures\emotes\paper.png" />
+    <Content Include="ref\textures\emotes\playdead.png" />
+    <Content Include="ref\textures\emotes\point.png" />
+    <Content Include="ref\textures\emotes\ponder.png" />
+    <Content Include="ref\textures\emotes\rank.png" />
+    <Content Include="ref\textures\emotes\rock.png" />
+    <Content Include="ref\textures\emotes\rockout.png" />
+    <Content Include="ref\textures\emotes\sad.png" />
+    <Content Include="ref\textures\emotes\salute.png" />
+    <Content Include="ref\textures\emotes\scissors.png" />
+    <Content Include="ref\textures\emotes\serve.png" />
+    <Content Include="ref\textures\emotes\shiver.png" />
+    <Content Include="ref\textures\emotes\shiverplus.png" />
+    <Content Include="ref\textures\emotes\shrug.png" />
+    <Content Include="ref\textures\emotes\shuffle.png" />
+    <Content Include="ref\textures\emotes\sipcoffee.png" />
+    <Content Include="ref\textures\emotes\sit.png" />
+    <Content Include="ref\textures\emotes\sleep.png" />
+    <Content Include="ref\textures\emotes\step.png" />
+    <Content Include="ref\textures\emotes\stretch.png" />
+    <Content Include="ref\textures\emotes\surprised.png" />
+    <Content Include="ref\textures\emotes\talk.png" />
+    <Content Include="ref\textures\emotes\thanks.png" />
+    <Content Include="ref\textures\emotes\threaten.png" />
+    <Content Include="ref\textures\emotes\wave.png" />
+    <Content Include="ref\textures\emotes\yes.png" />
     <Content Include="ref\textures\emotes_icon.png" />
+    <Content Include="ref\textures\missing-texture.png" />
     <Content Include="SharpDX.D3DCompiler.dll" />
     <Content Include="SharpDX.D3DCompiler.xml" />
     <Content Include="SharpDX.dll" />
     <Content Include="SharpDX.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\Controls\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Strings\Common.de.resx" />
     <EmbeddedResource Include="Strings\Common.resx">

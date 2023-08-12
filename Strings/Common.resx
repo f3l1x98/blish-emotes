@@ -151,7 +151,34 @@
     <value>Toggle emote list</value>
   </data>
   <data name="settings_global_useCategories" xml:space="preserve">
-    <value>Split into categories</value>
+    <value>Enable categories</value>
+  </data>
+  <data name="settings_global_useRadialMenu" xml:space="preserve">
+    <value>Use radial menu</value>
+  </data>
+  <data name="settings_radial_actionCamKeybind" xml:space="preserve">
+    <value>Action camera keybind</value>
+  </data>
+  <data name="settings_radial_iconOpacity" xml:space="preserve">
+    <value>Icon opacity</value>
+  </data>
+  <data name="settings_radial_iconSizeModifier" xml:space="preserve">
+    <value>Icon size modifier</value>
+  </data>
+  <data name="settings_radial_innerRadiusPercentage" xml:space="preserve">
+    <value>Disabled radius percentage</value>
+  </data>
+  <data name="settings_radial_innerRadiusPercentage_description" xml:space="preserve">
+    <value>Defines the radius where no emotes get selected in precentage of the radial radius</value>
+  </data>
+  <data name="settings_radial_radiusModifier" xml:space="preserve">
+    <value>Radius modifier</value>
+  </data>
+  <data name="settings_radial_spawnAtCursor" xml:space="preserve">
+    <value>Spawn at cursor</value>
+  </data>
+  <data name="settings_ui_emoteHotkeys_tab" xml:space="preserve">
+    <value>Emote Hotkeys</value>
   </data>
   <data name="settings_ui_global_tab" xml:space="preserve">
     <value>Global Settings</value>

@@ -160,11 +160,92 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Split into categories.
+        ///   Looks up a localized string similar to Enable categories.
         /// </summary>
         public static string settings_global_useCategories {
             get {
                 return ResourceManager.GetString("settings_global_useCategories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use radial menu.
+        /// </summary>
+        public static string settings_global_useRadialMenu {
+            get {
+                return ResourceManager.GetString("settings_global_useRadialMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Action camera keybind.
+        /// </summary>
+        public static string settings_radial_actionCamKeybind {
+            get {
+                return ResourceManager.GetString("settings_radial_actionCamKeybind", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Icon opacity.
+        /// </summary>
+        public static string settings_radial_iconOpacity {
+            get {
+                return ResourceManager.GetString("settings_radial_iconOpacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Icon size modifier.
+        /// </summary>
+        public static string settings_radial_iconSizeModifier {
+            get {
+                return ResourceManager.GetString("settings_radial_iconSizeModifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabled radius percentage.
+        /// </summary>
+        public static string settings_radial_innerRadiusPercentage {
+            get {
+                return ResourceManager.GetString("settings_radial_innerRadiusPercentage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Defines the radius where no emotes get selected in precentage of the radial radius.
+        /// </summary>
+        public static string settings_radial_innerRadiusPercentage_description {
+            get {
+                return ResourceManager.GetString("settings_radial_innerRadiusPercentage_description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radius modifier.
+        /// </summary>
+        public static string settings_radial_radiusModifier {
+            get {
+                return ResourceManager.GetString("settings_radial_radiusModifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spawn at cursor.
+        /// </summary>
+        public static string settings_radial_spawnAtCursor {
+            get {
+                return ResourceManager.GetString("settings_radial_spawnAtCursor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emote Hotkeys.
+        /// </summary>
+        public static string settings_ui_emoteHotkeys_tab {
+            get {
+                return ResourceManager.GetString("settings_ui_emoteHotkeys_tab", resourceCulture);
             }
         }
         

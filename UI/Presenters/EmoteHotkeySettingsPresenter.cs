@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI
 {
-    internal class SettingsWindowPresenter : Presenter<SettingsWindowView, ModuleSettings>
+    internal class EmoteHotkeySettingsPresenter : Presenter<EmoteHotkeySettingsView, ModuleSettings>
     {
-        public SettingsWindowPresenter(SettingsWindowView view, ModuleSettings model) : base(view, model)
+        public EmoteHotkeySettingsPresenter(EmoteHotkeySettingsView view, ModuleSettings model) : base(view, model)
         {
         }
         protected override Task<bool> Load(IProgress<string> progress)
@@ -20,8 +20,7 @@ namespace felix.BlishEmotes.UI
 
         protected override void UpdateView()
         {
-            this.View.GlobalSettingsViewContainer.Show(new SettingsView(this.Model.GlobalSettings));
-            this.View.EmotesShortcutsSettingsViewContainer.Show(new SettingsView(this.Model.EmotesShortcutsSettings));
+            this.View.BuildEmoteHotkeyPanel(this.Model.EmotesShortcutsSettings);
         }
 
         private void Model_EmotesSettingsLoaded(object sender, bool e)
