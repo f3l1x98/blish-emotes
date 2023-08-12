@@ -30,7 +30,7 @@ namespace felix.BlishEmotes.UI.Controls
 
         private Helper _helper;
         private ModuleSettings _settings;
-        private List<Emote> _emotes;
+        public List<Emote> Emotes { private get; set; }
         private Texture2D _lockedTexture;
 
         private List<RadialEmote> _radialEmotes = new List<RadialEmote>();
@@ -49,11 +49,11 @@ namespace felix.BlishEmotes.UI.Controls
 
         private float _debugLineThickness = 2;
 
-        public RadialMenu(Helper helper, ModuleSettings settings, List<Emote> emotes, Texture2D LockedTexture)
+        public RadialMenu(Helper helper, ModuleSettings settings, Texture2D LockedTexture)
         {
             this._helper = helper;
             this._settings = settings;
-            this._emotes = emotes;
+            this.Emotes = new List<Emote>();
             this._lockedTexture = LockedTexture;
             Visible = false;
             Padding = Blish_HUD.Controls.Thickness.Zero;
@@ -93,7 +93,7 @@ namespace felix.BlishEmotes.UI.Controls
         {
             _radialEmotes.Clear();
             _selectedEmoteLabel.Text = "";
-            if (_emotes.Count == 0)
+            if (Emotes.Count == 0)
             {
                 _noEmotesLabel.Show();
                 return;
@@ -111,8 +111,8 @@ namespace felix.BlishEmotes.UI.Controls
                 spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), _innerRadius, 50, Color.Red, _debugLineThickness);
             }
             double currentAngle = startAngle;
-            double sweepAngle = Math.PI * 2 / _emotes.Count; // Divide 360deg or 2PIrad between emotes
-            foreach (var emote in _emotes)
+            double sweepAngle = Math.PI * 2 / Emotes.Count; // Divide 360deg or 2PIrad between emotes
+            foreach (var emote in Emotes)
             {
                 var midAngle = currentAngle + sweepAngle / 2;
                 var endAngle = currentAngle + sweepAngle;

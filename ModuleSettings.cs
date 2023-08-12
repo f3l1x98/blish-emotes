@@ -54,8 +54,6 @@ namespace felix.BlishEmotes
 
             this.EmotesShortcutsKeybindsMap = new Dictionary<Emote, SettingEntry<KeyBinding>>();
         }
-
-        public event EventHandler<bool> OnEmotesLoaded;
         public void InitEmotesShortcuts(List<Emote> emotes)
         {
             this.EmotesShortcutsKeybindsMap.Clear();
@@ -69,7 +67,6 @@ namespace felix.BlishEmotes
                     _helper.SendEmoteCommand(emote);
                 };
             }
-            OnEmotesLoaded?.Invoke(this, true);
         }
         #endregion
 
@@ -101,9 +98,48 @@ namespace felix.BlishEmotes
             this.RadialIconSizeModifier.SetRange(0.25f, 0.75f);
             this.RadialIconOpacity = this.RadialMenuSettings.DefineSetting(nameof(this.RadialIconOpacity), 0.5f, () => Common.settings_radial_iconOpacity);
             this.RadialIconOpacity.SetRange(0.5f, 0.75f);
+
+            DefineEmotesRadialSettings(this.RadialMenuSettings);
+        }
+
+
+        private const string EMOTES_RADIAL_SETTINGS = "emotes-radial-settings";
+        public SettingCollection EmotesRadialSettings { get; private set; }
+        public Dictionary<Emote, SettingEntry<bool>> EmotesRadialEnabledMap { get; private set; }
+
+        private void DefineEmotesRadialSettings(SettingCollection settings)
+        {
+            this.EmotesRadialSettings = settings.AddSubCollection(EMOTES_RADIAL_SETTINGS);
+
+            this.EmotesRadialEnabledMap = new Dictionary<Emote, SettingEntry<bool>>();
+        }
+
+        public event EventHandler OnAnyEmotesRadialSettingsChanged;
+
+        public void InitEmotesRadialEnabled(List<Emote> emotes)
+        {
+            this.EmotesRadialEnabledMap.Clear();
+            foreach (Emote emote in emotes)
+            {
+                var newSetting = this.EmotesRadialSettings.DefineSetting(nameof(this.EmotesRadialEnabledMap) + "_" + emote.Id, true, () => _helper.EmotesResourceManager.GetString(emote.Id));
+                this.EmotesRadialEnabledMap.Add(emote, newSetting);
+                newSetting.SettingChanged += delegate
+                {
+                    OnAnyEmotesRadialSettingsChanged?.Invoke(this, null);
+                };
+            }
         }
 
         #endregion
+
+
+        public event EventHandler<bool> OnEmotesLoaded;
+        public void InitEmotesSettings(List<Emote> emotes)
+        {
+            this.InitEmotesShortcuts(emotes);
+            this.InitEmotesRadialEnabled(emotes);
+            OnEmotesLoaded?.Invoke(this, true);
+        }
 
         public void Unload()
         {

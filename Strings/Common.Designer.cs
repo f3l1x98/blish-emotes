@@ -187,6 +187,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display in radial menu.
+        /// </summary>
+        public static string settings_radial_emotesEnabled {
+            get {
+                return ResourceManager.GetString("settings_radial_emotesEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Icon opacity.
         /// </summary>
         public static string settings_radial_iconOpacity {
