@@ -107,7 +107,6 @@ namespace felix.BlishEmotes.UI.Views
             };
 
             // GlobalUseRadialMenu
-            // -> PERHAPS TRY DROPDOWN (not necessary, but for the looks?!?)
             var _useRadialRow = CreateRowPanel(_globalPanel);
             Label _useRadialLabel = new Label()
             {
@@ -116,7 +115,6 @@ namespace felix.BlishEmotes.UI.Views
                 Size = new Point(_labelWidth, _height),
                 Location = new Point(0, 0),
             };
-            // TODO THIS IS NOT DRAWN
             Dropdown _useRadialDropdown = new Dropdown()
             {
                 Parent = _useRadialRow,
@@ -131,7 +129,6 @@ namespace felix.BlishEmotes.UI.Views
             };
 
             // GlobalUseCategories
-            // -> PERHAPS ONLY DISPLAY IF !GlobalUseRadialMenu
             var _useCategoriesRow = CreateRowPanel(_globalPanel);
             Label _useCategoriesLabel = new Label()
             {

@@ -139,7 +139,7 @@ namespace BlishEmotesList
                 // load emotes
                 _emotes = LoadEmotesResource();
                 // Update emotes with data from api
-                UpdateEmotesFromApi();
+                await UpdateEmotesFromApi();
 
                 this.Settings.InitEmotesShortcuts(_emotes);
                 DrawUI();
@@ -191,7 +191,7 @@ namespace BlishEmotesList
 
             _radialMenu?.Dispose();
             // Init radial menu
-            _radialMenu = new RadialMenu(_helper, this.Settings, _emotes, ContentsManager.GetTexture(@"textures/2107931.png")) // 2107931.png // 2378287.png
+            _radialMenu = new RadialMenu(_helper, this.Settings, _emotes, ContentsManager.GetTexture(@"textures/2107931.png"))
             {
                 Parent = GameService.Graphics.SpriteScreen
             };
@@ -201,7 +201,7 @@ namespace BlishEmotesList
         private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
         {
             // Update emotes with data from api
-            UpdateEmotesFromApi();
+            await UpdateEmotesFromApi();
         }
 
         private void ShowEmoteList(bool atCornerIcon = true)
@@ -259,7 +259,7 @@ namespace BlishEmotesList
             return items;
         }
 
-        private async void UpdateEmotesFromApi()
+        private async Task UpdateEmotesFromApi()
         {
             Logger.Debug("Update emotes from api");
             // load emote information from api

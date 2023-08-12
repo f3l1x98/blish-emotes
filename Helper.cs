@@ -43,7 +43,7 @@ namespace felix.BlishEmotes
             }
         }
 
-        // Copied from https://github.com/manlaan/BlishHud-Mounts/blob/main/Helper.cs
+        // Copied from https://github.com/manlaan/BlishHud-Mounts/blob/main/Helper.cs as part of Radial implementation
         public async Task TriggerKeybind(SettingEntry<KeyBinding> keybindingSetting)
         {
             Logger.Debug("TriggerKeybind entered");
