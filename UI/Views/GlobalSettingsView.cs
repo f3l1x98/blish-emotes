@@ -247,8 +247,8 @@ namespace felix.BlishEmotes.UI.Views
             {
                 Parent = _iconSizeModifierRow,
                 Value = this._settings.RadialIconSizeModifier.Value * 100.0f,
-                MinValue = 50,
-                MaxValue = 100,
+                MinValue = 25,
+                MaxValue = 75,
                 Size = new Point(_controlWidth, _height),
                 Location = new Point(_labelWidth + _padding, 0),
             };
@@ -268,7 +268,7 @@ namespace felix.BlishEmotes.UI.Views
                 Parent = _iconOpacityRow,
                 Value = this._settings.RadialIconOpacity.Value * 100.0f,
                 MinValue = 50,
-                MaxValue = 100,
+                MaxValue = 75,
                 Size = new Point(_controlWidth, _height),
                 Location = new Point(_labelWidth + _padding, 0),
             };
