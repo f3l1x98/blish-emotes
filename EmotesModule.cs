@@ -292,9 +292,14 @@ namespace BlishEmotesList
                 fileContents = reader.ReadToEnd();
             }
             var emotes = JsonConvert.DeserializeObject<List<Emote>>(fileContents);
+            int i = 0;
             foreach (var emote in emotes)
             {
-                emote.Texture = ContentsManager.GetTexture(@"textures/emotes/" + emote.TextureRef, ContentsManager.GetTexture(@"textures/missing-texture.png"));
+                //emote.Texture = ContentsManager.GetTexture(i % 2 == 0 ? @"textures/emotes/bordered/beckon.png" : @"textures/emotes/colored/beckon.png");
+                //var texture = $"textures/speed ({i % 7}).png";
+                //emote.Texture = ContentsManager.GetTexture(@texture);
+                emote.Texture = ContentsManager.GetTexture(@"textures/emotes/bordered/" + emote.TextureRef, ContentsManager.GetTexture(@"textures/missing-texture.png"));
+                i++;
             }
             return emotes;
         }
