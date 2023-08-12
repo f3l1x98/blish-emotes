@@ -205,6 +205,24 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disabled radius percentage.
+        /// </summary>
+        public static string settings_radial_innerRadiusPercentage {
+            get {
+                return ResourceManager.GetString("settings_radial_innerRadiusPercentage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Defines the radius where no emotes get selected in precentage of the radial radius.
+        /// </summary>
+        public static string settings_radial_innerRadiusPercentage_description {
+            get {
+                return ResourceManager.GetString("settings_radial_innerRadiusPercentage_description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Radius modifier.
         /// </summary>
         public static string settings_radial_radiusModifier {

@@ -16,8 +16,6 @@ namespace felix.BlishEmotes.UI.Views
         private FlowPanel _globalPanel;
         private FlowPanel _radialPanel;
 
-        private FlowPanel _useCategoriesRow;
-
         private const int _labelWidth = 200;
         private const int _controlWidth = 150;
         private const int _height = 20;
@@ -26,23 +24,6 @@ namespace felix.BlishEmotes.UI.Views
         public GlobalSettingsView(ModuleSettings settings) : base()
         {
             this._settings = settings;
-        }
-
-        protected override Task<bool> Load(IProgress<string> progress)
-        {
-            this._settings.GlobalUseRadialMenu.SettingChanged += OnUseRadialMenuSettingChanged;
-            return base.Load(progress);
-        }
-
-        private void OnUseRadialMenuSettingChanged(object sender, ValueChangedEventArgs<bool> e)
-        {
-            if (e.NewValue)
-            {
-                this._useCategoriesRow?.Hide();
-            } else
-            {
-                this._useCategoriesRow?.Show();
-            }
         }
 
         private FlowPanel CreatePanel(Container parent, Point location, int width)
@@ -151,8 +132,7 @@ namespace felix.BlishEmotes.UI.Views
 
             // GlobalUseCategories
             // -> PERHAPS ONLY DISPLAY IF !GlobalUseRadialMenu
-            _useCategoriesRow = CreateRowPanel(_globalPanel);
-            _useCategoriesRow.Visible = !this._settings.GlobalUseRadialMenu.Value;
+            var _useCategoriesRow = CreateRowPanel(_globalPanel);
             Label _useCategoriesLabel = new Label()
             {
                 Parent = _useCategoriesRow,
@@ -226,11 +206,33 @@ namespace felix.BlishEmotes.UI.Views
                 Parent = _radiusModifierRow,
                 Value = this._settings.RadialRadiusModifier.Value * 100.0f,
                 MinValue = 25,
-                MaxValue = 75,
+                MaxValue = 50,
                 Size = new Point(_controlWidth, _height),
                 Location = new Point(_labelWidth + _padding, 0),
             };
             _radiusModifierTrackBar.ValueChanged += delegate { this._settings.RadialRadiusModifier.Value = _radiusModifierTrackBar.Value / 100.0f; };
+
+            // RadialInnerRadiusPercentage
+            var _innerRadiusPercentageRow = CreateRowPanel(_radialPanel);
+            Label _innerRadiusPercentageLabel = new Label()
+            {
+                Parent = _innerRadiusPercentageRow,
+                Text = Common.settings_radial_innerRadiusPercentage,
+                Size = new Point(_labelWidth, _height),
+                Location = new Point(0, 0),
+                BasicTooltipText = Common.settings_radial_innerRadiusPercentage_description,
+            };
+            TrackBar _innerRadiusPercentageTrackBar = new TrackBar()
+            {
+                Parent = _innerRadiusPercentageRow,
+                Value = this._settings.RadialInnerRadiusPercentage.Value * 100.0f,
+                MinValue = 0,
+                MaxValue = 50,
+                Size = new Point(_controlWidth, _height),
+                Location = new Point(_labelWidth + _padding, 0),
+                BasicTooltipText = Common.settings_radial_innerRadiusPercentage_description,
+            };
+            _innerRadiusPercentageTrackBar.ValueChanged += delegate { this._settings.RadialInnerRadiusPercentage.Value = _innerRadiusPercentageTrackBar.Value / 100.0f; };
 
             // RadialIconSizeModifier
             var _iconSizeModifierRow = CreateRowPanel(_radialPanel);
@@ -245,8 +247,8 @@ namespace felix.BlishEmotes.UI.Views
             {
                 Parent = _iconSizeModifierRow,
                 Value = this._settings.RadialIconSizeModifier.Value * 100.0f,
-                MinValue = 50,
-                MaxValue = 100,
+                MinValue = 25,
+                MaxValue = 75,
                 Size = new Point(_controlWidth, _height),
                 Location = new Point(_labelWidth + _padding, 0),
             };
@@ -266,7 +268,7 @@ namespace felix.BlishEmotes.UI.Views
                 Parent = _iconOpacityRow,
                 Value = this._settings.RadialIconOpacity.Value * 100.0f,
                 MinValue = 50,
-                MaxValue = 100,
+                MaxValue = 75,
                 Size = new Point(_controlWidth, _height),
                 Location = new Point(_labelWidth + _padding, 0),
             };
@@ -275,11 +277,8 @@ namespace felix.BlishEmotes.UI.Views
 
         protected override void Unload()
         {
-            this._settings.GlobalUseRadialMenu.SettingChanged -= OnUseRadialMenuSettingChanged;
-
             this._globalPanel?.Dispose();
             this._radialPanel?.Dispose();
-            this._useCategoriesRow?.Dispose();
         }
     }
 }

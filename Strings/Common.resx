@@ -165,6 +165,12 @@
   <data name="settings_radial_iconSizeModifier" xml:space="preserve">
     <value>Icon size modifier</value>
   </data>
+  <data name="settings_radial_innerRadiusPercentage" xml:space="preserve">
+    <value>Disabled radius percentage</value>
+  </data>
+  <data name="settings_radial_innerRadiusPercentage_description" xml:space="preserve">
+    <value>Defines the radius where no emotes get selected in precentage of the radial radius</value>
+  </data>
   <data name="settings_radial_radiusModifier" xml:space="preserve">
     <value>Radius modifier</value>
   </data>
