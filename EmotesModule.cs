@@ -49,6 +49,8 @@ namespace BlishEmotesList
 
         private List<Emote> _emotes;
 
+        private List<Emote> _radialEnabledEmotes => new List<Emote>(_emotes.Where(el => this.Settings.EmotesRadialEnabledMap.ContainsKey(el) ? this.Settings.EmotesRadialEnabledMap[el].Value : true));
+
 
         [ImportingConstructor]
         public EmoteLisModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters)
@@ -100,8 +102,7 @@ namespace BlishEmotesList
                 if (this._radialMenu != null)
                 {
                     // Update radial menu emotes
-                    var enabledEmotes = new List<Emote>(_emotes.Where(el => this.Settings.EmotesRadialEnabledMap[el].Value));
-                    this._radialMenu.Emotes = enabledEmotes;
+                    this._radialMenu.Emotes = _radialEnabledEmotes;
                 }
             };
         }
@@ -204,7 +205,7 @@ namespace BlishEmotesList
             _radialMenu = new RadialMenu(_helper, this.Settings, ContentsManager.GetTexture(@"textures/2107931.png"))
             {
                 Parent = GameService.Graphics.SpriteScreen,
-                Emotes = _emotes,
+                Emotes = _radialEnabledEmotes,
             };
 
         }
