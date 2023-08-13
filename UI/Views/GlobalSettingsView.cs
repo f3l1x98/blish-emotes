@@ -84,19 +84,21 @@ namespace felix.BlishEmotes.UI.Views
                 Parent = buildPanel,
                 Text = Common.settings_radial_emotesEnabled,
                 Location = new Point(0, 160),
-                Size = new Point(200, 40),
+                Size = new Point(170, 40),
                 Font = GameService.Content.DefaultFont18,
+            };
+            // Init spinner while emotes are loading
+            _emotesRadialSpinner = new LoadingSpinner()
+            {
+                Parent = buildPanel,
+                Location = new Point(170, 160),
+                Size = new Point(40, 40),
+                Visible = true,
             };
             _emotesRadialPanel = CreatePanel(buildPanel, new Point(0, 200), 0);
             _emotesRadialPanel.HeightSizingMode = SizingMode.Fill;
             _emotesRadialPanel.WidthSizingMode = SizingMode.Fill;
             _emotesRadialPanel.FlowDirection = ControlFlowDirection.TopToBottom;
-            // Init spinner while emotes are loading
-            _emotesRadialSpinner = new LoadingSpinner()
-            {
-                Parent = _emotesRadialPanel,
-                Visible = true,
-            };
             BuildEmotesRadialEnabledPanel();
         }
 
