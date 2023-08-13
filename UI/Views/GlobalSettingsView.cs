@@ -1,10 +1,16 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
+using Blish_HUD.Input;
+using Blish_HUD.Settings;
 using Blish_HUD.Settings.UI.Views;
 using felix.BlishEmotes.Strings;
 using Microsoft.Xna.Framework;
+using SharpDX.DirectWrite;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Views
@@ -15,6 +21,8 @@ namespace felix.BlishEmotes.UI.Views
 
         private FlowPanel _globalPanel;
         private FlowPanel _radialPanel;
+        private FlowPanel _emotesRadialPanel;
+        private LoadingSpinner _emotesRadialSpinner;
 
         private const int _labelWidth = 200;
         private const int _controlWidth = 150;
@@ -24,6 +32,10 @@ namespace felix.BlishEmotes.UI.Views
         public GlobalSettingsView(ModuleSettings settings) : base()
         {
             this._settings = settings;
+
+            _settings.OnEmotesLoaded += delegate {
+                BuildEmotesRadialEnabledPanel();
+            };
         }
 
         private FlowPanel CreatePanel(Container parent, Point location, int width)
@@ -64,6 +76,30 @@ namespace felix.BlishEmotes.UI.Views
             // Construct panel for _settings.RadialMenuSettings
             _radialPanel = CreatePanel(buildPanel, new Point(400, 0), 450);
             BuildRadialPanel();
+
+
+            // Construct panel for _settings.EmotesRadialSettings
+            var emotesRadialPanelLabel = new Label()
+            {
+                Parent = buildPanel,
+                Text = Common.settings_radial_emotesEnabled,
+                Location = new Point(0, 160),
+                Size = new Point(170, 40),
+                Font = GameService.Content.DefaultFont18,
+            };
+            // Init spinner while emotes are loading
+            _emotesRadialSpinner = new LoadingSpinner()
+            {
+                Parent = buildPanel,
+                Location = new Point(170, 160),
+                Size = new Point(40, 40),
+                Visible = true,
+            };
+            _emotesRadialPanel = CreatePanel(buildPanel, new Point(0, 200), 0);
+            _emotesRadialPanel.HeightSizingMode = SizingMode.Fill;
+            _emotesRadialPanel.WidthSizingMode = SizingMode.Fill;
+            _emotesRadialPanel.FlowDirection = ControlFlowDirection.TopToBottom;
+            BuildEmotesRadialEnabledPanel();
         }
 
         private void BuildGlobalPanel()
@@ -272,10 +308,51 @@ namespace felix.BlishEmotes.UI.Views
             _iconOpacityTrackBar.ValueChanged += delegate { this._settings.RadialIconOpacity.Value = _iconOpacityTrackBar.Value / 100.0f; };
         }
 
+        public void BuildEmotesRadialEnabledPanel()
+        {
+            // Clear current children
+            _emotesRadialPanel?.ClearChildren();
+
+            // Dispose spinner
+            if (this._settings.EmotesRadialEnabledMap.Count() > 0)
+            {
+                _emotesRadialSpinner?.Dispose();
+            }
+
+            // Sort by DisplayName
+            List<KeyValuePair<Emote, SettingEntry<bool>>> sorted = this._settings.EmotesRadialEnabledMap.ToList();
+            sorted.Sort((a, b) => a.Value.DisplayName.CompareTo(b.Value.DisplayName));
+            // Create Checkbox control for each entry
+            foreach (var entry in sorted)
+            {
+                var _emoteRadialEnabledRow = CreateRowPanel(_emotesRadialPanel);
+                _emoteRadialEnabledRow.OuterControlPadding = new Vector2(10, _padding);
+                Label _emoteRadialEnableLabel = new Label()
+                {
+                    Parent = _emoteRadialEnabledRow,
+                    Text = entry.Value.DisplayName,
+                    Size = new Point(100, _height),
+                    Location = new Point(0, 0),
+                };
+                Checkbox _emoteRadialEnableCheckbox = new Checkbox()
+                {
+                    Parent = _emoteRadialEnabledRow,
+                    Checked = entry.Value.Value,
+                    Size = new Point(_controlWidth, _height),
+                    Location = new Point(_labelWidth + _padding, 0),
+                };
+                _emoteRadialEnableCheckbox.CheckedChanged += delegate {
+                    entry.Value.Value = _emoteRadialEnableCheckbox.Checked;
+                };
+            }
+        }
+
         protected override void Unload()
         {
             this._globalPanel?.Dispose();
             this._radialPanel?.Dispose();
+            this._emotesRadialPanel?.Dispose();
+            this._emotesRadialSpinner?.Dispose();
         }
     }
 }

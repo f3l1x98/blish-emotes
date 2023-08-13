@@ -159,6 +159,9 @@
   <data name="settings_radial_actionCamKeybind" xml:space="preserve">
     <value>Action camera keybind</value>
   </data>
+  <data name="settings_radial_emotesEnabled" xml:space="preserve">
+    <value>Display in radial menu</value>
+  </data>
   <data name="settings_radial_iconOpacity" xml:space="preserve">
     <value>Icon opacity</value>
   </data>
