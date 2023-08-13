@@ -99,7 +99,7 @@ namespace BlishEmotesList
             {
                 if (this._radialMenu != null)
                 {
-                    // Could be optimized by also passing which emote was changed and to what value -> remove/add to current this._radialMenu.Emotes
+                    // Update radial menu emotes
                     var enabledEmotes = new List<Emote>(_emotes.Where(el => this.Settings.EmotesRadialEnabledMap[el].Value));
                     this._radialMenu.Emotes = enabledEmotes;
                 }
