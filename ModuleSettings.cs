@@ -148,6 +148,8 @@ namespace felix.BlishEmotes
             {
                 entry.Value.Value.Enabled = false;
             }
+            this.EmotesShortcutsKeybindsMap.Clear();
+            this.EmotesRadialEnabledMap.Clear();
         }
     }
 }
