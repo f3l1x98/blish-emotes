@@ -20,6 +20,7 @@ Contributions are welcome. Please note that this is my first "real" C# project s
 # Emote Icons Credits
 The following icons were used:
 - **beckon:** <a href="https://www.flaticon.com/free-icons/body-language" title="body language icons">Body language icons created by Leremy - Flaticon</a>
+- **bless:** <a href="https://www.flaticon.com/free-icons/shinning" title="shinning icons">Shinning icons created by Leremy - Flaticon</a>
 - **bow:** <a href="https://www.flaticon.com/free-icons/bow" title="bow icons">Bow icons created by Leremy - Flaticon</a>
 - **cheer:** <a href="https://www.flaticon.com/free-icons/pom" title="pom icons">Pom icons created by Leremy - Flaticon</a>
 - **cower:** <a href="https://www.flaticon.com/free-icons/cringe" title="cringe icons">Cringe icons created by Leremy - Flaticon</a>
@@ -37,6 +38,7 @@ The following icons were used:
 - **playdead:** <a href="https://www.flaticon.com/free-icons/cardiac-arrest" title="cardiac arrest icons">Cardiac arrest icons created by Leremy - Flaticon</a>
 - **point:** <a href="https://www.flaticon.com/free-icons/pointing" title="pointing icons">Pointing icons created by Leremy - Flaticon</a>
 - **ponder:** <a href="https://www.flaticon.com/free-icons/yawning" title="yawning icons">Yawning icons created by Leremy - Flaticon</a>
+- **possessed:** <a href="https://www.flaticon.com/free-icons/possession" title="possession icons">Possession icons created by Leremy - Flaticon</a>
 - **rank:** <a href="https://www.flaticon.com/free-icons/succeed" title="succeed icons">Succeed icons created by Leremy - Flaticon</a>
 - **rock:** <a href="https://www.flaticon.com/free-icons/strongman" title="strongman icons">Strongman icons created by Leremy - Flaticon</a>
 - **rockout:** <a href="https://www.flaticon.com/free-icons/electric" title="electric icons">Electric icons created by Leremy - Flaticon</a>

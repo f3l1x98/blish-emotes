@@ -70,6 +70,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bless.
+        /// </summary>
+        internal static string bless {
+            get {
+                return ResourceManager.GetString("bless", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bow.
         /// </summary>
         internal static string bow {
@@ -219,6 +228,15 @@ namespace felix.BlishEmotes.Strings {
         internal static string ponder {
             get {
                 return ResourceManager.GetString("ponder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Possessed.
+        /// </summary>
+        internal static string possessed {
+            get {
+                return ResourceManager.GetString("possessed", resourceCulture);
             }
         }
         

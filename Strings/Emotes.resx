@@ -120,6 +120,9 @@
   <data name="beckon" xml:space="preserve">
     <value>Beckon</value>
   </data>
+  <data name="bless" xml:space="preserve">
+    <value>Bless</value>
+  </data>
   <data name="bow" xml:space="preserve">
     <value>Bow</value>
   </data>
@@ -170,6 +173,9 @@
   </data>
   <data name="ponder" xml:space="preserve">
     <value>Ponder</value>
+  </data>
+  <data name="possessed" xml:space="preserve">
+    <value>Possessed</value>
   </data>
   <data name="rank" xml:space="preserve">
     <value>Rank</value>
