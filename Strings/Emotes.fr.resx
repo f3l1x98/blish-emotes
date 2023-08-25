@@ -120,6 +120,9 @@
   <data name="beckon" xml:space="preserve">
     <value>Approcher</value>
   </data>
+  <data name="bless" xml:space="preserve">
+    <value>Bénir</value>
+  </data>
   <data name="bow" xml:space="preserve">
     <value>Reverence</value>
   </data>

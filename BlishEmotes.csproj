@@ -327,6 +327,7 @@
     <Content Include="ref\textures\156734+155150.png" />
     <Content Include="ref\textures\2107931.png" />
     <Content Include="ref\textures\emotes\beckon.png" />
+    <Content Include="ref\textures\emotes\bless.png" />
     <Content Include="ref\textures\emotes\bow.png" />
     <Content Include="ref\textures\emotes\cheer.png" />
     <Content Include="ref\textures\emotes\cower.png" />
@@ -344,6 +345,7 @@
     <Content Include="ref\textures\emotes\playdead.png" />
     <Content Include="ref\textures\emotes\point.png" />
     <Content Include="ref\textures\emotes\ponder.png" />
+    <Content Include="ref\textures\emotes\possessed.png" />
     <Content Include="ref\textures\emotes\rank.png" />
     <Content Include="ref\textures\emotes\rock.png" />
     <Content Include="ref\textures\emotes\rockout.png" />
