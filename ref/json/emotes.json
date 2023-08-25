@@ -5,6 +5,11 @@
     "command": "/beckon"
   },
   {
+    "id": "bless",
+    "category": "pose",
+    "command": "/bless"
+  },
+  {
     "id": "bow",
     "category": "greeting",
     "command": "/bow"
@@ -88,6 +93,11 @@
     "id": "ponder",
     "category": "miscellaneous",
     "command": "/ponder"
+  },
+  {
+    "id": "possessed",
+    "category": "miscellaneous",
+    "command": "/possessed"
   },
   {
     "id": "rank",
