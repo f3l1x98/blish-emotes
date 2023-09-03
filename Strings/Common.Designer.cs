@@ -169,7 +169,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Synchronize Emote Modifier.
+        ///   Looks up a localized string similar to Synchronize Emote Toggle.
         /// </summary>
         public static string settings_global_keybindToggleSynchronize {
             get {

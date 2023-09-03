@@ -154,7 +154,7 @@
     <value>Toggle emote list</value>
   </data>
   <data name="settings_global_keybindToggleSynchronize" xml:space="preserve">
-    <value>Synchronize Emote Modifier</value>
+    <value>Synchronize Emote Toggle</value>
   </data>
   <data name="settings_global_useCategories" xml:space="preserve">
     <value>Enable categories</value>

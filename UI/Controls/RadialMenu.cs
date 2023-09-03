@@ -38,7 +38,6 @@ namespace felix.BlishEmotes.UI.Controls
         private RadialEmote SelectedEmote => _radialEmotes.SingleOrDefault(m => m.Selected);
 
         private bool _isActionCamToggled;
-        private bool _isSynchronizeActive = false;
 
         private int _innerRadius = 100;
         private int _radius = 0;
@@ -119,7 +118,7 @@ namespace felix.BlishEmotes.UI.Controls
                 _noEmotesLabel.Hide();
             }
 
-            if (_isSynchronizeActive)
+            if (_helper.IsEmoteSynchronized)
             {
                 _synchronizeToggleActiveLabel.Show();
             }
@@ -208,11 +207,6 @@ namespace felix.BlishEmotes.UI.Controls
             base.PaintBeforeChildren(spriteBatch, bounds);
         }
 
-        private void ToggleSynchronizeEmote(object sender, EventArgs e)
-        {
-            _isSynchronizeActive = !_isSynchronizeActive;
-        }
-
 
         private async Task HandleShown(object sender, EventArgs e)
         {
@@ -249,8 +243,6 @@ namespace felix.BlishEmotes.UI.Controls
             // Set Location of selected emote label to roughly center of radial menu
             _selectedEmoteLabel.Location = new Point(RadialSpawnPoint.X - this.Location.X - _selectedEmoteLabel.Size.X / 2, RadialSpawnPoint.Y - this.Location.Y - _selectedEmoteLabel.Size.Y / 2 - 20);
             _synchronizeToggleActiveLabel.Location = new Point(RadialSpawnPoint.X - this.Location.X - _synchronizeToggleActiveLabel.Size.X / 2, RadialSpawnPoint.Y - this.Location.Y - _synchronizeToggleActiveLabel.Size.Y / 2 + 15);
-
-            _settings.GlobalKeyBindToggleSynchronize.Value.Activated += ToggleSynchronizeEmote;
         }
 
         private async Task HandleHidden(object sender, EventArgs e)
@@ -262,13 +254,12 @@ namespace felix.BlishEmotes.UI.Controls
                 _isActionCamToggled = false;
                 Logger.Debug("HandleHidden turned back on action cam");
             }
-            _settings.GlobalKeyBindToggleSynchronize.Value.Activated -= ToggleSynchronizeEmote;
             // send emote command
             var selected = SelectedEmote;
             if (selected != null)
             {
                 Logger.Debug("Sending command for " + selected.Emote.Id);
-                _helper.SendEmoteCommand(selected.Emote, _isSynchronizeActive);
+                _helper.SendEmoteCommand(selected.Emote);
             }
         }
     }

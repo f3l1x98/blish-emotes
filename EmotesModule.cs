@@ -97,6 +97,12 @@ namespace BlishEmotesList
                 }
             };
             this.Settings.GlobalKeyBindToggleSynchronize.Value.Enabled = true;
+            this.Settings.GlobalKeyBindToggleSynchronize.Value.Activated += delegate
+            {
+                _helper.IsEmoteSynchronized = !_helper.IsEmoteSynchronized;
+                DrawUI(true);
+                Logger.Debug("Toggled IsEmoteSynchronized");
+            };
             // Update radial menu emotes
             this.Settings.OnAnyEmotesRadialSettingsChanged += delegate
             {
@@ -197,7 +203,7 @@ namespace BlishEmotesList
             };
         }
 
-        private void DrawUI()
+        private void DrawUI(bool excludeRadial = false)
         {
             _emoteListMenuStrip?.Dispose();
 
@@ -205,14 +211,16 @@ namespace BlishEmotesList
             var menuItems = this.Settings.GlobalUseCategories.Value ? GetCategoryMenuItems() : GetEmotesMenuItems(_emotes);
             _emoteListMenuStrip.AddMenuItems(menuItems);
 
-            _radialMenu?.Dispose();
-            // Init radial menu
-            _radialMenu = new RadialMenu(_helper, this.Settings, ContentsManager.GetTexture(@"textures/2107931.png"))
+            if (!excludeRadial)
             {
-                Parent = GameService.Graphics.SpriteScreen,
-                Emotes = _radialEnabledEmotes,
-            };
-
+                _radialMenu?.Dispose();
+                // Init radial menu
+                _radialMenu = new RadialMenu(_helper, this.Settings, ContentsManager.GetTexture(@"textures/2107931.png"))
+                {
+                    Parent = GameService.Graphics.SpriteScreen,
+                    Emotes = _radialEnabledEmotes,
+                };
+            }
         }
 
         private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
@@ -252,6 +260,11 @@ namespace BlishEmotesList
                 };
                 items.Add(menuItem);
             }
+            // If IsEmoteSynchronized insert at top
+            if (_helper.IsEmoteSynchronized)
+            {
+                items.Insert(0, new ContextMenuStripItem(Common.emote_synchronizeActive));
+            }
             return items;
         }
 
@@ -273,6 +286,11 @@ namespace BlishEmotesList
             }
             // Sort by text such that list is sorted no matter what locale
             items.Sort((x, y) => x.Text.CompareTo(y.Text));
+            // If IsEmoteSynchronized insert at top
+            if (_helper.IsEmoteSynchronized)
+            {
+                items.Insert(0, new ContextMenuStripItem(Common.emote_synchronizeActive));
+            }
             return items;
         }
 
