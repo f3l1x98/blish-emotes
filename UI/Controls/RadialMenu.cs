@@ -140,9 +140,9 @@ namespace felix.BlishEmotes.UI.Controls
                     // Draw debug lines separating the sections between emotes
                     float xDebugInner = (float)Math.Round(_innerRadius * Math.Cos(currentAngle)) + RadialSpawnPoint.X;
                     float yDebugInner = (float)Math.Round(_innerRadius * Math.Sin(currentAngle)) + RadialSpawnPoint.Y;
-                    var debugRadiusOuter = _categoryRadius - _innerRadius;
-                    float xDebugOuter = (float)Math.Round(2 * debugRadiusOuter * Math.Cos(currentAngle)) + RadialSpawnPoint.X;
-                    float yDebugOuter = (float)Math.Round(2 * debugRadiusOuter * Math.Sin(currentAngle)) + RadialSpawnPoint.Y;
+                    var debugRadiusOuter = _categoryRadius;
+                    float xDebugOuter = (float)Math.Round(debugRadiusOuter * Math.Cos(currentAngle)) + RadialSpawnPoint.X;
+                    float yDebugOuter = (float)Math.Round(debugRadiusOuter * Math.Sin(currentAngle)) + RadialSpawnPoint.Y;
                     spriteBatch.DrawLine(new Vector2(xDebugInner, yDebugInner), new Vector2(xDebugOuter, yDebugOuter), Color.Red, _debugLineThickness);
                 }
 
@@ -153,8 +153,8 @@ namespace felix.BlishEmotes.UI.Controls
                     EndAngle = endAngle,
                     X = x,
                     Y = y,
-                    Text = "TODO " + category.ToString(),//_helper.EmotesResourceManager.GetString(emote.Id),
-                    Texture = _lockedTexture,//emote.Texture,
+                    Text = category.ToString(),
+                    Texture = _lockedTexture,
                 });
 
                 currentAngle = endAngle;
@@ -176,10 +176,16 @@ namespace felix.BlishEmotes.UI.Controls
             foreach (var radialEmoteCategory in _radialEmoteCategories)
             {
                 // Only mark as selected if far enough from center away BUT not too far (in order to be able to close radial without selection and without changing category during emote selection)
-                if (length >= _innerRadius && length <= _categoryRadius)
+                if (length >= _innerRadius)
                 {
                     // Mark as selected
-                    radialEmoteCategory.Selected = SelectedEmoteCategory == radialEmoteCategory || (radialEmoteCategory.StartAngle <= angle && radialEmoteCategory.EndAngle > angle);
+                    if (length <= _categoryRadius)
+                    {
+                        radialEmoteCategory.Selected = radialEmoteCategory.StartAngle <= angle && radialEmoteCategory.EndAngle > angle;
+                    } else
+                    {
+                        radialEmoteCategory.Selected = SelectedEmoteCategory == radialEmoteCategory;
+                    }
 
                     if (radialEmoteCategory.Selected)
                     {
@@ -188,8 +194,8 @@ namespace felix.BlishEmotes.UI.Controls
                 }
 
                 // Draw emote texture
-                spriteBatch.DrawRectangle(new Rectangle(radialEmoteCategory.X, radialEmoteCategory.Y, _iconSize, _iconSize), Color.Yellow, 20);
-                spriteBatch.DrawOnCtrl(this, radialEmoteCategory.Texture, new Rectangle(radialEmoteCategory.X, radialEmoteCategory.Y, _iconSize, _iconSize), null, Color.White * (radialEmoteCategory.Selected ? 1f : _settings.RadialIconOpacity.Value));
+                //spriteBatch.DrawOnCtrl(this, radialEmoteCategory.Texture, new Rectangle(radialEmoteCategory.X, radialEmoteCategory.Y, _iconSize, _iconSize), null, Color.White * (radialEmoteCategory.Selected ? 1f : _settings.RadialIconOpacity.Value));
+                spriteBatch.DrawStringOnCtrl(this, radialEmoteCategory.Text, GameService.Content.DefaultFont32, new Rectangle(radialEmoteCategory.X, radialEmoteCategory.Y, _iconSize, _iconSize), Color.White * (radialEmoteCategory.Selected ? 1f : _settings.RadialIconOpacity.Value));
             }
         }
 
@@ -327,6 +333,11 @@ namespace felix.BlishEmotes.UI.Controls
                 Logger.Debug("Sending command for " + selected.Value.Id);
                 _helper.SendEmoteCommand(selected.Value);
             }
+        }
+
+        protected override void DisposeControl()
+        {
+            base.DisposeControl();
         }
     }
 }
