@@ -50,6 +50,11 @@
     "command": "/geargrind"
   },
   {
+    "id": "heroic",
+    "category": "pose",
+    "command": "/heroic"
+  },
+  {
     "id": "hiss",
     "category": "reaction",
     "command": "/hiss"

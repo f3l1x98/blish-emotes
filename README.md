@@ -29,6 +29,7 @@ The following icons were used:
 - **dance:** <a href="https://www.flaticon.com/free-icons/dance" title="dance icons">Dance icons created by Leremy - Flaticon</a>
 - **facepalm:** <a href="https://www.flaticon.com/free-icons/regret" title="regret icons">Regret icons created by Leremy - Flaticon</a>
 - **geargrind:** <a href="https://www.flaticon.com/free-icons/runner" title="runner icons">Runner icons created by Leremy - Flaticon</a>
+- **heroic:** <a href="https://www.flaticon.com/free-icons/superman" title="superman icons">Superman icons created by Leremy - Flaticon</a>
 - **hiss:** <a href="https://www.flaticon.com/free-icons/anaconda" title="anaconda icons">Anaconda icons created by Leremy - Flaticon</a>
 - **kneel:** <a href="https://www.flaticon.com/free-icons/servant" title="servant icons">Servant icons created by Leremy - Flaticon</a>
 - **laugh:** <a href="https://www.flaticon.com/free-icons/laugh" title="laugh icons">Laugh icons created by Leremy - Flaticon</a>

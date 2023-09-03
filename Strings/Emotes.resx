@@ -147,6 +147,9 @@
   <data name="geargrind" xml:space="preserve">
     <value>Geargrind</value>
   </data>
+  <data name="heroic" xml:space="preserve">
+    <value>Heroic</value>
+  </data>
   <data name="hiss" xml:space="preserve">
     <value>Hiss</value>
   </data>

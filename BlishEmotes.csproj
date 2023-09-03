@@ -336,6 +336,7 @@
     <Content Include="ref\textures\emotes\dance.png" />
     <Content Include="ref\textures\emotes\facepalm.png" />
     <Content Include="ref\textures\emotes\geargrind.png" />
+    <Content Include="ref\textures\emotes\heroic.png" />
     <Content Include="ref\textures\emotes\hiss.png" />
     <Content Include="ref\textures\emotes\kneel.png" />
     <Content Include="ref\textures\emotes\laugh.png" />
@@ -389,6 +390,7 @@
     <EmbeddedResource Include="Strings\Emotes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Emotes.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
