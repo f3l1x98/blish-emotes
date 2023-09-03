@@ -151,6 +151,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Heroic.
+        /// </summary>
+        internal static string heroic {
+            get {
+                return ResourceManager.GetString("heroic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hiss.
         /// </summary>
         internal static string hiss {
