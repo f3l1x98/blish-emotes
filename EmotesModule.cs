@@ -281,15 +281,37 @@ namespace BlishEmotesList
             return items;
         }
 
+        private ContextMenuStrip GetToggleFavContextMenu(Emote emote)
+        {
+            var toggleFavMenuItem = new ContextMenuStripItem()
+            {
+                Text = Common.emote_categoryFavourite,
+                CanCheck = true,
+                Checked = emote.IsFavourite,
+            };
+            toggleFavMenuItem.CheckedChanged += (sender, args) => {
+                emote.IsFavourite = args.Checked;
+                PersistenceManager.SaveEmotes(_emotes);
+                DrawUI();
+                Logger.Debug($"Toggled favourite for {emote.Id} to ${emote.IsFavourite}");
+            };
+
+            var toggleFavSubMenu = new ContextMenuStrip();
+            toggleFavSubMenu.AddMenuItem(toggleFavMenuItem);
+            return toggleFavSubMenu;
+        }
+
         private List<ContextMenuStripItem> GetEmotesMenuItems(List<Emote> emotes)
         {
             var items = new List<ContextMenuStripItem>();
             foreach (var emote in emotes)
             {
+
                 var menuItem = new ContextMenuStripItem()
                 {
                     Text = _helper.EmotesResourceManager.GetString(emote.Id),
                     Enabled = !emote.Locked,
+                    Submenu = GetToggleFavContextMenu(emote),
                 };
                 menuItem.Click += delegate
                 {
