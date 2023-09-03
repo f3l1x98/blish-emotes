@@ -96,6 +96,7 @@ namespace BlishEmotesList
                     ShowEmoteList(false);
                 }
             };
+            this.Settings.GlobalKeyBindToggleSynchronize.Value.Enabled = true;
             // Update radial menu emotes
             this.Settings.OnAnyEmotesRadialSettingsChanged += delegate
             {
