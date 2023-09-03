@@ -157,6 +157,7 @@
     <Compile Include="EmotesModule.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="ModuleSettings.cs" />
+    <Compile Include="PersistenceManager.cs" />
     <Compile Include="Strings\Common.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
