@@ -210,6 +210,10 @@ namespace BlishEmotesList
             {
                 ShowEmoteList();
             };
+            _cornerIcon.RightMouseButtonReleased += delegate
+            {
+                _settingsWindow.Show();
+            };
         }
 
         private void DrawUI()
