@@ -34,6 +34,8 @@ namespace BlishEmotesList
         internal ContentsManager ContentsManager => this.ModuleParameters.ContentsManager;
         internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
         internal Gw2ApiManager Gw2ApiManager => this.ModuleParameters.Gw2ApiManager;
+
+        internal PersistenceManager PersistenceManager;
         #endregion
 
         #region Controls
@@ -49,7 +51,9 @@ namespace BlishEmotesList
 
         private List<Emote> _emotes;
 
-        private List<Emote> _radialEnabledEmotes => new List<Emote>(_emotes.Where(el => this.Settings.EmotesRadialEnabledMap.ContainsKey(el) ? this.Settings.EmotesRadialEnabledMap[el].Value : true));
+        private List<Emote> _radialEnabledEmotes => _emotes.Where(el => this.Settings.EmotesRadialEnabledMap.ContainsKey(el) ? this.Settings.EmotesRadialEnabledMap[el].Value : true).ToList();
+
+        private List<Emote> _favouriteEmotes => _emotes.Where(el => el.IsFavourite).ToList();
 
 
         [ImportingConstructor]
@@ -110,6 +114,22 @@ namespace BlishEmotesList
         protected override void Initialize()
         {
             Gw2ApiManager.SubtokenUpdated += OnApiSubTokenUpdated;
+
+            // Init PersistenceManager
+            try
+            {
+                PersistenceManager = new PersistenceManager(DirectoriesManager, ContentsManager);
+            }
+            catch (Exception e)
+            {
+                Logger.Fatal("Failed to init PersistenceManager!");
+                Logger.Fatal(e.Message);
+                Logger.Fatal(e.StackTrace);
+
+                Unload();
+                return;
+            }
+
             // Init lists
             _emotes = new List<Emote>();
 
@@ -148,7 +168,7 @@ namespace BlishEmotesList
             try
             {
                 // load emotes
-                _emotes = LoadEmotesResource();
+                _emotes = LoadEmotes();//LoadEmotesResource();
                 // Update emotes with data from api
                 await UpdateEmotesFromApi();
 
@@ -235,6 +255,17 @@ namespace BlishEmotesList
         private List<ContextMenuStripItem> GetCategoryMenuItems()
         {
             var items = new List<ContextMenuStripItem>();
+            if (_favouriteEmotes.Count > 0)
+            {
+                var favouriteSubMenu = new ContextMenuStrip();
+                favouriteSubMenu.AddMenuItems(GetEmotesMenuItems(_favouriteEmotes));
+                var menuItem = new ContextMenuStripItem()
+                {
+                    Text = Common.emote_categoryFavourite,
+                    Submenu = favouriteSubMenu,
+                };
+                items.Add(menuItem);
+            }
             foreach (Category categoryEnum in Enum.GetValues(typeof(Category)))
             {
                 var emotesForCategory = _emotes.Where(emote => emote.Category == categoryEnum).ToList();
@@ -289,14 +320,9 @@ namespace BlishEmotesList
             }
         }
 
-        private List<Emote> LoadEmotesResource()
+        private List<Emote> LoadEmotes()
         {
-            string fileContents;
-            using (StreamReader reader = new StreamReader(ContentsManager.GetFileStream(@"json/emotes.json")))
-            {
-                fileContents = reader.ReadToEnd();
-            }
-            var emotes = JsonConvert.DeserializeObject<List<Emote>>(fileContents);
+            List<Emote> emotes = PersistenceManager.LoadEmotes();
             foreach (var emote in emotes)
             {
                 emote.Texture = ContentsManager.GetTexture(@"textures/emotes/" + emote.TextureRef, ContentsManager.GetTexture(@"textures/missing-texture.png"));
