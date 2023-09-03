@@ -1,5 +1,6 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
+using felix.BlishEmotes.Strings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -37,6 +38,7 @@ namespace felix.BlishEmotes.UI.Controls
         private RadialEmote SelectedEmote => _radialEmotes.SingleOrDefault(m => m.Selected);
 
         private bool _isActionCamToggled;
+        private bool _isSynchronizeActive = false;
 
         private int _innerRadius = 100;
         private int _radius = 0;
@@ -45,6 +47,7 @@ namespace felix.BlishEmotes.UI.Controls
 
         private Label _noEmotesLabel;
         private Label _selectedEmoteLabel;
+        private Label _synchronizeToggleActiveLabel;
         private Point RadialSpawnPoint = default;
 
         private float _debugLineThickness = 2;
@@ -81,6 +84,19 @@ namespace felix.BlishEmotes.UI.Controls
                 Text = "",
                 BackgroundColor = Color.Black * 0.5f
             };
+
+            _synchronizeToggleActiveLabel = new Label()
+            {
+                Parent = this,
+                Visible = false,
+                Location = new Point(0, 0),
+                Size = new Point(200, 30),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Font = GameService.Content.DefaultFont14,
+                Text = Common.emote_synchronizeActive,
+                BackgroundColor = Color.Black * 0.3f
+            };
         }
 
         protected override CaptureType CapturesInput()
@@ -101,6 +117,15 @@ namespace felix.BlishEmotes.UI.Controls
             else
             {
                 _noEmotesLabel.Hide();
+            }
+
+            if (_isSynchronizeActive)
+            {
+                _synchronizeToggleActiveLabel.Show();
+            }
+            else
+            {
+                _synchronizeToggleActiveLabel.Hide();
             }
 
             // Create RadialEmote wrapper for each emote
@@ -183,6 +208,11 @@ namespace felix.BlishEmotes.UI.Controls
             base.PaintBeforeChildren(spriteBatch, bounds);
         }
 
+        private void ToggleSynchronizeEmote(object sender, EventArgs e)
+        {
+            _isSynchronizeActive = !_isSynchronizeActive;
+        }
+
 
         private async Task HandleShown(object sender, EventArgs e)
         {
@@ -218,6 +248,9 @@ namespace felix.BlishEmotes.UI.Controls
 
             // Set Location of selected emote label to roughly center of radial menu
             _selectedEmoteLabel.Location = new Point(RadialSpawnPoint.X - this.Location.X - _selectedEmoteLabel.Size.X / 2, RadialSpawnPoint.Y - this.Location.Y - _selectedEmoteLabel.Size.Y / 2 - 20);
+            _synchronizeToggleActiveLabel.Location = new Point(RadialSpawnPoint.X - this.Location.X - _synchronizeToggleActiveLabel.Size.X / 2, RadialSpawnPoint.Y - this.Location.Y - _synchronizeToggleActiveLabel.Size.Y / 2 + 15);
+
+            _settings.GlobalKeyBindToggleSynchronize.Value.Activated += ToggleSynchronizeEmote;
         }
 
         private async Task HandleHidden(object sender, EventArgs e)
@@ -229,12 +262,13 @@ namespace felix.BlishEmotes.UI.Controls
                 _isActionCamToggled = false;
                 Logger.Debug("HandleHidden turned back on action cam");
             }
+            _settings.GlobalKeyBindToggleSynchronize.Value.Activated -= ToggleSynchronizeEmote;
             // send emote command
             var selected = SelectedEmote;
             if (selected != null)
             {
                 Logger.Debug("Sending command for " + selected.Emote.Id);
-                _helper.SendEmoteCommand(selected.Emote);
+                _helper.SendEmoteCommand(selected.Emote, _isSynchronizeActive);
             }
         }
     }

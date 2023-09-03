@@ -124,6 +124,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Synchronizing emotes.
+        /// </summary>
+        public static string emote_synchronizeActive {
+            get {
+                return ResourceManager.GetString("emote_synchronizeActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Settings.
         /// </summary>
         public static string settings_button {
@@ -156,6 +165,15 @@ namespace felix.BlishEmotes.Strings {
         public static string settings_global_keybindToggleEmoteList {
             get {
                 return ResourceManager.GetString("settings_global_keybindToggleEmoteList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synchronize Emote Modifier.
+        /// </summary>
+        public static string settings_global_keybindToggleSynchronize {
+            get {
+                return ResourceManager.GetString("settings_global_keybindToggleSynchronize", resourceCulture);
             }
         }
         
