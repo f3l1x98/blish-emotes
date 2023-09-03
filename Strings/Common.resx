@@ -123,6 +123,9 @@
   <data name="emote_categoryDance" xml:space="preserve">
     <value>Dance</value>
   </data>
+  <data name="emote_categoryFavourite" xml:space="preserve">
+    <value>Favourite</value>
+  </data>
   <data name="emote_categoryFun" xml:space="preserve">
     <value>Fun</value>
   </data>

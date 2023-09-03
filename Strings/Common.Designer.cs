@@ -79,6 +79,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Favourite.
+        /// </summary>
+        public static string emote_categoryFavourite {
+            get {
+                return ResourceManager.GetString("emote_categoryFavourite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fun.
         /// </summary>
         public static string emote_categoryFun {

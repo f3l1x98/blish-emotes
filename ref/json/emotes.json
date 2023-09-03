@@ -2,92 +2,110 @@
   {
     "id": "beckon",
     "category": "greeting",
-    "command": "/beckon"
+    "command": "/beckon",
+    "isFavourite": false
   },
   {
     "id": "bless",
     "category": "pose",
-    "command": "/bless"
+    "command": "/bless",
+    "isFavourite": false
   },
   {
     "id": "bow",
     "category": "greeting",
-    "command": "/bow"
+    "command": "/bow",
+    "isFavourite": false
   },
   {
     "id": "cheer",
     "category": "fun",
-    "command": "/cheer"
+    "command": "/cheer",
+    "isFavourite": false
   },
   {
     "id": "cower",
     "category": "reaction",
-    "command": "/cower"
+    "command": "/cower",
+    "isFavourite": false
   },
   {
     "id": "crossarms",
     "category": "pose",
-    "command": "/crossarms"
+    "command": "/crossarms",
+    "isFavourite": false
   },
   {
     "id": "cry",
     "category": "reaction",
-    "command": "/cry"
+    "command": "/cry",
+    "isFavourite": false
   },
   {
     "id": "dance",
     "category": "dance",
-    "command": "/dance"
+    "command": "/dance",
+    "isFavourite": false
   },
   {
     "id": "facepalm",
     "category": "reaction",
-    "command": "/facepalm"
+    "command": "/facepalm",
+    "isFavourite": false
   },
   {
     "id": "geargrind",
     "category": "dance",
-    "command": "/geargrind"
+    "command": "/geargrind",
+    "isFavourite": false
   },
   {
     "id": "heroic",
     "category": "pose",
-    "command": "/heroic"
+    "command": "/heroic",
+    "isFavourite": false
   },
   {
     "id": "hiss",
     "category": "reaction",
-    "command": "/hiss"
+    "command": "/hiss",
+    "isFavourite": false
   },
   {
     "id": "kneel",
     "category": "pose",
-    "command": "/kneel"
+    "command": "/kneel",
+    "isFavourite": false
   },
   {
     "id": "laugh",
     "category": "fun",
-    "command": "/laugh"
+    "command": "/laugh",
+    "isFavourite": false
   },
   {
     "id": "magicjuggle",
     "category": "pose",
-    "command": "/magicjuggle"
+    "command": "/magicjuggle",
+    "isFavourite": false
   },
   {
     "id": "no",
     "category": "reaction",
-    "command": "/no"
+    "command": "/no",
+    "isFavourite": false
   },
   {
     "id": "paper",
     "category": "fun",
-    "command": "/paper"
+    "command": "/paper",
+    "isFavourite": false
   },
   {
     "id": "playdead",
     "category": "pose",
-    "command": "/playdead"
+    "command": "/playdead",
+    "isFavourite": false
   },
   {
     "id": "point",
@@ -97,121 +115,145 @@
   {
     "id": "ponder",
     "category": "miscellaneous",
-    "command": "/ponder"
+    "command": "/ponder",
+    "isFavourite": false
   },
   {
     "id": "possessed",
     "category": "miscellaneous",
-    "command": "/possessed"
+    "command": "/possessed",
+    "isFavourite": false
   },
   {
     "id": "rank",
     "category": "miscellaneous",
-    "command": "/rank"
+    "command": "/rank",
+    "isFavourite": false
   },
   {
     "id": "rock",
     "category": "fun",
-    "command": "/rock"
+    "command": "/rock",
+    "isFavourite": false
   },
   {
     "id": "rockout",
     "category": "fun",
-    "command": "/rockout"
+    "command": "/rockout",
+    "isFavourite": false
   },
   {
     "id": "sad",
     "category": "reaction",
-    "command": "/sad"
+    "command": "/sad",
+    "isFavourite": false
   },
   {
     "id": "salute",
     "category": "greeting",
-    "command": "/salute"
+    "command": "/salute",
+    "isFavourite": false
   },
   {
     "id": "scissors",
     "category": "fun",
-    "command": "/scissors"
+    "command": "/scissors",
+    "isFavourite": false
   },
   {
     "id": "serve",
     "category": "pose",
-    "command": "/serve"
+    "command": "/serve",
+    "isFavourite": false
   },
   {
     "id": "shiver",
     "category": "reaction",
-    "command": "/shiver"
+    "command": "/shiver",
+    "isFavourite": false
   },
   {
     "id": "shiverplus",
     "category": "reaction",
-    "command": "/shiverplus"
+    "command": "/shiverplus",
+    "isFavourite": false
   },
   {
     "id": "shrug",
     "category": "reaction",
-    "command": "/shrug"
+    "command": "/shrug",
+    "isFavourite": false
   },
   {
     "id": "shuffle",
     "category": "dance",
-    "command": "/shuffle"
+    "command": "/shuffle",
+    "isFavourite": false
   },
   {
     "id": "sipcoffee",
     "category": "miscellaneous",
-    "command": "/sipcoffee"
+    "command": "/sipcoffee",
+    "isFavourite": false
   },
   {
     "id": "sit",
     "category": "pose",
-    "command": "/sit"
+    "command": "/sit",
+    "isFavourite": false
   },
   {
     "id": "sleep",
     "category": "pose",
-    "command": "/sleep"
+    "command": "/sleep",
+    "isFavourite": false
   },
   {
     "id": "step",
     "category": "dance",
-    "command": "/step"
+    "command": "/step",
+    "isFavourite": false
   },
   {
     "id": "stretch",
     "category": "pose",
-    "command": "/stretch"
+    "command": "/stretch",
+    "isFavourite": false
   },
   {
     "id": "surprised",
     "category": "reaction",
-    "command": "/surprised"
+    "command": "/surprised",
+    "isFavourite": false
   },
   {
     "id": "talk",
     "category": "miscellaneous",
-    "command": "/talk"
+    "command": "/talk",
+    "isFavourite": false
   },
   {
     "id": "thanks",
     "category": "reaction",
-    "command": "/thanks"
+    "command": "/thanks",
+    "isFavourite": false
   },
   {
     "id": "threaten",
     "category": "pose",
-    "command": "/threaten"
+    "command": "/threaten",
+    "isFavourite": false
   },
   {
     "id": "wave",
     "category": "greeting",
-    "command": "/wave"
+    "command": "/wave",
+    "isFavourite": false
   },
   {
     "id": "yes",
     "category": "reaction",
-    "command": "/yes"
+    "command": "/yes",
+    "isFavourite": false
   }
 ]
