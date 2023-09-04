@@ -109,9 +109,17 @@ namespace felix.BlishEmotes.UI.Controls
             {
                 _noEmotesLabel.Hide();
 
-                PaintEmoteCategories(spriteBatch, (Enum.GetValues(typeof(Category)) as Category[]).ToList());
+                var emotes = Emotes;
+                var emotesInnerRadius = _innerRadius;
+                if (_settings.GlobalUseCategories.Value)
+                {
+                    PaintEmoteCategories(spriteBatch, (Enum.GetValues(typeof(Category)) as Category[]).ToList());
 
-                PaintEmotes(spriteBatch, SelectedEmoteCategory != null ? Emotes.Where(e => e.Category == SelectedEmoteCategory.Value).ToList() : new List<Emote>());
+                    emotes = SelectedEmoteCategory != null ? Emotes.Where(e => e.Category == SelectedEmoteCategory.Value).ToList() : new List<Emote>();
+                    emotesInnerRadius = _categoryRadius;
+                }
+
+                PaintEmotes(spriteBatch, emotesInnerRadius, emotes);
             }
 
             base.PaintBeforeChildren(spriteBatch, bounds);
@@ -176,12 +184,12 @@ namespace felix.BlishEmotes.UI.Controls
             }
         }
 
-        private void PaintEmotes(SpriteBatch spriteBatch, List<Emote> emotes)
+        private void PaintEmotes(SpriteBatch spriteBatch, int innerRadius, List<Emote> emotes)
         {
             if (Helper.IsDebugEnabled())
             {
                 // Draw categories circle where emote selection is disabled
-                spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), _categoryRadius, 50, Color.Red, _debugLineThickness);
+                spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), innerRadius, 50, Color.Red, _debugLineThickness);
             }
             // Create RadialEmote wrapper for each emote
             PopulateRadialContainerList<Emote>(_radius, (emote) => _helper.EmotesResourceManager.GetString(emote.Id), (emote) => emote.Texture, ref _radialEmotes, emotes);
@@ -201,10 +209,10 @@ namespace felix.BlishEmotes.UI.Controls
             // Draw each RadialEmote and mark selected
             foreach (var radialEmote in _radialEmotes)
             {
-                DrawDebugSectionSeparators(spriteBatch, _categoryRadius, _radius, radialEmote);
+                DrawDebugSectionSeparators(spriteBatch, innerRadius, _radius, radialEmote);
 
                 // Only mark as selected if far enough from center away (in order to be able to close radial without selecting emote)
-                if (length >= _categoryRadius)
+                if (length >= innerRadius)
                 {
                     // Mark as selected
                     radialEmote.Selected = radialEmote.StartAngle <= angle && radialEmote.EndAngle > angle;
