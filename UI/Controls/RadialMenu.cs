@@ -42,6 +42,7 @@ namespace felix.BlishEmotes.UI.Controls
 
         private bool _isActionCamToggled;
 
+        private double _startAngle = Math.PI * Math.Floor(0.75 * 360) / 180.0; // start at 270deg (aka -90deg, aka at the top)
         private int _innerRadius = 100;
         private int _categoryRadius = 0;
         private int _radius = 0;
@@ -118,63 +119,37 @@ namespace felix.BlishEmotes.UI.Controls
 
         private void PaintEmoteCategories(SpriteBatch spriteBatch, List<Category> categories)
         {
-            // Create RadialEmote wrapper for each emote
-            double startAngle = Math.PI * Math.Floor(0.75 * 360) / 180.0; // start at 270deg (aka -90deg, aka at the top)
             if (Helper.IsDebugEnabled())
             {
                 // Draw inner circle where emote selection is disabled
                 spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), _innerRadius, 50, Color.Red, _debugLineThickness);
             }
-            double currentAngle = startAngle;
-            double sweepAngle = Math.PI * 2 / categories.Count; // Divide 360deg or 2PIrad between categories
-            foreach (var category in categories)
-            {
-                var midAngle = currentAngle + sweepAngle / 2;
-                var endAngle = currentAngle + sweepAngle;
-
-                int x = (int)Math.Round(_radius + _categoryRadius * Math.Cos(midAngle));
-                int y = (int)Math.Round(_radius + _categoryRadius * Math.Sin(midAngle));
-
-                if (Helper.IsDebugEnabled())
-                {
-                    // Draw debug lines separating the sections between emotes
-                    float xDebugInner = (float)Math.Round(_innerRadius * Math.Cos(currentAngle)) + RadialSpawnPoint.X;
-                    float yDebugInner = (float)Math.Round(_innerRadius * Math.Sin(currentAngle)) + RadialSpawnPoint.Y;
-                    var debugRadiusOuter = _categoryRadius;
-                    float xDebugOuter = (float)Math.Round(debugRadiusOuter * Math.Cos(currentAngle)) + RadialSpawnPoint.X;
-                    float yDebugOuter = (float)Math.Round(debugRadiusOuter * Math.Sin(currentAngle)) + RadialSpawnPoint.Y;
-                    spriteBatch.DrawLine(new Vector2(xDebugInner, yDebugInner), new Vector2(xDebugOuter, yDebugOuter), Color.Red, _debugLineThickness);
-                }
-
-                _radialEmoteCategories.Add(new RadialContainer<Category>()
-                {
-                    Value = category,
-                    StartAngle = currentAngle,
-                    EndAngle = endAngle,
-                    X = x,
-                    Y = y,
-                    Text = category.ToString(),
-                    Texture = _lockedTexture,
-                });
-
-                currentAngle = endAngle;
-            }
+            // Create RadialEmote wrapper for each category
+            PopulateRadialContainerList<Category>(_categoryRadius, (category) => category.ToString(), (category) => _lockedTexture, ref _radialEmoteCategories, categories);
 
             // Calc angle between mouse pos and radial center
             var mousePos = Input.Mouse.Position;
             var diff = mousePos - RadialSpawnPoint;
             var angle = Math.Atan2(diff.Y, diff.X);
             // Handle multiple of 2PI
-            while (angle < startAngle)
+            while (angle < _startAngle)
             {
                 angle += Math.PI * 2;
             }
 
             var length = new Vector2(diff.Y, diff.X).Length();
 
+            // Reset SelectedEmoteCategory if inside inner ring in order to hide emotes of last selected category
+            if (length < _innerRadius)
+            {
+                SelectedEmoteCategory = null;
+            }
+
             // Draw each RadialEmote and mark selected
             foreach (var radialEmoteCategory in _radialEmoteCategories)
             {
+                DrawDebugSectionSeparators(spriteBatch, _innerRadius, _categoryRadius, radialEmoteCategory);
+
                 // Only mark as selected if far enough from center away BUT not too far (in order to be able to close radial without selection and without changing category during emote selection)
                 if (length >= _innerRadius)
                 {
@@ -182,8 +157,10 @@ namespace felix.BlishEmotes.UI.Controls
                     if (length <= _categoryRadius)
                     {
                         radialEmoteCategory.Selected = radialEmoteCategory.StartAngle <= angle && radialEmoteCategory.EndAngle > angle;
-                    } else
+                    }
+                    else
                     {
+                        // Inside emote selection -> SelectedEmoteCategory should not change
                         radialEmoteCategory.Selected = SelectedEmoteCategory == radialEmoteCategory;
                     }
 
@@ -201,54 +178,20 @@ namespace felix.BlishEmotes.UI.Controls
 
         private void PaintEmotes(SpriteBatch spriteBatch, List<Emote> emotes)
         {
-            // Create RadialEmote wrapper for each emote
-            double startAngle = Math.PI * Math.Floor(0.75 * 360) / 180.0; // start at 270deg (aka -90deg, aka at the top)
             if (Helper.IsDebugEnabled())
             {
                 // Draw categories circle where emote selection is disabled
                 spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), _categoryRadius, 50, Color.Red, _debugLineThickness);
             }
-            double currentAngle = startAngle;
-            double sweepAngle = Math.PI * 2 / emotes.Count; // Divide 360deg or 2PIrad between emotes
-            foreach (var emote in emotes)
-            {
-                var midAngle = currentAngle + sweepAngle / 2;
-                var endAngle = currentAngle + sweepAngle;
-
-                int x = (int)Math.Round(_radius + _radius * Math.Cos(midAngle));
-                int y = (int)Math.Round(_radius + _radius * Math.Sin(midAngle));
-
-                if (Helper.IsDebugEnabled())
-                {
-                    // Draw debug lines separating the sections between emotes
-                    float xDebugInner = (float)Math.Round(_categoryRadius * Math.Cos(currentAngle)) + RadialSpawnPoint.X;
-                    float yDebugInner = (float)Math.Round(_categoryRadius * Math.Sin(currentAngle)) + RadialSpawnPoint.Y;
-                    var debugRadiusOuter = 250;
-                    float xDebugOuter = (float)Math.Round(2 * debugRadiusOuter * Math.Cos(currentAngle)) + RadialSpawnPoint.X;
-                    float yDebugOuter = (float)Math.Round(2 * debugRadiusOuter * Math.Sin(currentAngle)) + RadialSpawnPoint.Y;
-                    spriteBatch.DrawLine(new Vector2(xDebugInner, yDebugInner), new Vector2(xDebugOuter, yDebugOuter), Color.Red, _debugLineThickness);
-                }
-
-                _radialEmotes.Add(new RadialContainer<Emote>()
-                {
-                    Value = emote,
-                    StartAngle = currentAngle,
-                    EndAngle = endAngle,
-                    X = x,
-                    Y = y,
-                    Text = _helper.EmotesResourceManager.GetString(emote.Id),
-                    Texture = emote.Texture,
-                });
-
-                currentAngle = endAngle;
-            }
+            // Create RadialEmote wrapper for each emote
+            PopulateRadialContainerList<Emote>(_radius, (emote) => _helper.EmotesResourceManager.GetString(emote.Id), (emote) => emote.Texture, ref _radialEmotes, emotes);
 
             // Calc angle between mouse pos and radial center
             var mousePos = Input.Mouse.Position;
             var diff = mousePos - RadialSpawnPoint;
             var angle = Math.Atan2(diff.Y, diff.X);
             // Handle multiple of 2PI
-            while (angle < startAngle)
+            while (angle < _startAngle)
             {
                 angle += Math.PI * 2;
             }
@@ -258,6 +201,8 @@ namespace felix.BlishEmotes.UI.Controls
             // Draw each RadialEmote and mark selected
             foreach (var radialEmote in _radialEmotes)
             {
+                DrawDebugSectionSeparators(spriteBatch, _categoryRadius, _radius, radialEmote);
+
                 // Only mark as selected if far enough from center away (in order to be able to close radial without selecting emote)
                 if (length >= _categoryRadius)
                 {
@@ -276,6 +221,48 @@ namespace felix.BlishEmotes.UI.Controls
                 {
                     spriteBatch.DrawOnCtrl(this, _lockedTexture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
                 }
+            }
+        }
+
+        private void PopulateRadialContainerList<T>(int outerRadius, Func<T, string> GetRadialContainerText, Func<T, Texture2D> GetRadialContainerTexture, ref List<RadialContainer<T>> list, List<T> items)
+        {
+            // Create RadialEmote wrapper for each emote
+            double currentAngle = _startAngle;
+            double sweepAngle = Math.PI * 2 / items.Count; // Divide 360deg or 2PIrad between categories
+            foreach (var item in items)
+            {
+                var midAngle = currentAngle + sweepAngle / 2;
+                var endAngle = currentAngle + sweepAngle;
+
+                int x = (int)Math.Round(_radius + outerRadius * Math.Cos(midAngle));
+                int y = (int)Math.Round(_radius + outerRadius * Math.Sin(midAngle));
+
+                list.Add(new RadialContainer<T>()
+                {
+                    Value = item,
+                    StartAngle = currentAngle,
+                    EndAngle = endAngle,
+                    X = x,
+                    Y = y,
+                    Text = GetRadialContainerText(item),
+                    Texture = GetRadialContainerTexture(item),
+                });
+
+                currentAngle = endAngle;
+            }
+        }
+
+        private void DrawDebugSectionSeparators<T>(SpriteBatch spriteBatch, int innerRadius, int outerRadius, RadialContainer<T> item)
+        {
+            if (Helper.IsDebugEnabled())
+            {
+                // Draw debug lines separating the sections between emotes
+                float xDebugInner = (float)Math.Round(innerRadius * Math.Cos(item.StartAngle)) + RadialSpawnPoint.X;
+                float yDebugInner = (float)Math.Round(innerRadius * Math.Sin(item.StartAngle)) + RadialSpawnPoint.Y;
+                var debugRadiusOuter = outerRadius;
+                float xDebugOuter = (float)Math.Round(debugRadiusOuter * Math.Cos(item.StartAngle)) + RadialSpawnPoint.X;
+                float yDebugOuter = (float)Math.Round(debugRadiusOuter * Math.Sin(item.StartAngle)) + RadialSpawnPoint.Y;
+                spriteBatch.DrawLine(new Vector2(xDebugInner, yDebugInner), new Vector2(xDebugOuter, yDebugOuter), Color.Red, _debugLineThickness);
             }
         }
 
