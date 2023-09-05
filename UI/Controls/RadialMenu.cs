@@ -47,6 +47,7 @@ namespace felix.BlishEmotes.UI.Controls
         private Label _noEmotesLabel;
         private Label _selectedEmoteLabel;
         private Label _synchronizeToggleActiveLabel;
+        private Label _targetToggleActiveLabel;
         private Point RadialSpawnPoint = default;
 
         private float _debugLineThickness = 2;
@@ -96,6 +97,19 @@ namespace felix.BlishEmotes.UI.Controls
                 Text = Common.emote_synchronizeActive,
                 BackgroundColor = Color.Black * 0.3f
             };
+
+            _targetToggleActiveLabel = new Label()
+            {
+                Parent = this,
+                Visible = false,
+                Location = new Point(0, 0),
+                Size = new Point(200, 30),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Font = GameService.Content.DefaultFont14,
+                Text = Common.emote_targetingActive,
+                BackgroundColor = Color.Black * 0.3f
+            };
         }
 
         protected override CaptureType CapturesInput()
@@ -125,6 +139,15 @@ namespace felix.BlishEmotes.UI.Controls
             else
             {
                 _synchronizeToggleActiveLabel.Hide();
+            }
+
+            if (_helper.IsEmoteTargeted)
+            {
+                _targetToggleActiveLabel.Show();
+            }
+            else
+            {
+                _targetToggleActiveLabel.Hide();
             }
 
             // Create RadialEmote wrapper for each emote
@@ -242,7 +265,8 @@ namespace felix.BlishEmotes.UI.Controls
 
             // Set Location of selected emote label to roughly center of radial menu
             _selectedEmoteLabel.Location = new Point(RadialSpawnPoint.X - this.Location.X - _selectedEmoteLabel.Size.X / 2, RadialSpawnPoint.Y - this.Location.Y - _selectedEmoteLabel.Size.Y / 2 - 20);
-            _synchronizeToggleActiveLabel.Location = new Point(RadialSpawnPoint.X - this.Location.X - _synchronizeToggleActiveLabel.Size.X / 2, RadialSpawnPoint.Y - this.Location.Y - _synchronizeToggleActiveLabel.Size.Y / 2 + 15);
+            _synchronizeToggleActiveLabel.Location = new Point(_selectedEmoteLabel.Location.X, _selectedEmoteLabel.Location.Y + _selectedEmoteLabel.Size.Y);
+            _targetToggleActiveLabel.Location = new Point(_synchronizeToggleActiveLabel.Location.X, _synchronizeToggleActiveLabel.Location.Y + _synchronizeToggleActiveLabel.Size.Y);
         }
 
         private async Task HandleHidden(object sender, EventArgs e)
