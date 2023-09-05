@@ -263,7 +263,7 @@ namespace BlishEmotesList
             // If IsEmoteSynchronized insert at top
             if (_helper.IsEmoteSynchronized)
             {
-                items.Insert(0, new ContextMenuStripItem(Common.emote_synchronizeActive));
+                items.Insert(0, new ContextMenuStripItem($"[ {Common.emote_synchronizeActive.ToUpper()} ]"));
             }
             return items;
         }
@@ -289,7 +289,7 @@ namespace BlishEmotesList
             // If IsEmoteSynchronized insert at top
             if (_helper.IsEmoteSynchronized)
             {
-                items.Insert(0, new ContextMenuStripItem(Common.emote_synchronizeActive));
+                items.Insert(0, new ContextMenuStripItem($"[ {Common.emote_synchronizeActive.ToUpper()} ]"));
             }
             return items;
         }
