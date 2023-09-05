@@ -104,6 +104,13 @@ namespace BlishEmotesList
                 DrawUI(true);
                 Logger.Debug("Toggled IsEmoteSynchronized");
             };
+            this.Settings.GlobalKeyBindToggleTargeting.Value.Enabled = true;
+            this.Settings.GlobalKeyBindToggleTargeting.Value.Activated += delegate
+            {
+                _helper.IsEmoteTargeted = !_helper.IsEmoteTargeted;
+                DrawUI(true);
+                Logger.Debug("Toggled IsEmoteTargeted");
+            };
             // Update radial menu emotes
             this.Settings.OnAnyEmotesRadialSettingsChanged += delegate
             {
@@ -257,6 +264,20 @@ namespace BlishEmotesList
             }
         }
 
+        private void AddEmoteModifierStatus(ref List<ContextMenuStripItem> items)
+        {
+            // If IsEmoteSynchronized insert at top
+            if (_helper.IsEmoteSynchronized)
+            {
+                items.Insert(0, new ContextMenuStripItem($"[ {Common.emote_synchronizeActive.ToUpper()} ]"));
+            }
+            // If IsEmoteTargeted insert at top
+            if (_helper.IsEmoteTargeted)
+            {
+                items.Insert(0, new ContextMenuStripItem($"[ {Common.emote_targetingActive.ToUpper()} ]"));
+            }
+        }
+
         private List<ContextMenuStripItem> GetCategoryMenuItems()
         {
             var items = new List<ContextMenuStripItem>();
@@ -272,11 +293,7 @@ namespace BlishEmotesList
                 };
                 items.Add(menuItem);
             }
-            // If IsEmoteSynchronized insert at top
-            if (_helper.IsEmoteSynchronized)
-            {
-                items.Insert(0, new ContextMenuStripItem($"[ {Common.emote_synchronizeActive.ToUpper()} ]"));
-            }
+            AddEmoteModifierStatus(ref items);
             return items;
         }
 
@@ -298,11 +315,7 @@ namespace BlishEmotesList
             }
             // Sort by text such that list is sorted no matter what locale
             items.Sort((x, y) => x.Text.CompareTo(y.Text));
-            // If IsEmoteSynchronized insert at top
-            if (_helper.IsEmoteSynchronized)
-            {
-                items.Insert(0, new ContextMenuStripItem($"[ {Common.emote_synchronizeActive.ToUpper()} ]"));
-            }
+            AddEmoteModifierStatus(ref items);
             return items;
         }
 

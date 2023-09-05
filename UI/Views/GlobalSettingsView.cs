@@ -142,7 +142,7 @@ namespace felix.BlishEmotes.UI.Views
                 Location = new Point(_labelWidth - 2, 0), // -2 due to hardcoded padding between Name and keybind
             };
 
-            // GlobalKeyBindSynchronizeModifier
+            // GlobalKeyBindToggleSynchronize
             var _toggleSynchronizeKeybindRow = CreateRowPanel(_globalPanel);
             Label _toggleSynchronizeKeybindLabel = new Label()
             {
@@ -154,6 +154,24 @@ namespace felix.BlishEmotes.UI.Views
             KeybindingAssigner _toggleSynchronizeKeybindAssigner = new KeybindingAssigner(this._settings.GlobalKeyBindToggleSynchronize.Value)
             {
                 Parent = _toggleSynchronizeKeybindRow,
+                NameWidth = 0,
+                Padding = Thickness.Zero,
+                Size = new Point(_controlWidth, _height),
+                Location = new Point(_labelWidth - 2, 0), // -2 due to hardcoded padding between Name and keybind
+            };
+
+            // GlobalKeyBindToggleTargeting
+            var _toggleTargetingKeybindRow = CreateRowPanel(_globalPanel);
+            Label _toggleTargetingKeybindLabel = new Label()
+            {
+                Parent = _toggleTargetingKeybindRow,
+                Text = Common.settings_global_keybindToggleTargeting,
+                Size = new Point(_labelWidth, _height),
+                Location = new Point(0, 0),
+            };
+            KeybindingAssigner _toggleTargetingKeybindAssigner = new KeybindingAssigner(this._settings.GlobalKeyBindToggleTargeting.Value)
+            {
+                Parent = _toggleTargetingKeybindRow,
                 NameWidth = 0,
                 Padding = Thickness.Zero,
                 Size = new Point(_controlWidth, _height),

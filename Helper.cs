@@ -31,6 +31,8 @@ namespace felix.BlishEmotes
 
         public bool IsEmoteSynchronized { get; set; } = false;
 
+        public bool IsEmoteTargeted { get; set; } = false;
+
         public void SendEmoteCommand(Emote emote)
         {
             if (emote.Locked)
@@ -45,6 +47,10 @@ namespace felix.BlishEmotes
                 if (IsEmoteSynchronized)
                 {
                     command += " *";
+                }
+                if (IsEmoteTargeted)
+                {
+                    command += " @";
                 }
                 Logger.Debug(command);
                 GameService.GameIntegration.Chat.Send(command);
