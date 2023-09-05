@@ -1,5 +1,6 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.GameIntegration;
 using Blish_HUD.Graphics.UI;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
@@ -123,6 +124,17 @@ namespace BlishEmotesList
 
         protected override void Initialize()
         {
+            // SOTO Fix
+            if (Program.OverlayVersion < new SemVer.Version(1, 1, 0))
+            {
+                try
+                {
+                    var tacoActive = typeof(TacOIntegration).GetProperty(nameof(TacOIntegration.TacOIsRunning)).GetSetMethod(true);
+                    tacoActive?.Invoke(GameService.GameIntegration.TacO, new object[] { true });
+                }
+                catch { /* NOOP */ }
+            }
+
             Gw2ApiManager.SubtokenUpdated += OnApiSubTokenUpdated;
             // Init lists
             _emotes = new List<Emote>();
