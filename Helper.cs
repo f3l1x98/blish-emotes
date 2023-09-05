@@ -29,6 +29,8 @@ namespace felix.BlishEmotes
             EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
         }
 
+        public bool IsEmoteSynchronized { get; set; } = false;
+
         public void SendEmoteCommand(Emote emote)
         {
             if (emote.Locked)
@@ -39,7 +41,13 @@ namespace felix.BlishEmotes
             // Send emote command to chat if in game and map closed
             if (GameService.GameIntegration.Gw2Instance.IsInGame && !GameService.Gw2Mumble.UI.IsMapOpen)
             {
-                GameService.GameIntegration.Chat.Send(emote.Command);
+                string command = emote.Command;
+                if (IsEmoteSynchronized)
+                {
+                    command += " *";
+                }
+                Logger.Debug(command);
+                GameService.GameIntegration.Chat.Send(command);
             }
         }
 
