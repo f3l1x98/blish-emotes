@@ -1,5 +1,6 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.GameIntegration;
 using Blish_HUD.Graphics.UI;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
@@ -96,6 +97,20 @@ namespace BlishEmotesList
                     ShowEmoteList(false);
                 }
             };
+            this.Settings.GlobalKeyBindToggleSynchronize.Value.Enabled = true;
+            this.Settings.GlobalKeyBindToggleSynchronize.Value.Activated += delegate
+            {
+                _helper.IsEmoteSynchronized = !_helper.IsEmoteSynchronized;
+                DrawUI(true);
+                Logger.Debug("Toggled IsEmoteSynchronized");
+            };
+            this.Settings.GlobalKeyBindToggleTargeting.Value.Enabled = true;
+            this.Settings.GlobalKeyBindToggleTargeting.Value.Activated += delegate
+            {
+                _helper.IsEmoteTargeted = !_helper.IsEmoteTargeted;
+                DrawUI(true);
+                Logger.Debug("Toggled IsEmoteTargeted");
+            };
             // Update radial menu emotes
             this.Settings.OnAnyEmotesRadialSettingsChanged += delegate
             {
@@ -109,6 +124,17 @@ namespace BlishEmotesList
 
         protected override void Initialize()
         {
+            // SOTO Fix
+            if (Program.OverlayVersion < new SemVer.Version(1, 1, 0))
+            {
+                try
+                {
+                    var tacoActive = typeof(TacOIntegration).GetProperty(nameof(TacOIntegration.TacOIsRunning)).GetSetMethod(true);
+                    tacoActive?.Invoke(GameService.GameIntegration.TacO, new object[] { true });
+                }
+                catch { /* NOOP */ }
+            }
+
             Gw2ApiManager.SubtokenUpdated += OnApiSubTokenUpdated;
             // Init lists
             _emotes = new List<Emote>();
@@ -196,7 +222,7 @@ namespace BlishEmotesList
             };
         }
 
-        private void DrawUI()
+        private void DrawUI(bool excludeRadial = false)
         {
             _emoteListMenuStrip?.Dispose();
 
@@ -204,14 +230,16 @@ namespace BlishEmotesList
             var menuItems = this.Settings.GlobalUseCategories.Value ? GetCategoryMenuItems() : GetEmotesMenuItems(_emotes);
             _emoteListMenuStrip.AddMenuItems(menuItems);
 
-            _radialMenu?.Dispose();
-            // Init radial menu
-            _radialMenu = new RadialMenu(_helper, this.Settings, ContentsManager.GetTexture(@"textures/2107931.png"))
+            if (!excludeRadial)
             {
-                Parent = GameService.Graphics.SpriteScreen,
-                Emotes = _radialEnabledEmotes,
-            };
-
+                _radialMenu?.Dispose();
+                // Init radial menu
+                _radialMenu = new RadialMenu(_helper, this.Settings, ContentsManager.GetTexture(@"textures/2107931.png"))
+                {
+                    Parent = GameService.Graphics.SpriteScreen,
+                    Emotes = _radialEnabledEmotes,
+                };
+            }
         }
 
         private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
@@ -236,6 +264,20 @@ namespace BlishEmotesList
             }
         }
 
+        private void AddEmoteModifierStatus(ref List<ContextMenuStripItem> items)
+        {
+            // If IsEmoteSynchronized insert at top
+            if (_helper.IsEmoteSynchronized)
+            {
+                items.Insert(0, new ContextMenuStripItem($"[ {Common.emote_synchronizeActive.ToUpper()} ]"));
+            }
+            // If IsEmoteTargeted insert at top
+            if (_helper.IsEmoteTargeted)
+            {
+                items.Insert(0, new ContextMenuStripItem($"[ {Common.emote_targetingActive.ToUpper()} ]"));
+            }
+        }
+
         private List<ContextMenuStripItem> GetCategoryMenuItems()
         {
             var items = new List<ContextMenuStripItem>();
@@ -251,6 +293,7 @@ namespace BlishEmotesList
                 };
                 items.Add(menuItem);
             }
+            AddEmoteModifierStatus(ref items);
             return items;
         }
 
@@ -272,6 +315,7 @@ namespace BlishEmotesList
             }
             // Sort by text such that list is sorted no matter what locale
             items.Sort((x, y) => x.Text.CompareTo(y.Text));
+            AddEmoteModifierStatus(ref items);
             return items;
         }
 

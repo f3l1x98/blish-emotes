@@ -138,6 +138,12 @@
   <data name="emote_categoryReaction" xml:space="preserve">
     <value>Reaction</value>
   </data>
+  <data name="emote_synchronizeActive" xml:space="preserve">
+    <value>Synchronizing emotes</value>
+  </data>
+  <data name="emote_targetingActive" xml:space="preserve">
+    <value>Target emotes</value>
+  </data>
   <data name="settings_button" xml:space="preserve">
     <value>Open Settings</value>
   </data>
@@ -149,6 +155,12 @@
   </data>
   <data name="settings_global_keybindToggleEmoteList" xml:space="preserve">
     <value>Toggle emote list</value>
+  </data>
+  <data name="settings_global_keybindToggleSynchronize" xml:space="preserve">
+    <value>Synchronize Emote Toggle</value>
+  </data>
+  <data name="settings_global_keybindToggleTargeting" xml:space="preserve">
+    <value>Targeting Emote Toggle</value>
   </data>
   <data name="settings_global_useCategories" xml:space="preserve">
     <value>Enable categories</value>
