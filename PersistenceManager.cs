@@ -1,14 +1,9 @@
 ﻿using Blish_HUD.Modules.Managers;
 using Blish_HUD;
-using Gw2Sharp.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Microsoft.Xna.Framework.Content;
 
 namespace felix.BlishEmotes
 {
@@ -16,15 +11,12 @@ namespace felix.BlishEmotes
     {
 
         private static readonly Logger Logger = Logger.GetLogger<PersistenceManager>();
-        private ContentsManager _contentsManager;
 
         private string _baseDirectoryPath;
+        private string _categoriesFile => Path.Combine(_baseDirectoryPath, "categories.json");
 
-        private string _emotesFile => Path.Combine(_baseDirectoryPath, "emotes.json");
-
-        public PersistenceManager(DirectoriesManager directoriesManager, ContentsManager contentsManager)
+        public PersistenceManager(DirectoriesManager directoriesManager)
         {
-            _contentsManager = contentsManager;
             IReadOnlyList<string> registeredDirectories = directoriesManager.RegisteredDirectories;
             if (registeredDirectories.Count == 0)
             {
@@ -40,38 +32,30 @@ namespace felix.BlishEmotes
             _baseDirectoryPath = directoriesManager.GetFullDirectoryPath(registeredDirectories[0]);
         }
 
-        public List<Emote> LoadEmotes()
+        public List<Category> LoadCategories()
         {
             try
             {
-                var emotes = LoadJson<List<Emote>>(_emotesFile);
-                return emotes;
+                var categories = LoadJson<List<Category>>(_categoriesFile);
+                return categories;
             }
-            catch (FileNotFoundException)
+            catch (FileNotFoundException e)
             {
-                Logger.Debug("Emote file not found - init with resource file.");
-                // Read resource file
-                string fileContents;
-                using (StreamReader reader = new StreamReader(_contentsManager.GetFileStream(@"json/emotes.json")))
-                {
-                    fileContents = reader.ReadToEnd();
-                }
-                var emotes = JsonConvert.DeserializeObject<List<Emote>>(fileContents);
-                // Save to emote file
-                SaveEmotes(emotes);
-                return emotes;
+                Logger.Debug("Category file not found.");
+                // Re-throw because CategoriesManager will now have to setup default categories
+                throw e;
             }
             catch (Exception)
             {
-                return new List<Emote>();
+                return new List<Category>();
             }
         }
 
-        public void SaveEmotes(List<Emote> emotes)
+        public void SaveCategories(List<Category> categories)
         {
             try
             {
-                SaveJson(emotes, _emotesFile);
+                SaveJson(categories, _categoriesFile);
             }
             catch (Exception)
             {
@@ -95,7 +79,7 @@ namespace felix.BlishEmotes
             }
             catch (Exception e)
             {
-                Logger.Error($"Failed to write json file due to {e.GetType().FullName}");
+                Logger.Error($"Failed to write json file {file} due to {e.GetType().FullName}");
                 Logger.Error(e.Message);
                 Logger.Debug(e.StackTrace);
                 throw e;
@@ -111,6 +95,11 @@ namespace felix.BlishEmotes
                 Logger.Debug($"Successfully loaded json from {file}");
                 return json;
             }
+            catch (FileNotFoundException e)
+            {
+                Logger.Warn($"File {file} not found");
+                throw e;
+            }
             catch (JsonException e)
             {
                 Logger.Error("Failed to deserialize json!");
@@ -120,7 +109,7 @@ namespace felix.BlishEmotes
             }
             catch (Exception e)
             {
-                Logger.Error($"Failed to read emotes from {_emotesFile}");
+                Logger.Error($"Failed to read json file {file} due to {e.GetType().FullName}");
                 Logger.Error(e.Message);
                 Logger.Debug(e.StackTrace);
                 throw e;

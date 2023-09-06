@@ -10,6 +10,7 @@ using felix.BlishEmotes.Strings;
 using felix.BlishEmotes.UI.Controls;
 using felix.BlishEmotes.UI.Views;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,7 @@ namespace BlishEmotesList
         internal Gw2ApiManager Gw2ApiManager => this.ModuleParameters.Gw2ApiManager;
 
         internal PersistenceManager PersistenceManager;
+        internal CategoriesManager CategoriesManager;
         #endregion
 
         #region Controls
@@ -53,8 +55,6 @@ namespace BlishEmotesList
         private List<Emote> _emotes;
 
         private List<Emote> _radialEnabledEmotes => _emotes.Where(el => this.Settings.EmotesRadialEnabledMap.ContainsKey(el) ? this.Settings.EmotesRadialEnabledMap[el].Value : true).ToList();
-
-        private List<Emote> _favouriteEmotes => _emotes.Where(el => el.IsFavourite).ToList();
 
 
         [ImportingConstructor]
@@ -144,7 +144,7 @@ namespace BlishEmotesList
             // Init PersistenceManager
             try
             {
-                PersistenceManager = new PersistenceManager(DirectoriesManager, ContentsManager);
+                PersistenceManager = new PersistenceManager(DirectoriesManager);
             }
             catch (Exception e)
             {
@@ -155,6 +155,7 @@ namespace BlishEmotesList
                 Unload();
                 return;
             }
+            CategoriesManager = new CategoriesManager(PersistenceManager);
 
             // Init lists
             _emotes = new List<Emote>();
@@ -194,9 +195,11 @@ namespace BlishEmotesList
             try
             {
                 // load emotes
-                _emotes = LoadEmotes();//LoadEmotesResource();
+                _emotes = LoadEmotes();
                 // Update emotes with data from api
                 await UpdateEmotesFromApi();
+                // Update category Emotes
+                CategoriesManager.ResolveEmoteIds(_emotes);
 
                 this.Settings.InitEmotesSettings(_emotes);
                 DrawUI();
@@ -301,25 +304,13 @@ namespace BlishEmotesList
         private List<ContextMenuStripItem> GetCategoryMenuItems()
         {
             var items = new List<ContextMenuStripItem>();
-            if (_favouriteEmotes.Count > 0)
+            foreach (Category category in CategoriesManager.GetAll())
             {
-                var favouriteSubMenu = new ContextMenuStrip();
-                favouriteSubMenu.AddMenuItems(GetEmotesMenuItems(_favouriteEmotes));
-                var menuItem = new ContextMenuStripItem()
-                {
-                    Text = Common.emote_categoryFavourite,
-                    Submenu = favouriteSubMenu,
-                };
-                items.Add(menuItem);
-            }
-            foreach (Category categoryEnum in Enum.GetValues(typeof(Category)))
-            {
-                var emotesForCategory = _emotes.Where(emote => emote.Category == categoryEnum).ToList();
                 var categorySubMenu = new ContextMenuStrip();
-                categorySubMenu.AddMenuItems(GetEmotesMenuItems(emotesForCategory));
+                categorySubMenu.AddMenuItems(GetEmotesMenuItems(category.Emotes));
                 var menuItem = new ContextMenuStripItem()
                 {
-                    Text = categoryEnum.Label(),
+                    Text = category.Name,
                     Submenu = categorySubMenu,
                 };
                 items.Add(menuItem);
@@ -334,13 +325,12 @@ namespace BlishEmotesList
             {
                 Text = Common.emote_categoryFavourite,
                 CanCheck = true,
-                Checked = emote.IsFavourite,
+                Checked = CategoriesManager.GetById(CategoriesManager.FavouriteCategoryId).EmoteIds.Contains(emote.Id),
             };
             toggleFavMenuItem.CheckedChanged += (sender, args) => {
-                emote.IsFavourite = args.Checked;
-                PersistenceManager.SaveEmotes(_emotes);
+                CategoriesManager.ToggleFavouriteEmote(emote);
                 DrawUI();
-                Logger.Debug($"Toggled favourite for {emote.Id} to ${emote.IsFavourite}");
+                Logger.Debug($"Toggled favourite for {emote.Id} to ${args.Checked}");
             };
 
             var toggleFavSubMenu = new ContextMenuStrip();
@@ -353,7 +343,6 @@ namespace BlishEmotesList
             var items = new List<ContextMenuStripItem>();
             foreach (var emote in emotes)
             {
-
                 var menuItem = new ContextMenuStripItem()
                 {
                     Text = _helper.EmotesResourceManager.GetString(emote.Id),
@@ -392,7 +381,13 @@ namespace BlishEmotesList
 
         private List<Emote> LoadEmotes()
         {
-            List<Emote> emotes = PersistenceManager.LoadEmotes();
+            // Read resource file
+            string fileContents;
+            using (StreamReader reader = new StreamReader(ContentsManager.GetFileStream(@"json/emotes.json")))
+            {
+                fileContents = reader.ReadToEnd();
+            }
+            var emotes = JsonConvert.DeserializeObject<List<Emote>>(fileContents);
             foreach (var emote in emotes)
             {
                 emote.Texture = ContentsManager.GetTexture(@"textures/emotes/" + emote.TextureRef, ContentsManager.GetTexture(@"textures/missing-texture.png"));
@@ -444,6 +439,7 @@ namespace BlishEmotesList
             _cornerIcon?.Dispose();
             _settingsWindow?.Dispose();
             _radialMenu?.Dispose();
+            CategoriesManager.Unload();
 
             // All static members must be manually unset
         }

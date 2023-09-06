@@ -153,8 +153,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CategoriesManager.cs" />
+    <Compile Include="Category.cs" />
     <Compile Include="Emote.cs" />
     <Compile Include="EmotesModule.cs" />
+    <Compile Include="Exceptions\NotFoundException.cs" />
+    <Compile Include="Exceptions\UniqueViolationException.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="ModuleSettings.cs" />
     <Compile Include="PersistenceManager.cs" />
