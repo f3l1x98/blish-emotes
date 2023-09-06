@@ -120,24 +120,6 @@
   <data name="cornerIcon_tooltip" xml:space="preserve">
     <value>Emoteliste öffnen</value>
   </data>
-  <data name="emote_categoryDance" xml:space="preserve">
-    <value>Tanzen</value>
-  </data>
-  <data name="emote_categoryFun" xml:space="preserve">
-    <value>Spaß</value>
-  </data>
-  <data name="emote_categoryGreeting" xml:space="preserve">
-    <value>Grüße</value>
-  </data>
-  <data name="emote_categoryMiscellaneous" xml:space="preserve">
-    <value>Verschiedenes</value>
-  </data>
-  <data name="emote_categoryPose" xml:space="preserve">
-    <value>Pose</value>
-  </data>
-  <data name="emote_categoryReaction" xml:space="preserve">
-    <value>Reaktion</value>
-  </data>
   <data name="settings_button" xml:space="preserve">
     <value>Einstellungen öffnen</value>
   </data>

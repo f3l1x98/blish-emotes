@@ -42,6 +42,12 @@ namespace felix.BlishEmotes
             {
                 SetupDefaultCategories();
             }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to load categories.");
+                Logger.Error(ex.Message);
+                Logger.Debug(ex.StackTrace);
+            }
         }
 
         public Category CreateCategory(string name, List<Emote> emotes = null, bool saveToFile = true)
@@ -118,26 +124,44 @@ namespace felix.BlishEmotes
             return new List<Category>(categories.Values.Select((category) => category.Clone()));
         }
 
-        public void ToggleFavouriteEmote(Emote emote, bool saveToFile = true)
+        public bool IsEmoteInCategory(Guid categoryId, Emote emote)
         {
-            if (FavouriteCategoryId == null)
+            Category category;
+            categories.TryGetValue(categoryId, out category);
+            if (category == null)
             {
-                Logger.Error("FavouriteCategoryId is not set!");
+                throw new NotFoundException($"No category found for id {categoryId}");
+            }
+            return category.EmoteIds.Contains(emote.Id);
+        }
+
+        public void ToggleEmoteFromCategory(Guid categoryId, Emote emote, bool saveToFile = true)
+        {
+            if (categoryId == null)
+            {
+                Logger.Error("categoryId is not set!");
                 return;
             }
 
-            if (categories[FavouriteCategoryId].EmoteIds.Contains(emote.Id))
+            try
             {
-                categories[FavouriteCategoryId].RemoveEmote(emote.Id);
-            }
-            else
-            {
-                categories[FavouriteCategoryId].AddEmote(emote);
-            }
+                if (IsEmoteInCategory(categoryId, emote))
+                {
+                    categories[categoryId].RemoveEmote(emote.Id);
+                }
+                else
+                {
+                    categories[categoryId].AddEmote(emote);
+                }
 
-            if (saveToFile)
+                if (saveToFile)
+                {
+                    PersistenceManager.SaveCategories(categories.Values.ToList());
+                }
+            }
+            catch (NotFoundException)
             {
-                PersistenceManager.SaveCategories(categories.Values.ToList());
+                Logger.Warn($"Failed to toggle emote {emote.Id} - Category not found!");
             }
         }
 

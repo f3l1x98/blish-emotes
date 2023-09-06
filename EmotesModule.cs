@@ -6,6 +6,7 @@ using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using felix.BlishEmotes;
+using felix.BlishEmotes.Exceptions;
 using felix.BlishEmotes.Strings;
 using felix.BlishEmotes.UI.Controls;
 using felix.BlishEmotes.UI.Views;
@@ -321,14 +322,20 @@ namespace BlishEmotesList
 
         private ContextMenuStrip GetToggleFavContextMenu(Emote emote)
         {
+            bool isFav = false;
+            try
+            {
+                isFav = CategoriesManager.IsEmoteInCategory(CategoriesManager.FavouriteCategoryId, emote);
+            }
+            catch (NotFoundException) { }
             var toggleFavMenuItem = new ContextMenuStripItem()
             {
                 Text = Common.emote_categoryFavourite,
                 CanCheck = true,
-                Checked = CategoriesManager.GetById(CategoriesManager.FavouriteCategoryId).EmoteIds.Contains(emote.Id),
+                Checked = isFav,
             };
             toggleFavMenuItem.CheckedChanged += (sender, args) => {
-                CategoriesManager.ToggleFavouriteEmote(emote);
+                CategoriesManager.ToggleEmoteFromCategory(CategoriesManager.FavouriteCategoryId, emote);
                 DrawUI();
                 Logger.Debug($"Toggled favourite for {emote.Id} to ${args.Checked}");
             };
