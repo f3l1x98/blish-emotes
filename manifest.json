@@ -23,6 +23,7 @@
       "details": "Needed if you want to disable locked emotes."
     }
   },
+  "directories": [ "emotes" ],
   "url": "https://github.com/f3l1x98/blish-emotes",
   "contributors": [
     {

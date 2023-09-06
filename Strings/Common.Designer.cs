@@ -70,56 +70,11 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dance.
+        ///   Looks up a localized string similar to Favourite.
         /// </summary>
-        public static string emote_categoryDance {
+        public static string emote_categoryFavourite {
             get {
-                return ResourceManager.GetString("emote_categoryDance", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fun.
-        /// </summary>
-        public static string emote_categoryFun {
-            get {
-                return ResourceManager.GetString("emote_categoryFun", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Greeting.
-        /// </summary>
-        public static string emote_categoryGreeting {
-            get {
-                return ResourceManager.GetString("emote_categoryGreeting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Miscellaneous.
-        /// </summary>
-        public static string emote_categoryMiscellaneous {
-            get {
-                return ResourceManager.GetString("emote_categoryMiscellaneous", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pose.
-        /// </summary>
-        public static string emote_categoryPose {
-            get {
-                return ResourceManager.GetString("emote_categoryPose", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reaction.
-        /// </summary>
-        public static string emote_categoryReaction {
-            get {
-                return ResourceManager.GetString("emote_categoryReaction", resourceCulture);
+                return ResourceManager.GetString("emote_categoryFavourite", resourceCulture);
             }
         }
         
