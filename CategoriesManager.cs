@@ -177,7 +177,7 @@ namespace felix.BlishEmotes
             {
                 if (IsEmoteInCategory(categoryId, emote))
                 {
-                    categories[categoryId].RemoveEmote(emote.Id);
+                    categories[categoryId].RemoveEmote(emote);
                 }
                 else
                 {

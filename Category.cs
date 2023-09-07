@@ -38,10 +38,10 @@ namespace felix.BlishEmotes
             EmoteIds.Add(emote.Id);
             Emotes.Add(emote);
         }
-        public void RemoveEmote(string id)
+        public void RemoveEmote(Emote emote)
         {
-            EmoteIds.Remove(id);
-            Emotes.RemoveAll((emote) => emote.Id == id);
+            EmoteIds.Remove(emote.Id);
+            Emotes.RemoveAll((e) => e.Id == emote.Id);
         }
     }
 }
