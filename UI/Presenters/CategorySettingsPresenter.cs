@@ -14,14 +14,21 @@ namespace felix.BlishEmotes.UI.Presenters
         public CategorySettingsPresenter(CategorySettingsView view, (CategoriesManager, EmotesManager) model) : base(view, model)
         {
         }
+
         protected override Task<bool> Load(IProgress<string> progress)
         {
             this.View.AddCategory += View_AddCategoryClicked;
             this.View.UpdateCategory += View_UpdateCategoryClicked;
             this.View.DeleteCategory += View_DeleteCategoryClicked;
             this.View.Categories = this.Model.Item1.GetAll();
+            this.View.Emotes = this.Model.Item2.GetAll();
 
             return base.Load(progress);
+        }
+
+        public bool IsEmoteInCategory(Guid categoryId, Emote emote)
+        {
+            return this.Model.Item1.IsEmoteInCategory(categoryId, emote);
         }
 
         private void View_DeleteCategoryClicked(object sender, Category e)
@@ -29,7 +36,7 @@ namespace felix.BlishEmotes.UI.Presenters
             this.Model.Item1.DeleteCategory(e);
             this.View.Categories = this.Model.Item1.GetAll();
             // TODO TRIGGER VIEW REBUILD?!?!?
-            this.UpdateView();
+            this.View.Rebuild();
         }
 
         private void View_UpdateCategoryClicked(object sender, Category e)
@@ -37,7 +44,7 @@ namespace felix.BlishEmotes.UI.Presenters
             this.Model.Item1.UpdateCategory(e);
             this.View.Categories = this.Model.Item1.GetAll();
             // TODO TRIGGER VIEW REBUILD?!?!?
-            this.UpdateView();
+            this.View.Rebuild();
         }
 
         private void View_AddCategoryClicked(object sender, AddCategoryArgs e)
@@ -46,7 +53,7 @@ namespace felix.BlishEmotes.UI.Presenters
             this.View.Categories = this.Model.Item1.GetAll();
             // TODO TRIGGER VIEW REBUILD?!?!?
             // THIS MIGHT BREAK AUTOMATICALLY DISPLAYING EDIT
-            this.UpdateView();
+            this.View.Rebuild();
         }
 
         protected override void Unload()
