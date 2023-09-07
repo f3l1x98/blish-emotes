@@ -17,7 +17,14 @@ namespace felix.BlishEmotes
 
         public Category Clone()
         {
-            return new Category() { Id = this.Id, Name = this.Name, EmoteIds = new List<string>(this.EmoteIds), Emotes = new List<Emote>(this.Emotes) };
+            return new Category()
+            { 
+                Id = this.Id, 
+                Name = this.Name, 
+                EmoteIds = new List<string>(this.EmoteIds), 
+                Emotes = new List<Emote>(this.Emotes), 
+                IsFavourite = this.IsFavourite, 
+            };
         }
 
         public void AddEmote(Emote emote)

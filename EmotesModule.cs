@@ -40,6 +40,7 @@ namespace BlishEmotesList
 
         internal PersistenceManager PersistenceManager;
         internal CategoriesManager CategoriesManager;
+        internal EmotesManager EmotesManager;
         #endregion
 
         #region Controls
@@ -52,10 +53,6 @@ namespace BlishEmotesList
         #region Settings
         public ModuleSettings Settings;
         #endregion
-
-        private List<Emote> _emotes;
-
-        private List<Emote> _radialEnabledEmotes => _emotes.Where(el => this.Settings.EmotesRadialEnabledMap.ContainsKey(el) ? this.Settings.EmotesRadialEnabledMap[el].Value : true).ToList();
 
 
         [ImportingConstructor]
@@ -122,7 +119,7 @@ namespace BlishEmotesList
                 if (this._radialMenu != null)
                 {
                     // Update radial menu emotes
-                    this._radialMenu.Emotes = _radialEnabledEmotes;
+                    this._radialMenu.Emotes = EmotesManager?.GetRadial();
                 }
             };
         }
@@ -156,10 +153,8 @@ namespace BlishEmotesList
                 Unload();
                 return;
             }
+            EmotesManager = new EmotesManager(ContentsManager, Settings);
             CategoriesManager = new CategoriesManager(PersistenceManager);
-
-            // Init lists
-            _emotes = new List<Emote>();
 
             // Init UI
             if (!this.Settings.GlobalHideCornerIcon.Value)
@@ -179,6 +174,8 @@ namespace BlishEmotesList
 
             // Settings
             _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\155052.png"), () => new GlobalSettingsView(this.Settings), Common.settings_ui_global_tab));
+            // Category setting
+            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\156734+155150.png"), () => new CategorySettingsView(CategoriesManager, EmotesManager), Common.settings_ui_categories_tab));
             // Emote Hotkey settings
             _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\156734+155150.png"), () => new EmoteHotkeySettingsView(this.Settings), Common.settings_ui_emoteHotkeys_tab));
         }
@@ -195,14 +192,16 @@ namespace BlishEmotesList
         {
             try
             {
-                // load emotes
-                _emotes = LoadEmotes();
+                // Load categories
+                CategoriesManager.Load();
+                // Load emotes
+                EmotesManager.Load();
                 // Update emotes with data from api
                 await UpdateEmotesFromApi();
                 // Update category Emotes
-                CategoriesManager.ResolveEmoteIds(_emotes);
+                CategoriesManager.ResolveEmoteIds(EmotesManager.GetAll());
 
-                this.Settings.InitEmotesSettings(_emotes);
+                this.Settings.InitEmotesSettings(EmotesManager.GetAll());
                 DrawUI();
             }
             catch (Exception e)
@@ -251,7 +250,7 @@ namespace BlishEmotesList
             _emoteListMenuStrip?.Dispose();
 
             _emoteListMenuStrip = new ContextMenuStrip();
-            var menuItems = this.Settings.GlobalUseCategories.Value ? GetCategoryMenuItems() : GetEmotesMenuItems(_emotes);
+            var menuItems = this.Settings.GlobalUseCategories.Value ? GetCategoryMenuItems() : GetEmotesMenuItems(EmotesManager.GetAll());
             _emoteListMenuStrip.AddMenuItems(menuItems);
 
             if (!excludeRadial)
@@ -261,7 +260,7 @@ namespace BlishEmotesList
                 _radialMenu = new RadialMenu(_helper, this.Settings, ContentsManager.GetTexture(@"textures/2107931.png"))
                 {
                     Parent = GameService.Graphics.SpriteScreen,
-                    Emotes = _radialEnabledEmotes,
+                    Emotes = EmotesManager.GetRadial(),
                 };
             }
         }
@@ -373,8 +372,9 @@ namespace BlishEmotesList
             Logger.Debug("Update emotes from api");
             // load emote information from api
             var apiEmotes = await LoadEmotesFromApi();
+            var emotes = EmotesManager.GetAll();
             // Set locks
-            foreach (var emote in _emotes)
+            foreach (var emote in emotes)
             {
                 // Mark emotes as unlocked
                 emote.Locked = false;
@@ -384,22 +384,7 @@ namespace BlishEmotesList
                     emote.Locked = true;
                 }
             }
-        }
-
-        private List<Emote> LoadEmotes()
-        {
-            // Read resource file
-            string fileContents;
-            using (StreamReader reader = new StreamReader(ContentsManager.GetFileStream(@"json/emotes.json")))
-            {
-                fileContents = reader.ReadToEnd();
-            }
-            var emotes = JsonConvert.DeserializeObject<List<Emote>>(fileContents);
-            foreach (var emote in emotes)
-            {
-                emote.Texture = ContentsManager.GetTexture(@"textures/emotes/" + emote.TextureRef, ContentsManager.GetTexture(@"textures/missing-texture.png"));
-            }
-            return emotes;
+            EmotesManager.UpdateAll(emotes);
         }
 
         struct ApiEmotesReturn

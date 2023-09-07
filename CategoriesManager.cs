@@ -20,7 +20,10 @@ namespace felix.BlishEmotes
         {
             PersistenceManager = persistenceManager;
             categories = new Dictionary<Guid, Category>();
+        }
 
+        public void Load()
+        {
             try
             {
                 var loadedCategories = PersistenceManager.LoadCategories();
@@ -106,6 +109,33 @@ namespace felix.BlishEmotes
 
             Logger.Debug($"Updated category {category.Id}-{category.Name}");
             return category.Clone();
+        }
+
+        public bool DeleteCategory(Category category, bool saveToFile = true)
+        {
+            Category current;
+            categories.TryGetValue(category.Id, out current);
+            if (current == null)
+            {
+                Logger.Debug($"Tried deleting non-existing category with id {category.Id}");
+                // If it does not exist -> just claim delete was successful xD
+                return true;
+            }
+            // Prevent deleting favourite category
+            if (current.IsFavourite)
+            {
+                Logger.Debug("Tried to delete favourite category -> abort.");
+                return false;
+            }
+
+            categories.Remove(category.Id);
+            if (saveToFile)
+            {
+                PersistenceManager.SaveCategories(categories.Values.ToList());
+            }
+
+            Logger.Debug($"Deleted category {category.Id}-{category.Name}");
+            return true;
         }
 
         public Category GetById(Guid id)
