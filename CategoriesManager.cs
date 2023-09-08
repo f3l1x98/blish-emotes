@@ -55,7 +55,7 @@ namespace felix.BlishEmotes
 
         public Category CreateCategory(string name, List<Emote> emotes = null, bool saveToFile = true)
         {
-            return CreateCategory(name, emotes.Select((emote) => emote.Id).ToList(), emotes, false, saveToFile);
+            return CreateCategory(name, emotes?.Select((emote) => emote.Id).ToList(), emotes, false, saveToFile);
         }
         private Category CreateCategory(string name, List<string> emoteIds = null, List<Emote> emotes = null, bool isFavourite = false, bool saveToFile = true)
         {
@@ -92,6 +92,7 @@ namespace felix.BlishEmotes
             categories.TryGetValue(category.Id, out current);
             if (current == null)
             {
+                Logger.Debug($"No category found for id {category.Id}");
                 throw new NotFoundException($"No category found for id {category.Id}");
             }
             if (current.Name != category.Name)
@@ -144,6 +145,7 @@ namespace felix.BlishEmotes
             categories.TryGetValue(id, out category);
             if (category == null)
             {
+                Logger.Debug($"No category found for id {id}");
                 throw new NotFoundException($"No category found for id {id}");
             }
             return category.Clone();
@@ -160,6 +162,7 @@ namespace felix.BlishEmotes
             categories.TryGetValue(categoryId, out category);
             if (category == null)
             {
+                Logger.Debug($"No category found for id {categoryId}");
                 throw new NotFoundException($"No category found for id {categoryId}");
             }
             return category.EmoteIds.Contains(emote.Id);
@@ -228,6 +231,7 @@ namespace felix.BlishEmotes
             bool nameInUse = categories.Values.Any((category) => category.Name == name);
             if (nameInUse)
             {
+                Logger.Debug($"Name must be unique - {name} already in use.");
                 throw new UniqueViolationException($"Name must be unique - {name} already in use.");
             }
         }
