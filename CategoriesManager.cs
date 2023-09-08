@@ -9,6 +9,7 @@ namespace felix.BlishEmotes
 {
     class CategoriesManager
     {
+        public static readonly string NEW_CATEGORY_NAME = "New Category";
         private static readonly Logger Logger = Logger.GetLogger<CategoriesManager>();
         private PersistenceManager PersistenceManager;
         // Cache special Favourite category id
@@ -61,6 +62,17 @@ namespace felix.BlishEmotes
         {
             emoteIds = emoteIds ?? new List<string>();
             emotes = emotes ?? new List<Emote>();
+
+            if (name == NEW_CATEGORY_NAME)
+            {
+                // Append number to allow creating new categories rapidly
+                int next = GetNextNewCategoryNumber();
+                if (next > 0)
+                {
+                    name = $"{name} {next}";
+                }
+            }
+
             AssertUniqueName(name);
 
             var newCategory = new Category()
@@ -234,6 +246,29 @@ namespace felix.BlishEmotes
                 Logger.Debug($"Name must be unique - {name} already in use.");
                 throw new UniqueViolationException($"Name must be unique - {name} already in use.");
             }
+        }
+
+        private int GetNextNewCategoryNumber()
+        {
+            // Get all that start with NEW_CATEGORY_NAME -> remove and try to parse remaining number -> return max
+            var newCategoryNumbers = categories.Values.Where((category) => category.Name.StartsWith(NEW_CATEGORY_NAME)).Select(category =>
+            {
+                var numberStr = category.Name.Replace(NEW_CATEGORY_NAME, "").Trim();
+                if (numberStr.Length == 0)
+                {
+                    // First one did not have a number appended -> treat as 0
+                    numberStr = "0";
+                }
+
+                int parsed;
+                if (!int.TryParse(numberStr, out parsed))
+                {
+                    // Parsing failed -> ignore/treat as 0
+                    parsed = 0;
+                }
+                return parsed;
+            }).ToList();
+            return newCategoryNumbers.Count == 0 ? 0 : newCategoryNumbers.Max() + 1;
         }
     }
 }
