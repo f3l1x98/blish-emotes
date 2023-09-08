@@ -24,7 +24,6 @@ namespace felix.BlishEmotes.UI.Views
     {
         private Helper helper;
         // https://github.com/Tharylia/Blish-HUD-Modules/blob/main/Estreya.BlishHUD.EventTable/UI/Views/AreaSettingsView.cs
-        //private FlowPanel CategoryFlowPanel;
         private Panel CategoryListPanel;
         private Menu CategoryListMenu;
         private StandardButton AddCategoryButton;
@@ -77,6 +76,7 @@ namespace felix.BlishEmotes.UI.Views
         protected override void Build(Container buildPanel)
         {
             // Init left panel
+            var addBtnHeight = 30;
             CategoryListPanel = new Panel()
             {
                 Parent = buildPanel,
@@ -84,10 +84,8 @@ namespace felix.BlishEmotes.UI.Views
                 CanScroll = true,
                 HeightSizingMode = SizingMode.Standard,
                 WidthSizingMode = SizingMode.Standard,
-                //Location = new Point(bounds.X, bounds.Y),
-                //Size = new Point(Panel.MenuStandard.Size.X - 75, bounds.Height - StandardButton.STANDARD_CONTROL_HEIGHT),
                 Location = new Point(0, 0),
-                Size = new Point(200, buildPanel.ContentRegion.Height - 10 - 30), // TODO - padding - add btn height
+                Size = new Point(200, buildPanel.ContentRegion.Height - 10 - addBtnHeight), // - padding - add btn height
             };
             CategoryListMenu = new Menu
             {
@@ -100,7 +98,7 @@ namespace felix.BlishEmotes.UI.Views
             {
                 Parent = buildPanel,
                 Text = Common.category_add,
-                Size = new Point(200, 30),
+                Size = new Point(200, addBtnHeight),
                 Location = new Point(0, CategoryListPanel.Size.Y + 10),
             };
             AddCategoryButton.Click += delegate
@@ -118,10 +116,7 @@ namespace felix.BlishEmotes.UI.Views
                 CanScroll = false,
                 HeightSizingMode = SizingMode.Fill,
                 WidthSizingMode = SizingMode.Fill,
-                //Location = new Point(bounds.X, bounds.Y),
-                //Size = new Point(Panel.MenuStandard.Size.X - 75, bounds.Height - StandardButton.STANDARD_CONTROL_HEIGHT),
                 Location = new Point(CategoryListPanel.Size.X + 20, 0),
-                //Size = new Point(200, 400),
             };
         }
 
@@ -174,22 +169,18 @@ namespace felix.BlishEmotes.UI.Views
         private void BuildEditPanel(Panel parent, Category category)
         {
             parent.ClearChildren();
-            // TODO
             Panel settingsPanel = new Panel()
             {
                 Parent = parent,
                 CanCollapse = false,
                 CanScroll = false,
                 Size = parent.ContentRegion.Size,
-                //HeightSizingMode = SizingMode.Fill,
-                //WidthSizingMode = SizingMode.Fill,
             };
 
             // Header containing Name of category + save button
             Panel header = new Panel()
             {
                 Parent = settingsPanel,
-                //WidthSizingMode = SizingMode.Fill,
                 Width = settingsPanel.Width,
                 Height = 60,
                 CanScroll = false,
@@ -213,7 +204,6 @@ namespace felix.BlishEmotes.UI.Views
             };
             saveButton.Click += delegate
             {
-                // TODO UPDATE
                 category.Name = categoryName.Text;
                 UpdateCategory?.Invoke(this, category);
             };

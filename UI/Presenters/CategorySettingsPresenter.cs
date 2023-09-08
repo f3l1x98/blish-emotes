@@ -3,9 +3,6 @@ using Blish_HUD.Graphics.UI;
 using felix.BlishEmotes.Exceptions;
 using felix.BlishEmotes.UI.Views;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Presenters
@@ -44,7 +41,6 @@ namespace felix.BlishEmotes.UI.Presenters
         {
             this.Model.Item1.DeleteCategory(e);
             this.View.Categories = this.Model.Item1.GetAll();
-            // TODO TRIGGER VIEW REBUILD?!?!?
             this.View.Rebuild();
         }
 
@@ -52,10 +48,9 @@ namespace felix.BlishEmotes.UI.Presenters
         {
             try
             {
-                this.Model.Item1.UpdateCategory(e);
+                var updatedCategory = this.Model.Item1.UpdateCategory(e);
                 this.View.Categories = this.Model.Item1.GetAll();
-                // TODO TRIGGER VIEW REBUILD?!?!?
-                this.View.Rebuild();
+                this.View.Rebuild(updatedCategory);
             }
             catch (UniqueViolationException)
             {
@@ -73,8 +68,6 @@ namespace felix.BlishEmotes.UI.Presenters
             {
                 var newCategory = this.Model.Item1.CreateCategory(e.Name, e.Emotes);
                 this.View.Categories = this.Model.Item1.GetAll();
-                // TODO TRIGGER VIEW REBUILD?!?!?
-                // THIS MIGHT BREAK AUTOMATICALLY DISPLAYING EDIT
                 this.View.Rebuild(newCategory);
             }
             catch (UniqueViolationException)
