@@ -81,7 +81,7 @@ namespace felix.BlishEmotes.UI.Views
             {
                 Parent = buildPanel,
                 ShowBorder = true,
-                CanScroll = false,
+                CanScroll = true,
                 HeightSizingMode = SizingMode.Standard,
                 WidthSizingMode = SizingMode.Standard,
                 //Location = new Point(bounds.X, bounds.Y),
@@ -92,7 +92,7 @@ namespace felix.BlishEmotes.UI.Views
             CategoryListMenu = new Menu
             {
                 Parent = CategoryListPanel,
-                WidthSizingMode = SizingMode.Fill
+                WidthSizingMode = SizingMode.Fill,
             };
             BuildCategoryMenuItems();
 
@@ -105,10 +105,9 @@ namespace felix.BlishEmotes.UI.Views
             };
             AddCategoryButton.Click += delegate
             {
-                // TODO HOW TO ADD NEW -> FIRST CREATE MENU ITEM OR NOT?!?!?
-                AddCategory?.Invoke(this, new AddCategoryArgs() { Name = "New Category" });
-                // TODO REFETCH CATEGORIES
-                //BuildEditPanel(CategoryEditPanel, Categories);
+                // TODO IF A CATEGORY HAS BEEN DELETED PREVIOUSLY THIS INSERTS IT AT THE SAME POS INSTEAD OF AT THE END
+                // From StackOverflow: As you can see, the implementation uses a technique that tracks a list of free positions in the entries array, and when a new value is added, the free entries are used first.
+                AddCategory?.Invoke(this, new AddCategoryArgs() { Name = CategoriesManager.NEW_CATEGORY_NAME });
             };
 
             // Init right panel
@@ -150,7 +149,6 @@ namespace felix.BlishEmotes.UI.Views
                     Menu = BuildCategoryRightClickMenu(category),
                 };
                 menuItem.Click += (s, e) => {
-                    // TODO build edit panel for this and display it
                     BuildEditPanel(CategoryEditPanel, category);
                 };
             }
@@ -182,7 +180,7 @@ namespace felix.BlishEmotes.UI.Views
                 Parent = parent,
                 CanCollapse = false,
                 CanScroll = false,
-                Size = parent.Size,
+                Size = parent.ContentRegion.Size,
                 //HeightSizingMode = SizingMode.Fill,
                 //WidthSizingMode = SizingMode.Fill,
             };
