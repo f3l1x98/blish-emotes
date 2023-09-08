@@ -146,6 +146,8 @@ namespace felix.BlishEmotes
             }
 
             categories.Remove(category.Id);
+            // Recreate Dictionary in order to bypass optimization that would insert next item at the new empty space
+            categories = new Dictionary<Guid, Category>(categories);
             if (saveToFile)
             {
                 PersistenceManager.SaveCategories(categories.Values.ToList());

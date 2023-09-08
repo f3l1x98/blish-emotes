@@ -103,8 +103,6 @@ namespace felix.BlishEmotes.UI.Views
             };
             AddCategoryButton.Click += delegate
             {
-                // TODO IF A CATEGORY HAS BEEN DELETED PREVIOUSLY THIS INSERTS IT AT THE SAME POS INSTEAD OF AT THE END
-                // From StackOverflow: As you can see, the implementation uses a technique that tracks a list of free positions in the entries array, and when a new value is added, the free entries are used first.
                 AddCategory?.Invoke(this, new AddCategoryArgs() { Name = CategoriesManager.NEW_CATEGORY_NAME });
             };
 
