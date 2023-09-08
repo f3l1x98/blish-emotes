@@ -156,6 +156,11 @@ namespace BlishEmotesList
             EmotesManager = new EmotesManager(ContentsManager, Settings);
             CategoriesManager = new CategoriesManager(PersistenceManager);
 
+            CategoriesManager.CategoriesUpdated += delegate
+            {
+                DrawUI(true);
+            };
+
             // Init UI
             if (!this.Settings.GlobalHideCornerIcon.Value)
             {

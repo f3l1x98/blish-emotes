@@ -17,6 +17,8 @@ namespace felix.BlishEmotes
         // Cache mapping ids to objects
         private Dictionary<Guid, Category> categories;
 
+        public event EventHandler<List<Category>> CategoriesUpdated;
+
         public CategoriesManager(PersistenceManager persistenceManager)
         {
             PersistenceManager = persistenceManager;
@@ -95,6 +97,7 @@ namespace felix.BlishEmotes
             }
 
             Logger.Debug($"Created category {newCategory.Id}-{newCategory.Name}");
+            CategoriesUpdated?.Invoke(this, GetAll());
             return newCategory.Clone();
         }
 
@@ -121,6 +124,7 @@ namespace felix.BlishEmotes
             }
 
             Logger.Debug($"Updated category {category.Id}-{category.Name}");
+            CategoriesUpdated?.Invoke(this, GetAll());
             return category.Clone();
         }
 
@@ -148,6 +152,7 @@ namespace felix.BlishEmotes
             }
 
             Logger.Debug($"Deleted category {category.Id}-{category.Name}");
+            CategoriesUpdated?.Invoke(this, GetAll());
             return true;
         }
 
