@@ -184,15 +184,39 @@ namespace felix.BlishEmotes.UI.Views
                 CanScroll = false,
                 ShowBorder = false,
             };
-            TextBox categoryName = new TextBox()
+            
+            if (category.IsFavourite)
             {
-                Parent = header,
-                Width = 200,
-                Height = 40,
-                Text = category.Name,
-                Location = new Point(header.Size.X / 2 - 100, 10),
-                Font = GameService.Content.DefaultFont18,
-            };
+                Label categoryName = new Label()
+                {
+                    Parent = header,
+                    Width = 200,
+                    Height = 40,
+                    Text = category.Name,
+                    Location = new Point(header.Size.X / 2 - 100, 10),
+                    Font = GameService.Content.DefaultFont18,
+                };
+            }
+            else
+            {
+                TextBox categoryName = new TextBox()
+                {
+                    Parent = header,
+                    Width = 200,
+                    Height = 40,
+                    Text = category.Name,
+                    MaxLength = 20,
+                    Location = new Point(header.Size.X / 2 - 100, 10),
+                    Font = GameService.Content.DefaultFont18,
+                };
+                categoryName.TextChanged += (s, args) =>
+                {
+                    if (args is ValueChangedEventArgs<string> valueArgs)
+                    {
+                        category.Name = valueArgs.NewValue;
+                    }
+                };
+            }
             StandardButton saveButton = new StandardButton()
             {
                 Parent = header,
@@ -202,7 +226,6 @@ namespace felix.BlishEmotes.UI.Views
             };
             saveButton.Click += delegate
             {
-                category.Name = categoryName.Text;
                 UpdateCategory?.Invoke(this, category);
             };
 
