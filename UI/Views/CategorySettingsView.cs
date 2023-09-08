@@ -126,12 +126,16 @@ namespace felix.BlishEmotes.UI.Views
             };
         }
 
-        public void Rebuild()
+        public void Rebuild(Category category = null)
         {
             CategoryEditPanel?.ClearChildren();
             CategoryListMenu?.ClearChildren();
 
             BuildCategoryMenuItems();
+            if (category != null)
+            {
+                BuildEditPanel(CategoryEditPanel, category);
+            }
         }
 
         private void BuildCategoryMenuItems()

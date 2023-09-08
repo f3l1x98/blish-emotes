@@ -1,4 +1,6 @@
-﻿using Blish_HUD.Graphics.UI;
+﻿using Blish_HUD;
+using Blish_HUD.Graphics.UI;
+using felix.BlishEmotes.Exceptions;
 using felix.BlishEmotes.UI.Views;
 using System;
 using System.Collections.Generic;
@@ -28,7 +30,14 @@ namespace felix.BlishEmotes.UI.Presenters
 
         public bool IsEmoteInCategory(Guid categoryId, Emote emote)
         {
-            return this.Model.Item1.IsEmoteInCategory(categoryId, emote);
+            try
+            {
+                return this.Model.Item1.IsEmoteInCategory(categoryId, emote);
+            }
+            catch (NotFoundException)
+            {
+                return false;
+            }
         }
 
         private void View_DeleteCategoryClicked(object sender, Category e)
@@ -41,19 +50,37 @@ namespace felix.BlishEmotes.UI.Presenters
 
         private void View_UpdateCategoryClicked(object sender, Category e)
         {
-            this.Model.Item1.UpdateCategory(e);
-            this.View.Categories = this.Model.Item1.GetAll();
-            // TODO TRIGGER VIEW REBUILD?!?!?
-            this.View.Rebuild();
+            try
+            {
+                this.Model.Item1.UpdateCategory(e);
+                this.View.Categories = this.Model.Item1.GetAll();
+                // TODO TRIGGER VIEW REBUILD?!?!?
+                this.View.Rebuild();
+            }
+            catch (UniqueViolationException)
+            {
+                // TODO
+            }
+            catch (NotFoundException)
+            {
+                // TODO
+            }
         }
 
         private void View_AddCategoryClicked(object sender, AddCategoryArgs e)
         {
-            this.Model.Item1.CreateCategory(e.Name, e.Emotes);
-            this.View.Categories = this.Model.Item1.GetAll();
-            // TODO TRIGGER VIEW REBUILD?!?!?
-            // THIS MIGHT BREAK AUTOMATICALLY DISPLAYING EDIT
-            this.View.Rebuild();
+            try
+            {
+                var newCategory = this.Model.Item1.CreateCategory(e.Name, e.Emotes);
+                this.View.Categories = this.Model.Item1.GetAll();
+                // TODO TRIGGER VIEW REBUILD?!?!?
+                // THIS MIGHT BREAK AUTOMATICALLY DISPLAYING EDIT
+                this.View.Rebuild(newCategory);
+            }
+            catch (UniqueViolationException)
+            {
+                // TODO
+            }
         }
 
         protected override void Unload()
