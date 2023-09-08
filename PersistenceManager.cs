@@ -7,6 +7,17 @@ using Newtonsoft.Json;
 
 namespace felix.BlishEmotes
 {
+    class JsonVersionWrapper<T>
+    {
+        [JsonProperty("version", Required = Required.Always)] public string Version { get; set; }
+        [JsonProperty("data", Required = Required.Always)] public T Data { get; set; }
+
+        public JsonVersionWrapper(string version, T data)
+        {
+            this.Version = version;
+            this.Data = data;
+        }
+    }
     class PersistenceManager
     {
 
@@ -55,18 +66,18 @@ namespace felix.BlishEmotes
         {
             try
             {
-                SaveJson(categories, _categoriesFile);
+                SaveJson(categories, Category.VERSION, _categoriesFile);
             }
             catch (Exception)
             {
             }
         }
 
-        private void SaveJson<T>(T json, string file)
+        private void SaveJson<T>(T json, string version, string file)
         {
             try
             {
-                string serialized = JsonConvert.SerializeObject(json);
+                string serialized = JsonConvert.SerializeObject(new JsonVersionWrapper<T>(version, json));
                 File.WriteAllText(file, serialized);
                 Logger.Debug($"Successfully saved json to {file}");
             }
@@ -91,9 +102,9 @@ namespace felix.BlishEmotes
             try
             {
                 string content = File.ReadAllText(file);
-                var json = JsonConvert.DeserializeObject<T>(content);
+                var json = JsonConvert.DeserializeObject<JsonVersionWrapper<T>>(content);
                 Logger.Debug($"Successfully loaded json from {file}");
-                return json;
+                return json.Data;
             }
             catch (FileNotFoundException e)
             {

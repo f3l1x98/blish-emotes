@@ -7,6 +7,7 @@ namespace felix.BlishEmotes
     class Category
     {
         [JsonIgnore] public static readonly string FAVOURITES_CATEGORY_NAME = "Favourites";
+        [JsonIgnore] public static readonly string VERSION = "V1";
 
         [JsonProperty("id", Required = Required.Always)] public Guid Id { get; set; }
         [JsonProperty("name", Required = Required.Always)] public string Name { get; set; }
