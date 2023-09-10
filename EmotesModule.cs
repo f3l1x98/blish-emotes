@@ -139,20 +139,8 @@ namespace BlishEmotesList
 
             Gw2ApiManager.SubtokenUpdated += OnApiSubTokenUpdated;
 
-            // Init PersistenceManager
-            try
-            {
-                PersistenceManager = new PersistenceManager(DirectoriesManager);
-            }
-            catch (Exception e)
-            {
-                Logger.Fatal("Failed to init PersistenceManager!");
-                Logger.Fatal(e.Message);
-                Logger.Fatal(e.StackTrace);
-
-                Unload();
-                return;
-            }
+            // Init custom Manager
+            PersistenceManager = new PersistenceManager(DirectoriesManager);
             EmotesManager = new EmotesManager(ContentsManager, Settings);
             CategoriesManager = new CategoriesManager(PersistenceManager);
 

@@ -29,17 +29,6 @@ namespace felix.BlishEmotes
         public PersistenceManager(DirectoriesManager directoriesManager)
         {
             IReadOnlyList<string> registeredDirectories = directoriesManager.RegisteredDirectories;
-            if (registeredDirectories.Count == 0)
-            {
-                Logger.Fatal("No directories registered!");
-                throw new Exception("Failed to initialize - No directories registered");
-            }
-            else if (registeredDirectories.Count != 1)
-            {
-                Logger.Fatal($"Wrong number of registered directories: {registeredDirectories.Count}");
-                throw new Exception("Failed to initialize - Wrong number of registered directories");
-            }
-
             _baseDirectoryPath = directoriesManager.GetFullDirectoryPath(registeredDirectories[0]);
         }
 
