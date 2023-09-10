@@ -3,12 +3,14 @@ using Blish_HUD.Graphics.UI;
 using felix.BlishEmotes.Exceptions;
 using felix.BlishEmotes.UI.Views;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Presenters
 {
     class CategorySettingsPresenter : Presenter<CategorySettingsView, (CategoriesManager, EmotesManager)>
     {
+        private static readonly Logger Logger = Logger.GetLogger<CategorySettingsPresenter>();
 
         public CategorySettingsPresenter(CategorySettingsView view, (CategoriesManager, EmotesManager) model) : base(view, model)
         {
@@ -19,6 +21,7 @@ namespace felix.BlishEmotes.UI.Presenters
             this.View.AddCategory += View_AddCategoryClicked;
             this.View.UpdateCategory += View_UpdateCategoryClicked;
             this.View.DeleteCategory += View_DeleteCategoryClicked;
+            this.View.ReorderCategories += View_ReorderCategories;
             this.View.Categories = this.Model.Item1.GetAll();
             this.View.Emotes = this.Model.Item2.GetAll();
 
@@ -35,6 +38,11 @@ namespace felix.BlishEmotes.UI.Presenters
             {
                 return false;
             }
+        }
+
+        private void View_ReorderCategories(object sender, List<Category> e)
+        {
+            this.Model.Item1.ReorderCategories(e);
         }
 
         private void View_DeleteCategoryClicked(object sender, Category e)
@@ -54,11 +62,11 @@ namespace felix.BlishEmotes.UI.Presenters
             }
             catch (UniqueViolationException)
             {
-                // TODO
+                Logger.Error($"Failed to update category {e.Name} - Name already in use.");
             }
             catch (NotFoundException)
             {
-                // TODO
+                Logger.Error($"Failed to update category {e.Name} - Not found.");
             }
         }
 
@@ -72,7 +80,7 @@ namespace felix.BlishEmotes.UI.Presenters
             }
             catch (UniqueViolationException)
             {
-                // TODO
+                Logger.Error($"Failed to update category {e.Name} - Name already in use.");
             }
         }
 
@@ -81,6 +89,7 @@ namespace felix.BlishEmotes.UI.Presenters
             this.View.AddCategory -= View_AddCategoryClicked;
             this.View.UpdateCategory -= View_UpdateCategoryClicked;
             this.View.DeleteCategory -= View_DeleteCategoryClicked;
+            this.View.ReorderCategories -= View_ReorderCategories;
         }
     }
 }

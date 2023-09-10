@@ -1,7 +1,9 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
+using Blish_HUD.Input;
 using felix.BlishEmotes.Strings;
+using felix.BlishEmotes.UI.Controls;
 using felix.BlishEmotes.UI.Presenters;
 using Microsoft.Xna.Framework;
 using System;
@@ -23,16 +25,18 @@ namespace felix.BlishEmotes.UI.Views
     class CategorySettingsView : View
     {
         private Helper helper;
-        // https://github.com/Tharylia/Blish-HUD-Modules/blob/main/Estreya.BlishHUD.EventTable/UI/Views/AreaSettingsView.cs
+
         private Panel CategoryListPanel;
-        private Menu CategoryListMenu;
+        private ReorderableMenu CategoryListMenu;
         private StandardButton AddCategoryButton;
         private Panel CategoryEditPanel;
+        private Dictionary<ReorderableMenuItem, Category> MenuItemsMap;
 
         public List<Category> Categories { get; set; }
         public event EventHandler<AddCategoryArgs> AddCategory;
         public event EventHandler<Category> UpdateCategory;
         public event EventHandler<Category> DeleteCategory;
+        public event EventHandler<List<Category>> ReorderCategories;
 
         public List<Emote> Emotes { get; set; }
 
@@ -45,6 +49,7 @@ namespace felix.BlishEmotes.UI.Views
         {
             this.WithPresenter(new CategorySettingsPresenter(this, (categoriesManager, emotesManager)));
             this.helper = helper;
+            MenuItemsMap = new Dictionary<ReorderableMenuItem, Category>();
         }
 
         private FlowPanel CreateRowPanel(Container parent)
@@ -61,18 +66,6 @@ namespace felix.BlishEmotes.UI.Views
             };
         }
 
-        // IDEA:
-        // - Left side has column containing cards for each category
-        //  - Cards can be reorder (via drag and drop?!?!?) to reorder categories in list display (and radial, but imo not as important)
-        //  - + Btn at the bottom to add new category
-        //  - Select category to display emote selection in right container
-        //  - Scrollable
-        // - Right container
-        //  - Empty if no category selected
-        //  - Contains selection of all emotes in order to toggle whether part of category or not
-        // - Favourite category
-        //  - Cannot be deleted
-        //  - Cannot be reordered?!?!?!?
         protected override void Build(Container buildPanel)
         {
             // Init left panel
@@ -85,12 +78,30 @@ namespace felix.BlishEmotes.UI.Views
                 HeightSizingMode = SizingMode.Standard,
                 WidthSizingMode = SizingMode.Standard,
                 Location = new Point(0, 0),
-                Size = new Point(200, buildPanel.ContentRegion.Height - 10 - addBtnHeight), // - padding - add btn height
+                Size = new Point(200, buildPanel.ContentRegion.Height - 10 - addBtnHeight),
             };
-            CategoryListMenu = new Menu
+            CategoryListMenu = new ReorderableMenu
             {
                 Parent = CategoryListPanel,
                 WidthSizingMode = SizingMode.Fill,
+            };
+            CategoryListMenu.Reordered += (s, e) =>
+            {
+                // Save new order
+                List<Category> newOrder = new List<Category>();
+                foreach (var child in e)
+                {
+                    Category category;
+                    if (MenuItemsMap.TryGetValue(child, out category))
+                    {
+                        newOrder.Add(category);
+                    }
+                }
+                if (newOrder.Count == Categories.Count)
+                {
+                    ReorderCategories?.Invoke(this, newOrder);
+                }
+                // TODO log else
             };
             BuildCategoryMenuItems();
 
@@ -99,7 +110,7 @@ namespace felix.BlishEmotes.UI.Views
                 Parent = buildPanel,
                 Text = Common.category_add,
                 Size = new Point(200, addBtnHeight),
-                Location = new Point(0, CategoryListPanel.Size.Y + 10),
+                Location = new Point(0, CategoryListPanel.Bottom + 10),
             };
             AddCategoryButton.Click += delegate
             {
@@ -121,7 +132,6 @@ namespace felix.BlishEmotes.UI.Views
         public void Rebuild(Category category = null)
         {
             CategoryEditPanel?.ClearChildren();
-            CategoryListMenu?.ClearChildren();
 
             BuildCategoryMenuItems();
             if (category != null)
@@ -132,18 +142,23 @@ namespace felix.BlishEmotes.UI.Views
 
         private void BuildCategoryMenuItems()
         {
+            CategoryListMenu?.ClearChildren();
+            MenuItemsMap.Clear();
             foreach (var category in Categories)
             {
-                MenuItem menuItem = new MenuItem(category.Name)
+                ReorderableMenuItem menuItem = new ReorderableMenuItem(category.Name)
                 {
                     Parent = CategoryListMenu,
                     WidthSizingMode = SizingMode.Fill,
                     HeightSizingMode = SizingMode.AutoSize,
                     Menu = BuildCategoryRightClickMenu(category),
+                    CanDrag = !category.IsFavourite,
                 };
-                menuItem.Click += (s, e) => {
+                menuItem.Click += delegate
+                {
                     BuildEditPanel(CategoryEditPanel, category);
                 };
+                MenuItemsMap.Add(menuItem, category);
             }
         }
 

@@ -56,6 +56,26 @@ namespace felix.BlishEmotes
             }
         }
 
+        public void ReorderCategories(List<Category> newOrder, bool saveToFile = true)
+        {
+            if (newOrder.Count != categories.Count)
+            {
+                Logger.Error("Reordered category list length does not match current category list length.");
+                return;
+            }
+
+            categories.Clear();
+            foreach (var category in newOrder)
+            {
+                categories.Add(category.Id, category);
+            }
+
+            if (saveToFile)
+            {
+                PersistenceManager.SaveCategories(categories.Values.ToList());
+            }
+        }
+
         public Category CreateCategory(string name, List<Emote> emotes = null, bool saveToFile = true)
         {
             return CreateCategory(name, emotes?.Select((emote) => emote.Id).ToList(), emotes, false, saveToFile);
