@@ -11,8 +11,6 @@ namespace felix.BlishEmotes.UI.Controls
 {
     class ReorderableMenu : Menu
     {
-        //private static readonly Logger Logger = Logger.GetLogger<ReorderableMenu>();
-
         public event EventHandler<List<ReorderableMenuItem>> Reordered;
 
         private ReorderableMenuItem DraggedChild => Children.FirstOrDefault(child => child is ReorderableMenuItem entry && entry.Dragging) as ReorderableMenuItem;
@@ -22,7 +20,6 @@ namespace felix.BlishEmotes.UI.Controls
         {
             if (e.ChangedChild is ReorderableMenuItem)
             {
-                // TODO THIS MIGHT CAUSE ISSUE WITH Click EVENT -> BOTH FIRE
                 e.ChangedChild.LeftMouseButtonPressed += this.ChangedChild_LeftMouseButtonPressed;
                 e.ChangedChild.LeftMouseButtonReleased += this.ChangedChild_LeftMouseButtonReleased;
 
@@ -42,7 +39,6 @@ namespace felix.BlishEmotes.UI.Controls
             base.OnChildRemoved(e);
         }
 
-        // TODO ALLOW INSERT AT BOTTOM IF DRAGGED BELOW LAST ELEMENT -> will not react because LeftMouse not released above an ReorderableMenuItem -> perhaps add this handler also to menu?!?!?! (unsure if menu or menu parent)
         private void ChangedChild_LeftMouseButtonReleased(object sender, MouseEventArgs e)
         {
             var draggedEntry = DraggedChild;
@@ -81,6 +77,9 @@ namespace felix.BlishEmotes.UI.Controls
                 if (entry.CanDrag)
                 {
                     entry.Dragging = true;
+
+                    // Subscribe to global LefMouseButtonReleased in order to catch cancel
+                    GameService.Input.Mouse.LeftMouseButtonReleased += Game_OnLeftMouseButtonReleased;
                 }
             }
         }
@@ -149,10 +148,6 @@ namespace felix.BlishEmotes.UI.Controls
                 return;
             }
 
-
-            // TODO SOMETIMES BREAKS (probably when mouse leaves parent AND THEN LMOUSE IS RELEASED -> event not caught -> still thinking that element is being dragged)
-            //GameService.Input.Mouse.LeftMouseButtonReleased
-
             // Check if placeholder already exists -> move him
             int draggedOnIndex = this.GetCurrentDragOverIndex();
             if (draggedOnIndex == -1)
@@ -162,6 +157,35 @@ namespace felix.BlishEmotes.UI.Controls
             }
 
             DragItem(draggingEntry, draggedOnIndex);
+        }
+
+        private void Game_OnLeftMouseButtonReleased(object sender, MouseEventArgs args)
+        {
+            if (sender is MouseHandler mh)
+            {
+                var draggedEntry = DraggedChild;
+                if (draggedEntry == null)
+                {
+                    // nothing dragging right now -> ignore
+                    return;
+                }
+
+                // Only handle non ReorderableMenuItem (because they are handled separately)
+                if (mh.ActiveControl is ReorderableMenuItem)
+                {
+                    // Unsubscribe
+                    GameService.Input.Mouse.LeftMouseButtonReleased -= Game_OnLeftMouseButtonReleased;
+                    return;
+                }
+
+                // Dragging, but released outside dragging area -> stop dragging
+                draggedEntry.Dragging = false;
+
+                Reordered?.Invoke(this, this.ReorderableChildren);
+
+                // Unsubscribe
+                GameService.Input.Mouse.LeftMouseButtonReleased -= Game_OnLeftMouseButtonReleased;
+            }
         }
     }
 }

@@ -97,11 +97,7 @@ namespace felix.BlishEmotes.UI.Views
                         newOrder.Add(category);
                     }
                 }
-                if (newOrder.Count == Categories.Count)
-                {
-                    ReorderCategories?.Invoke(this, newOrder);
-                }
-                // TODO log else
+                ReorderCategories?.Invoke(this, newOrder);
             };
             BuildCategoryMenuItems();
 
