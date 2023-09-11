@@ -156,6 +156,7 @@
     <Compile Include="CategoriesManager.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="Emote.cs" />
+    <Compile Include="EmotesManager.cs" />
     <Compile Include="EmotesModule.cs" />
     <Compile Include="Exceptions\NotFoundException.cs" />
     <Compile Include="Exceptions\UniqueViolationException.cs" />
@@ -173,8 +174,12 @@
       <DependentUpon>Emotes.resx</DependentUpon>
     </Compile>
     <Compile Include="UI\Controls\RadialMenu.cs" />
+    <Compile Include="UI\Controls\ReorderableMenu.cs" />
+    <Compile Include="UI\Controls\ReorderableMenuItem.cs" />
+    <Compile Include="UI\Presenters\CategorySettingsPresenter.cs" />
     <Compile Include="UI\Presenters\DummySettingsPresenter.cs" />
     <Compile Include="UI\Presenters\EmoteHotkeySettingsPresenter.cs" />
+    <Compile Include="UI\Views\CategorySettingsView.cs" />
     <Compile Include="UI\Views\DummySettingsView.cs" />
     <Compile Include="UI\Views\EmoteHotkeySettingsView.cs" />
     <Compile Include="UI\Views\GlobalSettingsView.cs" />
@@ -334,6 +339,7 @@
     <Content Include="ref\textures\155052.png" />
     <Content Include="ref\textures\156006.png" />
     <Content Include="ref\textures\156734+155150.png" />
+    <Content Include="ref\textures\156909.png" />
     <Content Include="ref\textures\2107931.png" />
     <Content Include="ref\textures\emotes\beckon.png" />
     <Content Include="ref\textures\emotes\bless.png" />
