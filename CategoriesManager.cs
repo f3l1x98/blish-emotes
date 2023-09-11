@@ -136,7 +136,6 @@ namespace felix.BlishEmotes
                 AssertUniqueName(category.Name);
             }
 
-            // TODO ENSURE Emotes IS SET?!?!?!?
             categories[category.Id] = category;
             if (saveToFile)
             {
@@ -256,6 +255,7 @@ namespace felix.BlishEmotes
             Logger.Debug("SetupDefaultCategories");
             // Create Favourite category
             CreateCategory(Category.FAVOURITES_CATEGORY_NAME, null, null, true, false);
+            // Create default categories
             CreateCategory("Greeting", new List<string>() { "beckon", "bow", "salute", "wave" }, null, false, false);
             CreateCategory("Reaction", new List<string>() { "cower", "cry", "facepalm", "hiss", "no", "sad", "shiver", "shiverplus", "shrug", "surprised", "thanks", "yes" }, null, false, false);
             CreateCategory("Fun", new List<string>() { "cheer", "laugh", "paper", "rock", "rockout", "scissors" }, null, false, false);

@@ -187,5 +187,11 @@ namespace felix.BlishEmotes.UI.Controls
                 GameService.Input.Mouse.LeftMouseButtonReleased -= Game_OnLeftMouseButtonReleased;
             }
         }
+
+        protected override void DisposeControl()
+        {
+            GameService.Input.Mouse.LeftMouseButtonReleased -= Game_OnLeftMouseButtonReleased;
+            base.DisposeControl();
+        }
     }
 }
