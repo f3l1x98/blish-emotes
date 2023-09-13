@@ -1,6 +1,6 @@
 {
   "name": "Emotes",
-  "version": "1.2.0-Beta",
+  "version": "1.2.1-Beta",
   "namespace": "xyz.f3l1x.blishemotes",
   "package": "BlishEmotes.dll",
   "manifest_version": 1,

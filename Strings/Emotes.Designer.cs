@@ -259,6 +259,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Read book.
+        /// </summary>
+        internal static string readbook {
+            get {
+                return ResourceManager.GetString("readbook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rock.
         /// </summary>
         internal static string rock {
