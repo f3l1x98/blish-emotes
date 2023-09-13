@@ -103,7 +103,7 @@ namespace felix.BlishEmotes
             catch (JsonException e)
             {
                 Logger.Error("Failed to deserialize json!");
-                Logger.Debug(e.Message);
+                Logger.Error(e.Message);
                 Logger.Debug(e.StackTrace);
                 throw e;
             }
