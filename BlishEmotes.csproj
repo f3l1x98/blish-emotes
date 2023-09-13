@@ -363,6 +363,7 @@
     <Content Include="ref\textures\emotes\ponder.png" />
     <Content Include="ref\textures\emotes\possessed.png" />
     <Content Include="ref\textures\emotes\rank.png" />
+    <Content Include="ref\textures\emotes\readbook.png" />
     <Content Include="ref\textures\emotes\rock.png" />
     <Content Include="ref\textures\emotes\rockout.png" />
     <Content Include="ref\textures\emotes\sad.png" />

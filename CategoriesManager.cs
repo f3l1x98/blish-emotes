@@ -261,7 +261,7 @@ namespace felix.BlishEmotes
             CreateCategory("Fun", new List<string>() { "cheer", "laugh", "paper", "rock", "rockout", "scissors" }, null, false, false);
             CreateCategory("Pose", new List<string>() { "bless", "crossarms", "heroic", "kneel", "magicjuggle", "playdead", "point", "serve", "sit", "sleep", "stretch", "threaten" }, null, false, false);
             CreateCategory("Dance", new List<string>() { "dance", "geargrind", "shuffle", "step" }, null, false, false);
-            CreateCategory("Miscellaneous", new List<string>() { "ponder", "possessed", "rank", "sipcoffee", "talk" }, null, false, false);
+            CreateCategory("Miscellaneous", new List<string>() { "ponder", "possessed", "rank", "readbook", "sipcoffee", "talk" }, null, false, false);
             PersistenceManager.SaveCategories(categories.Values.ToList());
         }
 

@@ -183,6 +183,9 @@
   <data name="rank" xml:space="preserve">
     <value>Rank</value>
   </data>
+  <data name="readbook" xml:space="preserve">
+    <value>Read book</value>
+  </data>
   <data name="rock" xml:space="preserve">
     <value>Rock</value>
   </data>
