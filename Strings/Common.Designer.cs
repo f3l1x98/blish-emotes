@@ -61,6 +61,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        public static string category_add {
+            get {
+                return ResourceManager.GetString("category_add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open emotes list.
         /// </summary>
         public static string cornerIcon_tooltip {
@@ -70,56 +79,29 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dance.
+        ///   Looks up a localized string similar to Favourite.
         /// </summary>
-        public static string emote_categoryDance {
+        public static string emote_categoryFavourite {
             get {
-                return ResourceManager.GetString("emote_categoryDance", resourceCulture);
+                return ResourceManager.GetString("emote_categoryFavourite", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fun.
+        ///   Looks up a localized string similar to Synchronizing emotes.
         /// </summary>
-        public static string emote_categoryFun {
+        public static string emote_synchronizeActive {
             get {
-                return ResourceManager.GetString("emote_categoryFun", resourceCulture);
+                return ResourceManager.GetString("emote_synchronizeActive", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Greeting.
+        ///   Looks up a localized string similar to Target emotes.
         /// </summary>
-        public static string emote_categoryGreeting {
+        public static string emote_targetingActive {
             get {
-                return ResourceManager.GetString("emote_categoryGreeting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Miscellaneous.
-        /// </summary>
-        public static string emote_categoryMiscellaneous {
-            get {
-                return ResourceManager.GetString("emote_categoryMiscellaneous", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pose.
-        /// </summary>
-        public static string emote_categoryPose {
-            get {
-                return ResourceManager.GetString("emote_categoryPose", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reaction.
-        /// </summary>
-        public static string emote_categoryReaction {
-            get {
-                return ResourceManager.GetString("emote_categoryReaction", resourceCulture);
+                return ResourceManager.GetString("emote_targetingActive", resourceCulture);
             }
         }
         
@@ -156,6 +138,24 @@ namespace felix.BlishEmotes.Strings {
         public static string settings_global_keybindToggleEmoteList {
             get {
                 return ResourceManager.GetString("settings_global_keybindToggleEmoteList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synchronize Emote Toggle.
+        /// </summary>
+        public static string settings_global_keybindToggleSynchronize {
+            get {
+                return ResourceManager.GetString("settings_global_keybindToggleSynchronize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Targeting Emote Toggle.
+        /// </summary>
+        public static string settings_global_keybindToggleTargeting {
+            get {
+                return ResourceManager.GetString("settings_global_keybindToggleTargeting", resourceCulture);
             }
         }
         
@@ -250,6 +250,24 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Category Settings.
+        /// </summary>
+        public static string settings_ui_categories_tab {
+            get {
+                return ResourceManager.GetString("settings_ui_categories_tab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string settings_ui_delete {
+            get {
+                return ResourceManager.GetString("settings_ui_delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emote Hotkeys.
         /// </summary>
         public static string settings_ui_emoteHotkeys_tab {
@@ -264,6 +282,15 @@ namespace felix.BlishEmotes.Strings {
         public static string settings_ui_global_tab {
             get {
                 return ResourceManager.GetString("settings_ui_global_tab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string settings_ui_save {
+            get {
+                return ResourceManager.GetString("settings_ui_save", resourceCulture);
             }
         }
         

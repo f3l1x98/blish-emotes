@@ -153,10 +153,16 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CategoriesManager.cs" />
+    <Compile Include="Category.cs" />
     <Compile Include="Emote.cs" />
+    <Compile Include="EmotesManager.cs" />
     <Compile Include="EmotesModule.cs" />
+    <Compile Include="Exceptions\NotFoundException.cs" />
+    <Compile Include="Exceptions\UniqueViolationException.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="ModuleSettings.cs" />
+    <Compile Include="PersistenceManager.cs" />
     <Compile Include="Strings\Common.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -168,8 +174,12 @@
       <DependentUpon>Emotes.resx</DependentUpon>
     </Compile>
     <Compile Include="UI\Controls\RadialMenu.cs" />
+    <Compile Include="UI\Controls\ReorderableMenu.cs" />
+    <Compile Include="UI\Controls\ReorderableMenuItem.cs" />
+    <Compile Include="UI\Presenters\CategorySettingsPresenter.cs" />
     <Compile Include="UI\Presenters\DummySettingsPresenter.cs" />
     <Compile Include="UI\Presenters\EmoteHotkeySettingsPresenter.cs" />
+    <Compile Include="UI\Views\CategorySettingsView.cs" />
     <Compile Include="UI\Views\DummySettingsView.cs" />
     <Compile Include="UI\Views\EmoteHotkeySettingsView.cs" />
     <Compile Include="UI\Views\GlobalSettingsView.cs" />
@@ -189,6 +199,7 @@
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Win32.Primitives" />
     <Reference Include="MonoGame.Extended, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\MonoGame.Extended.3.8.0\lib\netstandard2.0\MonoGame.Extended.dll</HintPath>
@@ -204,6 +215,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SemVer, Version=1.2.2.0, Culture=neutral, PublicKeyToken=a89bb7dc6f7a145c, processorArchitecture=MSIL">
+      <HintPath>packages\SemanticVersioning.1.2.2\lib\net45\SemVer.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
@@ -325,6 +339,7 @@
     <Content Include="ref\textures\155052.png" />
     <Content Include="ref\textures\156006.png" />
     <Content Include="ref\textures\156734+155150.png" />
+    <Content Include="ref\textures\156909.png" />
     <Content Include="ref\textures\2107931.png" />
     <Content Include="ref\textures\emotes\beckon.png" />
     <Content Include="ref\textures\emotes\bless.png" />
@@ -348,6 +363,7 @@
     <Content Include="ref\textures\emotes\ponder.png" />
     <Content Include="ref\textures\emotes\possessed.png" />
     <Content Include="ref\textures\emotes\rank.png" />
+    <Content Include="ref\textures\emotes\readbook.png" />
     <Content Include="ref\textures\emotes\rock.png" />
     <Content Include="ref\textures\emotes\rockout.png" />
     <Content Include="ref\textures\emotes\sad.png" />

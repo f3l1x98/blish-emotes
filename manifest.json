@@ -1,6 +1,6 @@
 {
   "name": "Emotes",
-  "version": "1.0.1",
+  "version": "1.2.1",
   "namespace": "xyz.f3l1x.blishemotes",
   "package": "BlishEmotes.dll",
   "manifest_version": 1,
@@ -23,6 +23,7 @@
       "details": "Needed if you want to disable locked emotes."
     }
   },
+  "directories": [ "emotes" ],
   "url": "https://github.com/f3l1x98/blish-emotes",
   "contributors": [
     {

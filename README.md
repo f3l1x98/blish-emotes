@@ -41,6 +41,7 @@ The following icons were used:
 - **ponder:** <a href="https://www.flaticon.com/free-icons/yawning" title="yawning icons">Yawning icons created by Leremy - Flaticon</a>
 - **possessed:** <a href="https://www.flaticon.com/free-icons/possession" title="possession icons">Possession icons created by Leremy - Flaticon</a>
 - **rank:** <a href="https://www.flaticon.com/free-icons/succeed" title="succeed icons">Succeed icons created by Leremy - Flaticon</a>
+- **readbook:** <a href="https://www.flaticon.com/free-icons/read" title="read icons">Read icons created by Leremy - Flaticon</a>
 - **rock:** <a href="https://www.flaticon.com/free-icons/strongman" title="strongman icons">Strongman icons created by Leremy - Flaticon</a>
 - **rockout:** <a href="https://www.flaticon.com/free-icons/electric" title="electric icons">Electric icons created by Leremy - Flaticon</a>
 - **sad:** <a href="https://www.flaticon.com/free-icons/trouble" title="trouble icons">Trouble icons created by Leremy - Flaticon</a>

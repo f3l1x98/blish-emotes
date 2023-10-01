@@ -27,6 +27,8 @@ namespace felix.BlishEmotes
 
         public SettingEntry<bool> GlobalHideCornerIcon { get; private set; }
         public SettingEntry<KeyBinding> GlobalKeyBindToggleEmoteList { get; private set; }
+        public SettingEntry<KeyBinding> GlobalKeyBindToggleSynchronize { get; private set; }
+        public SettingEntry<KeyBinding> GlobalKeyBindToggleTargeting { get; private set; }
         public SettingEntry<bool> GlobalUseCategories { get; private set; }
         public SettingEntry<bool> GlobalUseRadialMenu { get; private set; }
 
@@ -38,6 +40,8 @@ namespace felix.BlishEmotes
             this.GlobalKeyBindToggleEmoteList = this.GlobalSettings.DefineSetting(nameof(this.GlobalKeyBindToggleEmoteList), new KeyBinding(), () => Common.settings_global_keybindToggleEmoteList);
             this.GlobalUseCategories = this.GlobalSettings.DefineSetting(nameof(this.GlobalUseCategories), false, () => Common.settings_global_useCategories);
             this.GlobalUseRadialMenu = this.GlobalSettings.DefineSetting(nameof(this.GlobalUseRadialMenu), false, () => Common.settings_global_useRadialMenu);
+            this.GlobalKeyBindToggleSynchronize = this.GlobalSettings.DefineSetting(nameof(this.GlobalKeyBindToggleSynchronize), new KeyBinding(), () => Common.settings_global_keybindToggleSynchronize);
+            this.GlobalKeyBindToggleTargeting = this.GlobalSettings.DefineSetting(nameof(this.GlobalKeyBindToggleTargeting), new KeyBinding(), () => Common.settings_global_keybindToggleTargeting);
         }
         #endregion
 
@@ -144,6 +148,8 @@ namespace felix.BlishEmotes
         public void Unload()
         {
             this.GlobalKeyBindToggleEmoteList.Value.Enabled = false;
+            this.GlobalKeyBindToggleSynchronize.Value.Enabled = false;
+            this.GlobalKeyBindToggleTargeting.Value.Enabled = false;
             foreach (var entry in this.EmotesShortcutsKeybindsMap)
             {
                 entry.Value.Value.Enabled = false;
