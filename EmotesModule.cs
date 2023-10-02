@@ -146,7 +146,7 @@ namespace BlishEmotesList
 
             CategoriesManager.CategoriesUpdated += delegate
             {
-                DrawUI(true);
+                DrawUI(Settings.GlobalUseCategories?.Value ?? false);
             };
 
             // Init UI
@@ -254,6 +254,7 @@ namespace BlishEmotesList
                 {
                     Parent = GameService.Graphics.SpriteScreen,
                     Emotes = EmotesManager.GetRadial(),
+                    Categories = CategoriesManager.GetAll(),
                 };
             }
         }

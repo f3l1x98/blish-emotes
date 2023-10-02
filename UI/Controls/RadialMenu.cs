@@ -32,19 +32,20 @@ namespace felix.BlishEmotes.UI.Controls
         private Helper _helper;
         private ModuleSettings _settings;
         public List<Emote> Emotes { private get; set; }
+        public List<Category> Categories { private get; set; }
         private Texture2D _lockedTexture;
 
         private List<RadialContainer<Emote>> _radialEmotes = new List<RadialContainer<Emote>>();
         private RadialContainer<Emote> SelectedEmote => _radialEmotes.SingleOrDefault(m => m.Selected);
 
 
-        private List<RadialContainer<Category>> _radialEmoteCategories = new List<RadialContainer<Category>>();
-        private RadialContainer<Category> SelectedEmoteCategory;// => _radialEmoteCategories.SingleOrDefault(m => m.Selected);
+        private List<RadialContainer<Category>> _radialCategories = new List<RadialContainer<Category>>();
+        private RadialContainer<Category> SelectedCategory => _radialCategories.SingleOrDefault(m => m.Selected);
 
         private bool _isActionCamToggled;
 
         private double _startAngle = Math.PI * Math.Floor(0.75 * 360) / 180.0; // start at 270deg (aka -90deg, aka at the top)
-        private int _innerRadius = 100;
+        private int _disabledRadius = 100;
         private int _categoryRadius = 0;
         private int _radius = 0;
         private int _iconSize = 0;
@@ -126,8 +127,6 @@ namespace felix.BlishEmotes.UI.Controls
 
         public override void PaintBeforeChildren(SpriteBatch spriteBatch, Rectangle bounds)
         {
-            _radialEmoteCategories.Clear();
-            _radialEmotes.Clear();
             _selectedEmoteLabel.Text = "";
             if (Emotes.Count == 0)
             {
@@ -157,12 +156,12 @@ namespace felix.BlishEmotes.UI.Controls
                 }
 
                 var emotes = Emotes;
-                var emotesInnerRadius = _innerRadius;
-                if (_settings.GlobalUseCategories.Value)
+                var emotesInnerRadius = _disabledRadius;
+                if (_settings.GlobalUseCategories.Value && Categories.Count > 0)
                 {
-                    PaintEmoteCategories(spriteBatch, (Enum.GetValues(typeof(Category)) as Category[]).ToList());
+                    PaintEmoteCategories(spriteBatch, Categories);
 
-                    emotes = SelectedEmoteCategory != null ? SelectedEmoteCategory.Value.Emotes : new List<Emote>();
+                    emotes = SelectedCategory != null ? SelectedCategory.Value.Emotes : new List<Emote>();
                     emotesInnerRadius = _categoryRadius;
                 }
 
@@ -177,10 +176,12 @@ namespace felix.BlishEmotes.UI.Controls
             if (Helper.IsDebugEnabled())
             {
                 // Draw inner circle where emote selection is disabled
-                spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), _innerRadius, 50, Color.Red, _debugLineThickness);
+                spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), _disabledRadius, 50, Color.Red, _debugLineThickness);
             }
             // Create RadialEmote wrapper for each category
-            PopulateRadialContainerList<Category>(_categoryRadius, (category) => category.ToString(), (category) => _lockedTexture, ref _radialEmoteCategories, categories);
+            var newList = CreateRadialContainerList<Category>(_categoryRadius, (category) => category.ToString(), (category) => _lockedTexture, (category) => SelectedCategory?.Value == category, categories);
+            _radialCategories.Clear();
+            _radialCategories.AddRange(newList);
 
             // Calc angle between mouse pos and radial center
             var mousePos = Input.Mouse.Position;
@@ -194,40 +195,33 @@ namespace felix.BlishEmotes.UI.Controls
 
             var length = new Vector2(diff.Y, diff.X).Length();
 
-            // Reset SelectedEmoteCategory if inside inner ring in order to hide emotes of last selected category
-            if (length < _innerRadius)
-            {
-                SelectedEmoteCategory = null;
-            }
-
             // Draw each RadialEmote and mark selected
-            foreach (var radialEmoteCategory in _radialEmoteCategories)
+            foreach (var radialCategory in _radialCategories)
             {
-                DrawDebugSectionSeparators(spriteBatch, _innerRadius, _categoryRadius, radialEmoteCategory);
+                DrawDebugSectionSeparators(spriteBatch, _disabledRadius, _categoryRadius, radialCategory);
 
                 // Only mark as selected if far enough from center away BUT not too far (in order to be able to close radial without selection and without changing category during emote selection)
-                if (length >= _innerRadius)
+                if (length >= _disabledRadius)
                 {
                     // Mark as selected
                     if (length <= _categoryRadius)
                     {
-                        radialEmoteCategory.Selected = radialEmoteCategory.StartAngle <= angle && radialEmoteCategory.EndAngle > angle;
+                        radialCategory.Selected = radialCategory.StartAngle <= angle && radialCategory.EndAngle > angle;
+                        if (radialCategory.Selected)
+                        {
+                            _selectedEmoteLabel.Text = radialCategory.Text;
+                        }
                     }
-                    else
-                    {
-                        // Inside emote selection -> SelectedEmoteCategory should not change
-                        radialEmoteCategory.Selected = SelectedEmoteCategory == radialEmoteCategory;
-                    }
-
-                    if (radialEmoteCategory.Selected)
-                    {
-                        SelectedEmoteCategory = radialEmoteCategory;
-                    }
+                } else
+                {
+                    radialCategory.Selected = false;
                 }
 
                 // Draw emote texture
                 //spriteBatch.DrawOnCtrl(this, radialEmoteCategory.Texture, new Rectangle(radialEmoteCategory.X, radialEmoteCategory.Y, _iconSize, _iconSize), null, Color.White * (radialEmoteCategory.Selected ? 1f : _settings.RadialIconOpacity.Value));
-                spriteBatch.DrawStringOnCtrl(this, radialEmoteCategory.Text, GameService.Content.DefaultFont32, new Rectangle(radialEmoteCategory.X, radialEmoteCategory.Y, _iconSize, _iconSize), Color.White * (radialEmoteCategory.Selected ? 1f : _settings.RadialIconOpacity.Value));
+                spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(radialCategory.X, radialCategory.Y, _iconSize, _iconSize), null, Color.Gray);
+                // TODO Vector2 vector = font.MeasureString(text);
+                spriteBatch.DrawStringOnCtrl(this, radialCategory.Text, GameService.Content.DefaultFont32, new Rectangle(radialCategory.X, radialCategory.Y, _iconSize, _iconSize), Color.White * (radialCategory.Selected ? 1f : _settings.RadialIconOpacity.Value));
             }
         }
 
@@ -239,7 +233,9 @@ namespace felix.BlishEmotes.UI.Controls
                 spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), innerRadius, 50, Color.Red, _debugLineThickness);
             }
             // Create RadialEmote wrapper for each emote
-            PopulateRadialContainerList<Emote>(_radius, (emote) => _helper.EmotesResourceManager.GetString(emote.Id), (emote) => emote.Texture, ref _radialEmotes, emotes);
+            var newList = CreateRadialContainerList<Emote>(_radius, (emote) => _helper.EmotesResourceManager.GetString(emote.Id), (emote) => emote.Texture, (emote) => false, emotes);
+            _radialEmotes.Clear();
+            _radialEmotes.AddRange(newList);
 
             // Calc angle between mouse pos and radial center
             var mousePos = Input.Mouse.Position;
@@ -279,11 +275,12 @@ namespace felix.BlishEmotes.UI.Controls
             }
         }
 
-        private void PopulateRadialContainerList<T>(int outerRadius, Func<T, string> GetRadialContainerText, Func<T, Texture2D> GetRadialContainerTexture, ref List<RadialContainer<T>> list, List<T> items)
+        private List<RadialContainer<T>> CreateRadialContainerList<T>(int outerRadius, Func<T, string> GetRadialContainerText, Func<T, Texture2D> GetRadialContainerTexture, Func<T, bool> IsSelected, List<T> items)
         {
             // Create RadialEmote wrapper for each emote
             double currentAngle = _startAngle;
             double sweepAngle = Math.PI * 2 / items.Count; // Divide 360deg or 2PIrad between categories
+            List<RadialContainer<T>> newList = new List<RadialContainer<T>>();
             foreach (var item in items)
             {
                 var midAngle = currentAngle + sweepAngle / 2;
@@ -292,7 +289,7 @@ namespace felix.BlishEmotes.UI.Controls
                 int x = (int)Math.Round(_radius + outerRadius * Math.Cos(midAngle));
                 int y = (int)Math.Round(_radius + outerRadius * Math.Sin(midAngle));
 
-                list.Add(new RadialContainer<T>()
+                newList.Add(new RadialContainer<T>()
                 {
                     Value = item,
                     StartAngle = currentAngle,
@@ -301,10 +298,12 @@ namespace felix.BlishEmotes.UI.Controls
                     Y = y,
                     Text = GetRadialContainerText(item),
                     Texture = GetRadialContainerTexture(item),
+                    Selected = IsSelected(item),
                 });
 
                 currentAngle = endAngle;
             }
+            return newList;
         }
 
         private void DrawDebugSectionSeparators<T>(SpriteBatch spriteBatch, int innerRadius, int outerRadius, RadialContainer<T> item)
@@ -336,8 +335,8 @@ namespace felix.BlishEmotes.UI.Controls
             _maxRadialDiameter = Math.Min(GameService.Graphics.SpriteScreen.Width, GameService.Graphics.SpriteScreen.Height);
             _iconSize = (int)(_maxRadialDiameter / 8 * _settings.RadialIconSizeModifier.Value);
             _radius = (int)((_maxRadialDiameter * (3.0 / 4.0) - _iconSize / 2) * _settings.RadialRadiusModifier.Value);
-            _categoryRadius = _innerRadius + (int)((_radius - _innerRadius) * 0.5);
-            _innerRadius = (int)(_radius * _settings.RadialInnerRadiusPercentage.Value);
+            _categoryRadius = _disabledRadius + (int)((_radius - _disabledRadius) * 0.5);
+            _disabledRadius = (int)(_radius * _settings.RadialInnerRadiusPercentage.Value);
             Size = new Point(_maxRadialDiameter, _maxRadialDiameter);
 
             // Set spawn point
