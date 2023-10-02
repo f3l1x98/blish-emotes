@@ -142,11 +142,15 @@ namespace BlishEmotesList
             // Init custom Manager
             PersistenceManager = new PersistenceManager(DirectoriesManager);
             EmotesManager = new EmotesManager(ContentsManager, Settings);
-            CategoriesManager = new CategoriesManager(PersistenceManager);
+            CategoriesManager = new CategoriesManager(ContentsManager, PersistenceManager);
 
             CategoriesManager.CategoriesUpdated += delegate
             {
-                DrawUI(Settings.GlobalUseCategories?.Value ?? false);
+                DrawUI(true);
+                if (this._radialMenu != null)
+                {
+                    _radialMenu.Categories = CategoriesManager.GetAll();
+                }
             };
 
             // Init UI

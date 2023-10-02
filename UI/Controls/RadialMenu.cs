@@ -179,7 +179,7 @@ namespace felix.BlishEmotes.UI.Controls
                 spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), _disabledRadius, 50, Color.Red, _debugLineThickness);
             }
             // Create RadialEmote wrapper for each category
-            var newList = CreateRadialContainerList<Category>(_categoryRadius, (category) => category.Name, (category) => _lockedTexture, (category) => SelectedCategory?.Value == category, categories);
+            var newList = CreateRadialContainerList<Category>(_categoryRadius, (category) => category.Name, (category) => category.Texture, (category) => SelectedCategory?.Value == category, categories);
             _radialCategories.Clear();
             _radialCategories.AddRange(newList);
 
@@ -218,10 +218,7 @@ namespace felix.BlishEmotes.UI.Controls
                 }
 
                 // Draw emote texture
-                //spriteBatch.DrawOnCtrl(this, radialEmoteCategory.Texture, new Rectangle(radialEmoteCategory.X, radialEmoteCategory.Y, _iconSize, _iconSize), null, Color.White * (radialEmoteCategory.Selected ? 1f : _settings.RadialIconOpacity.Value));
-                spriteBatch.DrawOnCtrl(this, ContentService.Textures.Pixel, new Rectangle(radialCategory.X, radialCategory.Y, _iconSize, _iconSize), null, Color.Gray);
-                // TODO Vector2 vector = font.MeasureString(text);
-                spriteBatch.DrawStringOnCtrl(this, radialCategory.Text, GameService.Content.DefaultFont32, new Rectangle(radialCategory.X, radialCategory.Y, _iconSize, _iconSize), Color.White * (radialCategory.Selected ? 1f : _settings.RadialIconOpacity.Value));
+                spriteBatch.DrawOnCtrl(this, radialCategory.Texture, new Rectangle(radialCategory.X, radialCategory.Y, _iconSize, _iconSize), null, Color.White * (radialCategory.Selected ? 1f : _settings.RadialIconOpacity.Value));
             }
         }
 
@@ -275,6 +272,7 @@ namespace felix.BlishEmotes.UI.Controls
             }
         }
 
+        // TODO USE https://stackoverflow.com/questions/4732494/cs-equivalent-of-javas-extends-base-in-generics to remove GetRadialContainerText and GetRadialContainerTexture
         private List<RadialContainer<T>> CreateRadialContainerList<T>(int outerRadius, Func<T, string> GetRadialContainerText, Func<T, Texture2D> GetRadialContainerTexture, Func<T, bool> IsSelected, List<T> items)
         {
             // Create RadialEmote wrapper for each emote

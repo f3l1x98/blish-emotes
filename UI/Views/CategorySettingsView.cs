@@ -20,6 +20,7 @@ namespace felix.BlishEmotes.UI.Views
     {
         public string Name {  get; set; }
         public List<Emote> Emotes { get; set; }
+        public string TextureFileName { get; set; }
     }
 
     class CategorySettingsView : View
