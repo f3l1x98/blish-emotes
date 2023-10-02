@@ -179,7 +179,7 @@ namespace felix.BlishEmotes.UI.Controls
                 spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), _disabledRadius, 50, Color.Red, _debugLineThickness);
             }
             // Create RadialEmote wrapper for each category
-            var newList = CreateRadialContainerList<Category>(_categoryRadius, (category) => category.ToString(), (category) => _lockedTexture, (category) => SelectedCategory?.Value == category, categories);
+            var newList = CreateRadialContainerList<Category>(_categoryRadius, (category) => category.Name, (category) => _lockedTexture, (category) => SelectedCategory?.Value == category, categories);
             _radialCategories.Clear();
             _radialCategories.AddRange(newList);
 
