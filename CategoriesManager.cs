@@ -13,7 +13,7 @@ namespace felix.BlishEmotes
     class CategoriesManager
     {
         public static readonly string NEW_CATEGORY_NAME = "New Category";
-        private const string DEFAULT_TEXTURE_FILE_NAME = "156909.png";
+        public const string DEFAULT_TEXTURE_FILE_NAME = "156909.png";
         private Texture2D defaultTexture;
         private static readonly Logger Logger = Logger.GetLogger<CategoriesManager>();
         private ContentsManager ContentsManager;
