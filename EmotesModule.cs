@@ -430,6 +430,7 @@ namespace BlishEmotesList
             _settingsWindow?.Dispose();
             _radialMenu?.Dispose();
             CategoriesManager.Unload();
+            EmotesManager.Unload();
 
             // All static members must be manually unset
         }

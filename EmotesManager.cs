@@ -71,5 +71,14 @@ namespace felix.BlishEmotes
         {
             return emotes.Values.Where(el => this.Settings.EmotesRadialEnabledMap.ContainsKey(el) ? this.Settings.EmotesRadialEnabledMap[el].Value : true).ToList();
         }
+
+        public void Unload()
+        {
+            // Dispose all Textures
+            foreach (var emote in emotes.Values)
+            {
+                emote.Texture?.Dispose();
+            }
+        }
     }
 }
