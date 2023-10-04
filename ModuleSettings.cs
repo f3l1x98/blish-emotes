@@ -3,17 +3,18 @@ using Blish_HUD.Settings;
 using felix.BlishEmotes.Strings;
 using System;
 using System.Collections.Generic;
+using System.Resources;
 
 namespace felix.BlishEmotes
 {
     public class ModuleSettings
     {
 
-        private Helper _helper;
+        private ResourceManager _emotesResourceManager;
 
-        public ModuleSettings(SettingCollection settings, Helper helper)
+        public ModuleSettings(SettingCollection settings, ResourceManager emotesResourceManager)
         {
-            this._helper = helper;
+            this._emotesResourceManager = emotesResourceManager;
             this.RootSettings = settings;
             DefineGlobalSettings(settings);
             DefineEmotesKeybindSettings(settings);
@@ -52,6 +53,8 @@ namespace felix.BlishEmotes
 
         public Dictionary<Emote, SettingEntry<KeyBinding>> EmotesShortcutsKeybindsMap { get; private set; }
 
+        public event EventHandler<Emote> EmoteShortcutActivated;
+
         private void DefineEmotesKeybindSettings(SettingCollection settings)
         {
             this.EmotesShortcutsSettings = settings.AddSubCollection(EMOTES_SHORTCUT_SETTINGS);
@@ -63,12 +66,12 @@ namespace felix.BlishEmotes
             this.EmotesShortcutsKeybindsMap.Clear();
             foreach (Emote emote in emotes)
             {
-                this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.Id, new KeyBinding(), () => _helper.EmotesResourceManager.GetString(emote.Id)));
+                this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.Id, new KeyBinding(), () => _emotesResourceManager.GetString(emote.Id)));
 
                 this.EmotesShortcutsKeybindsMap[emote].Value.Enabled = !emote.Locked;
                 this.EmotesShortcutsKeybindsMap[emote].Value.Activated += delegate
                 {
-                    _helper.SendEmoteCommand(emote);
+                    EmoteShortcutActivated.Invoke(this, emote);
                 };
             }
         }
@@ -125,7 +128,7 @@ namespace felix.BlishEmotes
             this.EmotesRadialEnabledMap.Clear();
             foreach (Emote emote in emotes)
             {
-                var newSetting = this.EmotesRadialSettings.DefineSetting(nameof(this.EmotesRadialEnabledMap) + "_" + emote.Id, true, () => _helper.EmotesResourceManager.GetString(emote.Id));
+                var newSetting = this.EmotesRadialSettings.DefineSetting(nameof(this.EmotesRadialEnabledMap) + "_" + emote.Id, true, () => _emotesResourceManager.GetString(emote.Id));
                 this.EmotesRadialEnabledMap.Add(emote, newSetting);
                 newSetting.SettingChanged += delegate
                 {

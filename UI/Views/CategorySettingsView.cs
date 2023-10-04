@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace felix.BlishEmotes.UI.Views
 
     class CategorySettingsView : View
     {
-        private Helper helper;
+        private ResourceManager _emotesResourceManager;
 
         private Panel CategoryListPanel;
         private ReorderableMenu CategoryListMenu;
@@ -46,10 +47,10 @@ namespace felix.BlishEmotes.UI.Views
         private const int _controlWidth = 150;
         private const int _height = 20;
 
-        public CategorySettingsView(CategoriesManager categoriesManager, EmotesManager emotesManager, Helper helper) : base()
+        public CategorySettingsView(CategoriesManager categoriesManager, EmotesManager emotesManager, ResourceManager emotesResourceManager) : base()
         {
             this.WithPresenter(new CategorySettingsPresenter(this, (categoriesManager, emotesManager)));
-            this.helper = helper;
+            _emotesResourceManager = emotesResourceManager;
             MenuItemsMap = new Dictionary<ReorderableMenuItem, Category>();
         }
 
@@ -259,7 +260,7 @@ namespace felix.BlishEmotes.UI.Views
                 Label emoteInCategoryLabel = new Label()
                 {
                     Parent = emoteInCategoryRow,
-                    Text = helper.EmotesResourceManager.GetString(emote.Id),
+                    Text = _emotesResourceManager.GetString(emote.Id),
                     Size = new Point(100, _height),
                     Location = new Point(0, 0),
                 };

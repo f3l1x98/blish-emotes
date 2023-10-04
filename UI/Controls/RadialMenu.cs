@@ -8,6 +8,7 @@ using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Controls
@@ -33,9 +34,12 @@ namespace felix.BlishEmotes.UI.Controls
         public event EventHandler<Emote> EmoteSelected;
 
         private Helper _helper;
+        private ResourceManager _emotesResourceManager;
         private ModuleSettings _settings;
         public List<Emote> Emotes { private get; set; }
         public List<Category> Categories { private get; set; }
+        public bool IsEmoteSynchronized { private get; set; }
+        public bool IsEmoteTargeted { private get; set; }
         private Texture2D _lockedTexture;
 
         private List<RadialContainer<Emote>> _radialEmotes = new List<RadialContainer<Emote>>();
@@ -62,9 +66,10 @@ namespace felix.BlishEmotes.UI.Controls
 
         private float _debugLineThickness = 2;
 
-        public RadialMenu(Helper helper, ModuleSettings settings, Texture2D LockedTexture)
+        public RadialMenu(ResourceManager emotesResourceManager, ModuleSettings settings, Texture2D LockedTexture)
         {
-            this._helper = helper;
+            this._helper = new Helper();
+            this._emotesResourceManager = emotesResourceManager;
             this._settings = settings;
             this.Emotes = new List<Emote>();
             this._lockedTexture = LockedTexture;
@@ -140,7 +145,7 @@ namespace felix.BlishEmotes.UI.Controls
             {
                 _noEmotesLabel.Hide();
 
-                if (_helper.IsEmoteSynchronized)
+                if (IsEmoteSynchronized)
                 {
                     _synchronizeToggleActiveLabel.Show();
                 }
@@ -149,7 +154,7 @@ namespace felix.BlishEmotes.UI.Controls
                     _synchronizeToggleActiveLabel.Hide();
                 }
 
-                if (_helper.IsEmoteTargeted)
+                if (IsEmoteTargeted)
                 {
                     _targetToggleActiveLabel.Show();
                 }
@@ -233,7 +238,7 @@ namespace felix.BlishEmotes.UI.Controls
                 spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), innerRadius, 50, Color.Red, _debugLineThickness);
             }
             // Create RadialEmote wrapper for each emote
-            var newList = CreateRadialContainerList<Emote>(_radius, (emote) => _helper.EmotesResourceManager.GetString(emote.Id), (emote) => false, emotes);
+            var newList = CreateRadialContainerList<Emote>(_radius, (emote) => _emotesResourceManager.GetString(emote.Id), (emote) => false, emotes);
             _radialEmotes.Clear();
             _radialEmotes.AddRange(newList);
 

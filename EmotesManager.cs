@@ -1,10 +1,12 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Modules.Managers;
+using felix.BlishEmotes.Strings;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +15,10 @@ namespace felix.BlishEmotes
     class EmotesManager
     {
         private static readonly Logger Logger = Logger.GetLogger<EmotesManager>();
+        public bool IsEmoteSynchronized { get; set; } = false;
+
+        public bool IsEmoteTargeted { get; set; } = false;
+
         private ContentsManager ContentsManager;
         private ModuleSettings Settings;
 
@@ -78,6 +84,30 @@ namespace felix.BlishEmotes
             foreach (var emote in emotes.Values)
             {
                 emote.Texture?.Dispose();
+            }
+        }
+
+        public void SendEmoteCommand(Emote emote)
+        {
+            if (emote.Locked)
+            {
+                Logger.Debug("SendEmoteCommand: Emote locked.");
+                return;
+            }
+            // Send emote command to chat if in game and map closed
+            if (GameService.GameIntegration.Gw2Instance.IsInGame && !GameService.Gw2Mumble.UI.IsMapOpen)
+            {
+                string command = emote.Command;
+                if (IsEmoteSynchronized)
+                {
+                    command += " *";
+                }
+                if (IsEmoteTargeted)
+                {
+                    command += " @";
+                }
+                Logger.Debug(command);
+                GameService.GameIntegration.Chat.Send(command);
             }
         }
     }
