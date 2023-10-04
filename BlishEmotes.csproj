@@ -163,6 +163,7 @@
     <Compile Include="Helper.cs" />
     <Compile Include="ModuleSettings.cs" />
     <Compile Include="PersistenceManager.cs" />
+    <Compile Include="RadialBase.cs" />
     <Compile Include="Strings\Common.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

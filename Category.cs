@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace felix.BlishEmotes
 {
-    public class Category
+    public class Category : RadialBase
     {
         [JsonIgnore] public static readonly string FAVOURITES_CATEGORY_NAME = "Favourites";
         [JsonIgnore] public static readonly string VERSION = "V1";
@@ -19,7 +19,6 @@ namespace felix.BlishEmotes
         [JsonProperty("textureFileName", DefaultValueHandling = DefaultValueHandling.Populate), DefaultValue(CategoriesManager.DEFAULT_TEXTURE_FILE_NAME)]
         public string TextureFileName { get; set; }
 
-        [JsonIgnore] public Texture2D Texture { get; set; }
         [JsonIgnore] public List<Emote> Emotes { get; set; } = new List<Emote>();
 
         public Category Clone()

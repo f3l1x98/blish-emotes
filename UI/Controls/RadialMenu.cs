@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace felix.BlishEmotes.UI.Controls
 {
     // Based on https://github.com/manlaan/BlishHud-Mounts/blob/main/Controls/DrawRadial.cs by bennieboj
-    internal class RadialContainer<T>
+    internal class RadialContainer<T> where T : RadialBase
     {
         public double StartAngle { get; set; }
         public double EndAngle { get; set; }
@@ -179,7 +179,7 @@ namespace felix.BlishEmotes.UI.Controls
                 spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), _disabledRadius, 50, Color.Red, _debugLineThickness);
             }
             // Create RadialEmote wrapper for each category
-            var newList = CreateRadialContainerList<Category>(_categoryRadius, (category) => category.Name, (category) => category.Texture, (category) => SelectedCategory?.Value == category, categories);
+            var newList = CreateRadialContainerList<Category>(_categoryRadius, (category) => category.Name, (category) => SelectedCategory?.Value == category, categories);
             _radialCategories.Clear();
             _radialCategories.AddRange(newList);
 
@@ -230,7 +230,7 @@ namespace felix.BlishEmotes.UI.Controls
                 spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), innerRadius, 50, Color.Red, _debugLineThickness);
             }
             // Create RadialEmote wrapper for each emote
-            var newList = CreateRadialContainerList<Emote>(_radius, (emote) => _helper.EmotesResourceManager.GetString(emote.Id), (emote) => emote.Texture, (emote) => false, emotes);
+            var newList = CreateRadialContainerList<Emote>(_radius, (emote) => _helper.EmotesResourceManager.GetString(emote.Id), (emote) => false, emotes);
             _radialEmotes.Clear();
             _radialEmotes.AddRange(newList);
 
@@ -273,7 +273,7 @@ namespace felix.BlishEmotes.UI.Controls
         }
 
         // TODO USE https://stackoverflow.com/questions/4732494/cs-equivalent-of-javas-extends-base-in-generics to remove GetRadialContainerText and GetRadialContainerTexture
-        private List<RadialContainer<T>> CreateRadialContainerList<T>(int outerRadius, Func<T, string> GetRadialContainerText, Func<T, Texture2D> GetRadialContainerTexture, Func<T, bool> IsSelected, List<T> items)
+        private List<RadialContainer<T>> CreateRadialContainerList<T> (int outerRadius, Func<T, string> GetLabel, Func<T, bool> IsSelected, List<T> items) where T : RadialBase
         {
             // Create RadialEmote wrapper for each emote
             double currentAngle = _startAngle;
@@ -294,8 +294,8 @@ namespace felix.BlishEmotes.UI.Controls
                     EndAngle = endAngle,
                     X = x,
                     Y = y,
-                    Text = GetRadialContainerText(item),
-                    Texture = GetRadialContainerTexture(item),
+                    Text = GetLabel(item),
+                    Texture = item.Texture,
                     Selected = IsSelected(item),
                 });
 
@@ -304,7 +304,7 @@ namespace felix.BlishEmotes.UI.Controls
             return newList;
         }
 
-        private void DrawDebugSectionSeparators<T>(SpriteBatch spriteBatch, int innerRadius, int outerRadius, RadialContainer<T> item)
+        private void DrawDebugSectionSeparators<T>(SpriteBatch spriteBatch, int innerRadius, int outerRadius, RadialContainer<T> item) where T : RadialBase
         {
             if (Helper.IsDebugEnabled())
             {
