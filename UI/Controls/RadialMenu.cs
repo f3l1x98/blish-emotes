@@ -280,7 +280,6 @@ namespace felix.BlishEmotes.UI.Controls
             }
         }
 
-        // TODO USE https://stackoverflow.com/questions/4732494/cs-equivalent-of-javas-extends-base-in-generics to remove GetRadialContainerText and GetRadialContainerTexture
         private List<RadialContainer<T>> CreateRadialContainerList<T> (int outerRadius, Func<T, string> GetLabel, Func<T, bool> IsSelected, List<T> items) where T : RadialBase
         {
             // Create RadialEmote wrapper for each emote
@@ -380,7 +379,6 @@ namespace felix.BlishEmotes.UI.Controls
             if (selected != null)
             {
                 Logger.Debug("Sending command for " + selected.Value.Id);
-                //_helper.SendEmoteCommand(selected.Value);
                 EmoteSelected.Invoke(this, selected.Value);
             }
         }
