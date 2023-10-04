@@ -80,7 +80,7 @@ namespace BlishEmotesList
             this.Settings.GlobalUseCategories.SettingChanged += delegate
             {
                 // Redraw UI due to switch between using categories and full list
-                DrawUI();
+                DrawEmoteListContextMenu();
             };
             this.Settings.GlobalKeyBindToggleEmoteList.Value.Enabled = true;
             this.Settings.GlobalKeyBindToggleEmoteList.Value.Activated += delegate
@@ -103,14 +103,14 @@ namespace BlishEmotesList
             this.Settings.GlobalKeyBindToggleSynchronize.Value.Activated += delegate
             {
                 _helper.IsEmoteSynchronized = !_helper.IsEmoteSynchronized;
-                DrawUI(true);
+                DrawEmoteListContextMenu();
                 Logger.Debug("Toggled IsEmoteSynchronized");
             };
             this.Settings.GlobalKeyBindToggleTargeting.Value.Enabled = true;
             this.Settings.GlobalKeyBindToggleTargeting.Value.Activated += delegate
             {
                 _helper.IsEmoteTargeted = !_helper.IsEmoteTargeted;
-                DrawUI(true);
+                DrawEmoteListContextMenu();
                 Logger.Debug("Toggled IsEmoteTargeted");
             };
             // Update radial menu emotes
@@ -146,7 +146,7 @@ namespace BlishEmotesList
 
             CategoriesManager.CategoriesUpdated += delegate
             {
-                DrawUI(true);
+                DrawEmoteListContextMenu();
                 if (this._radialMenu != null)
                 {
                     _radialMenu.Categories = CategoriesManager.GetAll();
@@ -177,14 +177,6 @@ namespace BlishEmotesList
             _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\156734+155150.png"), () => new EmoteHotkeySettingsView(this.Settings), Common.settings_ui_emoteHotkeys_tab));
         }
 
-        protected override void OnModuleLoaded(EventArgs e)
-        {
-            DrawUI();
-
-            // Base handler must be called
-            base.OnModuleLoaded(e);
-        }
-
         protected override async Task LoadAsync()
         {
             try
@@ -199,7 +191,7 @@ namespace BlishEmotesList
                 CategoriesManager.ResolveEmoteIds(EmotesManager.GetAll());
 
                 this.Settings.InitEmotesSettings(EmotesManager.GetAll());
-                DrawUI();
+                InitUI();
             }
             catch (Exception e)
             {
@@ -242,25 +234,32 @@ namespace BlishEmotesList
             };
         }
 
-        private void DrawUI(bool excludeRadial = false)
+        private void InitUI()
+        {
+            DrawEmoteListContextMenu();
+
+            // Init radial menu
+            _radialMenu = new RadialMenu(_helper, this.Settings, ContentsManager.GetTexture(@"textures/2107931.png"))
+            {
+                Parent = GameService.Graphics.SpriteScreen,
+                Emotes = EmotesManager.GetRadial(),
+                Categories = CategoriesManager.GetAll(),
+            };
+            _radialMenu.EmoteSelected += OnEmoteSelected;
+        }
+
+        private void OnEmoteSelected(object sender, Emote emote)
+        {
+            _helper.SendEmoteCommand(emote);
+        }
+
+        private void DrawEmoteListContextMenu()
         {
             _emoteListMenuStrip?.Dispose();
 
             _emoteListMenuStrip = new ContextMenuStrip();
             var menuItems = this.Settings.GlobalUseCategories.Value ? GetCategoryMenuItems() : GetEmotesMenuItems(EmotesManager.GetAll());
             _emoteListMenuStrip.AddMenuItems(menuItems);
-
-            if (!excludeRadial)
-            {
-                _radialMenu?.Dispose();
-                // Init radial menu
-                _radialMenu = new RadialMenu(_helper, this.Settings, ContentsManager.GetTexture(@"textures/2107931.png"))
-                {
-                    Parent = GameService.Graphics.SpriteScreen,
-                    Emotes = EmotesManager.GetRadial(),
-                    Categories = CategoriesManager.GetAll(),
-                };
-            }
         }
 
         private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
@@ -333,7 +332,7 @@ namespace BlishEmotesList
             };
             toggleFavMenuItem.CheckedChanged += (sender, args) => {
                 CategoriesManager.ToggleEmoteFromCategory(CategoriesManager.FavouriteCategoryId, emote);
-                DrawUI();
+                DrawEmoteListContextMenu();
                 Logger.Debug($"Toggled favourite for {emote.Id} to ${args.Checked}");
             };
 
@@ -428,6 +427,7 @@ namespace BlishEmotesList
             // Unload here
             _cornerIcon?.Dispose();
             _settingsWindow?.Dispose();
+            _radialMenu.EmoteSelected -= OnEmoteSelected;
             _radialMenu?.Dispose();
             CategoriesManager.Unload();
             EmotesManager.Unload();

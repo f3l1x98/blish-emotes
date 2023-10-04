@@ -1,6 +1,7 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
 using felix.BlishEmotes.Strings;
+using felix.BlishEmotes.UI.Views;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -28,6 +29,8 @@ namespace felix.BlishEmotes.UI.Controls
     internal class RadialMenu : Container
     {
         private static readonly Logger Logger = Logger.GetLogger<RadialMenu>();
+
+        public event EventHandler<Emote> EmoteSelected;
 
         private Helper _helper;
         private ModuleSettings _settings;
@@ -372,7 +375,8 @@ namespace felix.BlishEmotes.UI.Controls
             if (selected != null)
             {
                 Logger.Debug("Sending command for " + selected.Value.Id);
-                _helper.SendEmoteCommand(selected.Value);
+                //_helper.SendEmoteCommand(selected.Value);
+                EmoteSelected.Invoke(this, selected.Value);
             }
         }
 
