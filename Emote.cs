@@ -13,7 +13,6 @@ namespace felix.BlishEmotes
     {
         [JsonProperty("id", Required = Required.Always)] public string Id { get; set; }
         [JsonProperty("command", Required = Required.Always)] public string Command { get; set; }
-        [JsonIgnore] public bool Locked { get; set; } = false;
 
         [JsonIgnore] public string TextureRef => $"{Id}.png";
     }

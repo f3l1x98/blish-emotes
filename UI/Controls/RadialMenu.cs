@@ -5,11 +5,13 @@ using felix.BlishEmotes.UI.Views;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using SemVer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Resources;
 using System.Threading.Tasks;
+using static Blish_HUD.ArcDps.ArcDpsEnums;
 
 namespace felix.BlishEmotes.UI.Controls
 {
@@ -25,6 +27,7 @@ namespace felix.BlishEmotes.UI.Controls
         public int Y { get; set; }
 
         public bool Selected { get; set; }
+        public bool Locked { get; set; }
     }
 
     internal class RadialMenu : Container
@@ -191,43 +194,7 @@ namespace felix.BlishEmotes.UI.Controls
             _radialCategories.Clear();
             _radialCategories.AddRange(newList);
 
-            // Calc angle between mouse pos and radial center
-            var mousePos = Input.Mouse.Position;
-            var diff = mousePos - RadialSpawnPoint;
-            var angle = Math.Atan2(diff.Y, diff.X);
-            // Handle multiple of 2PI
-            while (angle < _startAngle)
-            {
-                angle += Math.PI * 2;
-            }
-
-            var length = new Vector2(diff.Y, diff.X).Length();
-
-            // Draw each RadialEmote and mark selected
-            foreach (var radialCategory in _radialCategories)
-            {
-                DrawDebugSectionSeparators(spriteBatch, _disabledRadius, _categoryRadius, radialCategory);
-
-                // Only mark as selected if far enough from center away BUT not too far (in order to be able to close radial without selection and without changing category during emote selection)
-                if (length >= _disabledRadius)
-                {
-                    // Mark as selected
-                    if (length <= _categoryRadius)
-                    {
-                        radialCategory.Selected = radialCategory.StartAngle <= angle && radialCategory.EndAngle > angle;
-                        if (radialCategory.Selected)
-                        {
-                            _selectedEmoteLabel.Text = radialCategory.Text;
-                        }
-                    }
-                } else
-                {
-                    radialCategory.Selected = false;
-                }
-
-                // Draw emote texture
-                spriteBatch.DrawOnCtrl(this, radialCategory.Texture, new Rectangle(radialCategory.X, radialCategory.Y, _iconSize, _iconSize), null, Color.White * (radialCategory.Selected ? 1f : _settings.RadialIconOpacity.Value));
-            }
+            DrawRadialContainerItems(spriteBatch, _disabledRadius, _categoryRadius, _radialCategories);
         }
 
         private void PaintEmotes(SpriteBatch spriteBatch, int innerRadius, List<Emote> emotes)
@@ -242,6 +209,11 @@ namespace felix.BlishEmotes.UI.Controls
             _radialEmotes.Clear();
             _radialEmotes.AddRange(newList);
 
+            DrawRadialContainerItems(spriteBatch, innerRadius, int.MaxValue, _radialEmotes);
+        }
+
+        private void DrawRadialContainerItems<T>(SpriteBatch spriteBatch, int innerRadius, int outerRadius, List<RadialContainer<T>> radialContainerItems) where T : RadialBase
+        {
             // Calc angle between mouse pos and radial center
             var mousePos = Input.Mouse.Position;
             var diff = mousePos - RadialSpawnPoint;
@@ -251,31 +223,32 @@ namespace felix.BlishEmotes.UI.Controls
             {
                 angle += Math.PI * 2;
             }
-
             var length = new Vector2(diff.Y, diff.X).Length();
 
-            // Draw each RadialEmote and mark selected
-            foreach (var radialEmote in _radialEmotes)
+            foreach (var item in radialContainerItems)
             {
-                DrawDebugSectionSeparators(spriteBatch, innerRadius, _radius, radialEmote);
+                DrawDebugSectionSeparators(spriteBatch, innerRadius, Math.Min(_radius, outerRadius), item);
 
                 // Only mark as selected if far enough from center away (in order to be able to close radial without selecting emote)
-                if (length >= innerRadius)
+                if (length >= innerRadius && length <= outerRadius)
                 {
-                    // Mark as selected
-                    radialEmote.Selected = radialEmote.StartAngle <= angle && radialEmote.EndAngle > angle;
-                    if (radialEmote.Selected)
+                    item.Selected = item.StartAngle <= angle && item.EndAngle > angle;
+                    if (item.Selected)
                     {
-                        _selectedEmoteLabel.Text = radialEmote.Text;
+                        _selectedEmoteLabel.Text = item.Text;
                     }
+                }
+                else if (length < innerRadius)
+                {
+                    item.Selected = false;
                 }
 
                 // Draw emote texture
-                spriteBatch.DrawOnCtrl(this, radialEmote.Texture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, radialEmote.Value.Locked ? Color.White * 0.25f : Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
+                spriteBatch.DrawOnCtrl(this, item.Texture, new Rectangle(item.X, item.Y, _iconSize, _iconSize), null, item.Locked ? Color.White * 0.25f : Color.White * (item.Selected ? 1f : _settings.RadialIconOpacity.Value));
                 // Draw locked texture
-                if (radialEmote.Value.Locked)
+                if (item.Locked)
                 {
-                    spriteBatch.DrawOnCtrl(this, _lockedTexture, new Rectangle(radialEmote.X, radialEmote.Y, _iconSize, _iconSize), null, Color.White * (radialEmote.Selected ? 1f : _settings.RadialIconOpacity.Value));
+                    spriteBatch.DrawOnCtrl(this, _lockedTexture, new Rectangle(item.X, item.Y, _iconSize, _iconSize), null, Color.White * (item.Selected ? 1f : _settings.RadialIconOpacity.Value));
                 }
             }
         }
@@ -304,6 +277,7 @@ namespace felix.BlishEmotes.UI.Controls
                     Text = GetLabel(item),
                     Texture = item.Texture,
                     Selected = IsSelected(item),
+                    Locked = item.Locked,
                 });
 
                 currentAngle = endAngle;
