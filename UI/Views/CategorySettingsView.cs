@@ -26,8 +26,6 @@ namespace felix.BlishEmotes.UI.Views
 
     class CategorySettingsView : View
     {
-        private ResourceManager _emotesResourceManager;
-
         private Panel CategoryListPanel;
         private ReorderableMenu CategoryListMenu;
         private StandardButton AddCategoryButton;
@@ -47,10 +45,9 @@ namespace felix.BlishEmotes.UI.Views
         private const int _controlWidth = 150;
         private const int _height = 20;
 
-        public CategorySettingsView(CategoriesManager categoriesManager, EmotesManager emotesManager, ResourceManager emotesResourceManager) : base()
+        public CategorySettingsView(CategoriesManager categoriesManager, EmotesManager emotesManager) : base()
         {
             this.WithPresenter(new CategorySettingsPresenter(this, (categoriesManager, emotesManager)));
-            _emotesResourceManager = emotesResourceManager;
             MenuItemsMap = new Dictionary<ReorderableMenuItem, Category>();
         }
 
@@ -260,7 +257,7 @@ namespace felix.BlishEmotes.UI.Views
                 Label emoteInCategoryLabel = new Label()
                 {
                     Parent = emoteInCategoryRow,
-                    Text = _emotesResourceManager.GetString(emote.Id),
+                    Text = emote.Label,
                     Size = new Point(100, _height),
                     Location = new Point(0, 0),
                 };

@@ -37,8 +37,6 @@ namespace BlishEmotesList
         internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
         internal Gw2ApiManager Gw2ApiManager => this.ModuleParameters.Gw2ApiManager;
 
-        internal ResourceManager EmotesResourceManager;
-
         internal PersistenceManager PersistenceManager;
         internal CategoriesManager CategoriesManager;
         internal EmotesManager EmotesManager;
@@ -59,12 +57,11 @@ namespace BlishEmotesList
         [ImportingConstructor]
         public EmoteLisModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters)
         {
-            EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
         }
 
         protected override void DefineSettings(SettingCollection settings)
         {
-            this.Settings = new ModuleSettings(settings, EmotesResourceManager);
+            this.Settings = new ModuleSettings(settings);
 
             // Handlers
             this.Settings.GlobalHideCornerIcon.SettingChanged += (sender, args) =>
@@ -166,7 +163,7 @@ namespace BlishEmotesList
             // Settings
             _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\155052.png"), () => new GlobalSettingsView(this.Settings), Common.settings_ui_global_tab));
             // Category setting
-            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\156909.png"), () => new CategorySettingsView(CategoriesManager, EmotesManager, EmotesResourceManager), Common.settings_ui_categories_tab));
+            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\156909.png"), () => new CategorySettingsView(CategoriesManager, EmotesManager), Common.settings_ui_categories_tab));
             // Emote Hotkey settings
             _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\156734+155150.png"), () => new EmoteHotkeySettingsView(this.Settings), Common.settings_ui_emoteHotkeys_tab));
         }
@@ -233,7 +230,7 @@ namespace BlishEmotesList
             DrawEmoteListContextMenu();
 
             // Init radial menu
-            _radialMenu = new RadialMenu(EmotesResourceManager, this.Settings, ContentsManager.GetTexture(@"textures/2107931.png"))
+            _radialMenu = new RadialMenu(this.Settings, ContentsManager.GetTexture(@"textures/2107931.png"))
             {
                 Parent = GameService.Graphics.SpriteScreen,
                 Emotes = EmotesManager.GetRadial(),
@@ -359,7 +356,7 @@ namespace BlishEmotesList
             {
                 var menuItem = new ContextMenuStripItem()
                 {
-                    Text = EmotesResourceManager.GetString(emote.Id),
+                    Text = emote.Label,
                     Enabled = !emote.Locked,
                     Submenu = GetToggleFavContextMenu(emote),
                 };

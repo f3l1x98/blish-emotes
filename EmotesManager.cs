@@ -4,6 +4,7 @@ using felix.BlishEmotes.Strings;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Resources;
@@ -21,6 +22,7 @@ namespace felix.BlishEmotes
 
         private ContentsManager ContentsManager;
         private ModuleSettings Settings;
+        private ResourceManager EmotesResourceManager;
 
         // Cache mapping ids to objects
         private Dictionary<string, Emote> emotes;
@@ -29,7 +31,23 @@ namespace felix.BlishEmotes
         {
             ContentsManager = contentsManager;
             Settings = settings;
+            EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
             emotes = new Dictionary<string, Emote>();
+            GameService.Overlay.UserLocaleChanged += OnLocaleChanged;
+        }
+
+        private void OnLocaleChanged(object sender, ValueEventArgs<CultureInfo> eventArgs)
+        {
+            UpdateEmoteLabels();
+            Logger.Debug("Updated emote labels");
+        }
+
+        private void UpdateEmoteLabels()
+        {
+            foreach (var emote in emotes)
+            {
+                emote.Value.UpdateLabel(EmotesResourceManager);
+            }
         }
 
         public void Load()
@@ -45,6 +63,7 @@ namespace felix.BlishEmotes
                 foreach (var emote in loadedEmotes)
                 {
                     emote.Texture = ContentsManager.GetTexture(@"textures/emotes/" + emote.TextureRef, ContentsManager.GetTexture(@"textures/missing-texture.png"));
+                    emote.UpdateLabel(EmotesResourceManager);
                 }
                 foreach (var emote in loadedEmotes)
                 {
@@ -80,6 +99,7 @@ namespace felix.BlishEmotes
 
         public void Unload()
         {
+            GameService.Overlay.UserLocaleChanged -= OnLocaleChanged;
             // Dispose all Textures
             foreach (var emote in emotes.Values)
             {

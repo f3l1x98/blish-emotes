@@ -10,11 +10,8 @@ namespace felix.BlishEmotes
     public class ModuleSettings
     {
 
-        private ResourceManager _emotesResourceManager;
-
-        public ModuleSettings(SettingCollection settings, ResourceManager emotesResourceManager)
+        public ModuleSettings(SettingCollection settings)
         {
-            this._emotesResourceManager = emotesResourceManager;
             this.RootSettings = settings;
             DefineGlobalSettings(settings);
             DefineEmotesKeybindSettings(settings);
@@ -66,7 +63,7 @@ namespace felix.BlishEmotes
             this.EmotesShortcutsKeybindsMap.Clear();
             foreach (Emote emote in emotes)
             {
-                this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.Id, new KeyBinding(), () => _emotesResourceManager.GetString(emote.Id)));
+                this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.Id, new KeyBinding(), () => emote.Label));
 
                 this.EmotesShortcutsKeybindsMap[emote].Value.Enabled = !emote.Locked;
                 this.EmotesShortcutsKeybindsMap[emote].Value.Activated += delegate
@@ -128,7 +125,7 @@ namespace felix.BlishEmotes
             this.EmotesRadialEnabledMap.Clear();
             foreach (Emote emote in emotes)
             {
-                var newSetting = this.EmotesRadialSettings.DefineSetting(nameof(this.EmotesRadialEnabledMap) + "_" + emote.Id, true, () => _emotesResourceManager.GetString(emote.Id));
+                var newSetting = this.EmotesRadialSettings.DefineSetting(nameof(this.EmotesRadialEnabledMap) + "_" + emote.Id, true, () => emote.Label);
                 this.EmotesRadialEnabledMap.Add(emote, newSetting);
                 newSetting.SettingChanged += delegate
                 {

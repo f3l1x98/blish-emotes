@@ -21,6 +21,11 @@ namespace felix.BlishEmotes
 
         [JsonIgnore] public List<Emote> Emotes { get; set; } = new List<Emote>();
 
+        [JsonIgnore]
+        public override string Label {
+            get => Name;
+        }
+
         public Category Clone()
         {
             return new Category()

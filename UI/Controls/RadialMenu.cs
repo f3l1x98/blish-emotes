@@ -37,7 +37,6 @@ namespace felix.BlishEmotes.UI.Controls
         public event EventHandler<Emote> EmoteSelected;
 
         private Helper _helper;
-        private ResourceManager _emotesResourceManager;
         private ModuleSettings _settings;
         public List<Emote> Emotes { private get; set; }
         public List<Category> Categories { private get; set; }
@@ -69,10 +68,9 @@ namespace felix.BlishEmotes.UI.Controls
 
         private float _debugLineThickness = 2;
 
-        public RadialMenu(ResourceManager emotesResourceManager, ModuleSettings settings, Texture2D LockedTexture)
+        public RadialMenu(ModuleSettings settings, Texture2D LockedTexture)
         {
             this._helper = new Helper();
-            this._emotesResourceManager = emotesResourceManager;
             this._settings = settings;
             this.Emotes = new List<Emote>();
             this._lockedTexture = LockedTexture;
@@ -190,7 +188,7 @@ namespace felix.BlishEmotes.UI.Controls
                 spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), _disabledRadius, 50, Color.Red, _debugLineThickness);
             }
             // Create RadialEmote wrapper for each category
-            var newList = CreateRadialContainerList<Category>(_categoryRadius, (category) => category.Name, (category) => SelectedCategory?.Value == category, categories);
+            var newList = CreateRadialContainerList<Category>(_categoryRadius, (category) => SelectedCategory?.Value == category, categories);
             _radialCategories.Clear();
             _radialCategories.AddRange(newList);
 
@@ -205,7 +203,7 @@ namespace felix.BlishEmotes.UI.Controls
                 spriteBatch.DrawCircle(RadialSpawnPoint.ToVector2(), innerRadius, 50, Color.Red, _debugLineThickness);
             }
             // Create RadialEmote wrapper for each emote
-            var newList = CreateRadialContainerList<Emote>(_radius, (emote) => _emotesResourceManager.GetString(emote.Id), (emote) => false, emotes);
+            var newList = CreateRadialContainerList<Emote>(_radius, (emote) => false, emotes);
             _radialEmotes.Clear();
             _radialEmotes.AddRange(newList);
 
@@ -253,7 +251,7 @@ namespace felix.BlishEmotes.UI.Controls
             }
         }
 
-        private List<RadialContainer<T>> CreateRadialContainerList<T> (int outerRadius, Func<T, string> GetLabel, Func<T, bool> IsSelected, List<T> items) where T : RadialBase
+        private List<RadialContainer<T>> CreateRadialContainerList<T> (int outerRadius, Func<T, bool> IsSelected, List<T> items) where T : RadialBase
         {
             // Create RadialEmote wrapper for each emote
             double currentAngle = _startAngle;
@@ -274,7 +272,7 @@ namespace felix.BlishEmotes.UI.Controls
                     EndAngle = endAngle,
                     X = x,
                     Y = y,
-                    Text = GetLabel(item),
+                    Text = item.Label,
                     Texture = item.Texture,
                     Selected = IsSelected(item),
                     Locked = item.Locked,

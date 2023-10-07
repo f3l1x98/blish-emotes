@@ -12,6 +12,6 @@ namespace felix.BlishEmotes
     {
         [JsonIgnore] public Texture2D Texture { get; set; }
         [JsonIgnore] public bool Locked { get; set; } = false;
-        // TODO add Label and use BuildsManager.s_moduleInstance.LanguageChanged -= ModuleInstance_LanguageChanged; to update Label for Emote
+        [JsonIgnore] public abstract string Label { get; }
     }
 }
