@@ -174,6 +174,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Emotes.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\IconSelection.cs" />
     <Compile Include="UI\Controls\RadialMenu.cs" />
     <Compile Include="UI\Controls\ReorderableMenu.cs" />
     <Compile Include="UI\Controls\ReorderableMenuItem.cs" />

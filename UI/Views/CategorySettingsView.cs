@@ -26,6 +26,7 @@ namespace felix.BlishEmotes.UI.Views
 
     class CategorySettingsView : View
     {
+        private IconSelection IconSelection;
         private Panel CategoryListPanel;
         private ReorderableMenu CategoryListMenu;
         private StandardButton AddCategoryButton;
@@ -40,6 +41,7 @@ namespace felix.BlishEmotes.UI.Views
 
         public List<Emote> Emotes { get; set; }
 
+        private Category _editingCategory = null;
 
         private const int _labelWidth = 200;
         private const int _controlWidth = 150;
@@ -67,6 +69,19 @@ namespace felix.BlishEmotes.UI.Views
 
         protected override void Build(Container buildPanel)
         {
+            IconSelection = new IconSelection(buildPanel, null)
+            {
+                Options = Emotes.Select((emote) => new SelectionOption(emote.Texture, $"emotes/{emote.TextureRef}")).ToList(),
+                Padding = new Thickness(5),
+            };
+            IconSelection.Selected += (sender, item) =>
+            {
+                if (_editingCategory == null) return;
+
+                _editingCategory.TextureFileName = item.TextureRef;
+                _editingCategory.Texture = item.Texture;
+                BuildEditPanel(CategoryEditPanel);
+            };
             // Init left panel
             var addBtnHeight = 30;
             CategoryListPanel = new Panel()
@@ -131,7 +146,8 @@ namespace felix.BlishEmotes.UI.Views
             BuildCategoryMenuItems();
             if (category != null)
             {
-                BuildEditPanel(CategoryEditPanel, category);
+                _editingCategory = category.Clone();
+                BuildEditPanel(CategoryEditPanel);
             }
         }
 
@@ -151,7 +167,8 @@ namespace felix.BlishEmotes.UI.Views
                 };
                 menuItem.Click += delegate
                 {
-                    BuildEditPanel(CategoryEditPanel, category);
+                    _editingCategory = category.Clone();
+                    BuildEditPanel(CategoryEditPanel);
                 };
                 MenuItemsMap.Add(menuItem, category);
             }
@@ -174,7 +191,7 @@ namespace felix.BlishEmotes.UI.Views
             return rightClickMenu;
         }
 
-        private void BuildEditPanel(Panel parent, Category category)
+        private void BuildEditPanel(Panel parent)
         {
             parent.ClearChildren();
             Panel settingsPanel = new Panel()
@@ -194,15 +211,30 @@ namespace felix.BlishEmotes.UI.Views
                 CanScroll = false,
                 ShowBorder = false,
             };
-            
-            if (category.IsFavourite)
+
+            // TODO GIVE ICON A BORDER TO INDICATE AS CLICKABLE
+            Image icon = new Image()
+            {
+                Parent = header,
+                BasicTooltipText = "Click to change icon.",
+                Width = 40,
+                Height = 40,
+                Texture = _editingCategory.Texture,
+                Location = new Point(10),
+            };
+            IconSelection.AttachedToControl = icon;
+            icon.LeftMouseButtonPressed += delegate
+            {
+                IconSelection.Show();
+            };
+            if (_editingCategory.IsFavourite)
             {
                 Label categoryName = new Label()
                 {
                     Parent = header,
                     Width = 200,
                     Height = 40,
-                    Text = category.Name,
+                    Text = _editingCategory.Name,
                     Location = new Point(header.Size.X / 2 - 100, 10),
                     Font = GameService.Content.DefaultFont18,
                 };
@@ -214,7 +246,7 @@ namespace felix.BlishEmotes.UI.Views
                     Parent = header,
                     Width = 200,
                     Height = 40,
-                    Text = category.Name,
+                    Text = _editingCategory.Name,
                     MaxLength = 20,
                     Location = new Point(header.Size.X / 2 - 100, 10),
                     Font = GameService.Content.DefaultFont18,
@@ -223,7 +255,7 @@ namespace felix.BlishEmotes.UI.Views
                 {
                     if (args is ValueChangedEventArgs<string> valueArgs)
                     {
-                        category.Name = valueArgs.NewValue;
+                        _editingCategory.Name = valueArgs.NewValue;
                     }
                 };
             }
@@ -236,7 +268,7 @@ namespace felix.BlishEmotes.UI.Views
             };
             saveButton.Click += delegate
             {
-                UpdateCategory?.Invoke(this, category);
+                UpdateCategory?.Invoke(this, _editingCategory);
             };
 
             // Emotes
@@ -264,18 +296,18 @@ namespace felix.BlishEmotes.UI.Views
                 Checkbox emoteInCategoryCheckbox = new Checkbox()
                 {
                     Parent = emoteInCategoryRow,
-                    Checked = (this.Presenter as CategorySettingsPresenter).IsEmoteInCategory(category.Id, emote),
+                    Checked = (this.Presenter as CategorySettingsPresenter).IsEmoteInCategory(_editingCategory.Id, emote),
                     Size = new Point(_controlWidth, _height),
                     Location = new Point(_labelWidth + 5, 0),
                 };
                 emoteInCategoryCheckbox.CheckedChanged += (s, args) => {
                     if (args.Checked)
                     {
-                        category.AddEmote(emote);
+                        _editingCategory.AddEmote(emote);
                     }
                     else
                     {
-                        category.RemoveEmote(emote);
+                        _editingCategory.RemoveEmote(emote);
                     }
                 };
             }
@@ -283,6 +315,7 @@ namespace felix.BlishEmotes.UI.Views
 
         protected override void Unload()
         {
+            this.IconSelection?.Dispose();
             this.CategoryListPanel?.Dispose();
             this.AddCategoryButton?.Dispose();
             this.CategoryEditPanel?.Dispose();
