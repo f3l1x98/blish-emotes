@@ -26,10 +26,11 @@ using System.Threading.Tasks;
 namespace BlishEmotesList
 {
     [Export(typeof(Blish_HUD.Modules.Module))]
-    public class EmoteLisModule : Blish_HUD.Modules.Module
+    public class EmotesModule : Blish_HUD.Modules.Module
     {
+        internal static EmotesModule ModuleInstance;
 
-        private static readonly Logger Logger = Logger.GetLogger<EmoteLisModule>();
+        private static readonly Logger Logger = Logger.GetLogger<EmotesModule>();
 
         #region Service Managers
         internal SettingsManager SettingsManager => this.ModuleParameters.SettingsManager;
@@ -55,8 +56,9 @@ namespace BlishEmotesList
 
 
         [ImportingConstructor]
-        public EmoteLisModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters)
+        public EmotesModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters)
         {
+            ModuleInstance = this;
         }
 
         protected override void DefineSettings(SettingCollection settings)
