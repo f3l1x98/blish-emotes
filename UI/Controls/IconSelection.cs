@@ -101,14 +101,14 @@ namespace felix.BlishEmotes.UI.Controls
 
         private List<SelectionEntry> _selections;
 
-        public IconSelection(Container parent, Control attachedToControl)
+        public IconSelection(Container parent, Control attachedToControl, ContentsManager contentsManager)
         {
             Parent = parent;
             AttachedToControl = attachedToControl;
             _selections = new List<SelectionEntry>();
             ZIndex = 997;
             Visible = false;
-            Background = EmotesModule.ModuleInstance.ContentsManager.GetTexture(@"textures\156006.png");
+            Background = contentsManager.GetTexture(@"textures\156006.png");
 
             UpdateSizeAndLocation();
 

@@ -2,6 +2,7 @@
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Blish_HUD.Input;
+using BlishEmotesList;
 using felix.BlishEmotes.Strings;
 using felix.BlishEmotes.UI.Controls;
 using felix.BlishEmotes.UI.Presenters;
@@ -69,7 +70,7 @@ namespace felix.BlishEmotes.UI.Views
 
         protected override void Build(Container buildPanel)
         {
-            IconSelection = new IconSelection(buildPanel, null)
+            IconSelection = new IconSelection(buildPanel, null, EmotesModule.ModuleInstance.ContentsManager)
             {
                 Options = Emotes.Select((emote) => new SelectionOption(emote.Texture, $"emotes/{emote.TextureRef}")).ToList(),
                 Padding = new Thickness(5),
