@@ -164,6 +164,7 @@
     <Compile Include="ModuleSettings.cs" />
     <Compile Include="Services\PersistenceManager.cs" />
     <Compile Include="Models\RadialBase.cs" />
+    <Compile Include="Services\TexturesManager.cs" />
     <Compile Include="Strings\Common.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

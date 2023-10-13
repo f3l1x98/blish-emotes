@@ -7,6 +7,7 @@ using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using felix.BlishEmotes;
 using felix.BlishEmotes.Exceptions;
+using felix.BlishEmotes.Services;
 using felix.BlishEmotes.Strings;
 using felix.BlishEmotes.UI.Controls;
 using felix.BlishEmotes.UI.Views;
@@ -39,6 +40,7 @@ namespace BlishEmotesList
         internal Gw2ApiManager Gw2ApiManager => this.ModuleParameters.Gw2ApiManager;
 
         internal PersistenceManager PersistenceManager;
+        internal TexturesManager TexturesManager;
         internal CategoriesManager CategoriesManager;
         internal EmotesManager EmotesManager;
         #endregion
@@ -138,6 +140,7 @@ namespace BlishEmotesList
 
             // Init custom Manager
             PersistenceManager = new PersistenceManager(DirectoriesManager);
+            TexturesManager = new TexturesManager(ContentsManager);
             EmotesManager = new EmotesManager(ContentsManager, Settings);
             CategoriesManager = new CategoriesManager(ContentsManager, PersistenceManager);
 
@@ -152,22 +155,22 @@ namespace BlishEmotesList
                 InitCornerIcon();
             }
 
-            _settingsWindow = new TabbedWindow2(ContentsManager.GetTexture(@"textures\156006.png"), new Rectangle(35, 36, 900, 640), new Rectangle(95, 42, 783 + 38, 592))
+            _settingsWindow = new TabbedWindow2(TexturesManager.GetTexture(Textures.Background), new Rectangle(35, 36, 900, 640), new Rectangle(95, 42, 783 + 38, 592))
             {
                 Title = Common.settings_ui_title,
                 Parent = GameService.Graphics.SpriteScreen,
                 Location = new Point(100, 100),
-                Emblem = this.ContentsManager.GetTexture(@"textures\102390.png"),
+                Emblem = TexturesManager.GetTexture(Textures.SettingsIcon),
                 Id = $"{this.Namespace}_SettingsWindow",
                 SavesPosition = true,
             };
 
             // Settings
-            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\155052.png"), () => new GlobalSettingsView(this.Settings), Common.settings_ui_global_tab));
+            _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.GlobalSettingsIcon), () => new GlobalSettingsView(this.Settings), Common.settings_ui_global_tab));
             // Category setting
-            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\156909.png"), () => new CategorySettingsView(CategoriesManager, EmotesManager), Common.settings_ui_categories_tab));
+            _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.CategorySettingsIcon), () => new CategorySettingsView(CategoriesManager, EmotesManager), Common.settings_ui_categories_tab));
             // Emote Hotkey settings
-            _settingsWindow.Tabs.Add(new Tab(ContentsManager.GetTexture(@"textures\156734+155150.png"), () => new EmoteHotkeySettingsView(this.Settings), Common.settings_ui_emoteHotkeys_tab));
+            _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.HotkeySettingsIcon), () => new EmoteHotkeySettingsView(this.Settings), Common.settings_ui_emoteHotkeys_tab));
         }
 
         protected override async Task LoadAsync()
@@ -212,7 +215,7 @@ namespace BlishEmotesList
             _cornerIcon?.Dispose();
             _cornerIcon = new CornerIcon()
             {
-                Icon = ContentsManager.GetTexture(@"textures/emotes_icon.png"),
+                Icon = TexturesManager.GetTexture(Textures.ModuleIcon),
                 BasicTooltipText = Common.cornerIcon_tooltip,
                 Priority = -620003847,
             };
@@ -232,7 +235,7 @@ namespace BlishEmotesList
             DrawEmoteListContextMenu();
 
             // Init radial menu
-            _radialMenu = new RadialMenu(this.Settings, ContentsManager.GetTexture(@"textures/2107931.png"))
+            _radialMenu = new RadialMenu(this.Settings, TexturesManager.GetTexture(Textures.LockedTexture))
             {
                 Parent = GameService.Graphics.SpriteScreen,
                 Emotes = EmotesManager.GetRadial(),
@@ -415,11 +418,11 @@ namespace BlishEmotesList
                 }
                 else
                 {
-
                     returnVal.UnlockableEmotesIds = new List<string>();
                     returnVal.UnlockedEmotesIds = new List<string>();
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Logger.Warn("Failed to fetch emotes from API");
                 Logger.Debug(e.Message);
@@ -442,6 +445,7 @@ namespace BlishEmotesList
             _radialMenu?.Dispose();
             CategoriesManager.Unload();
             EmotesManager.Unload();
+            TexturesManager.Dispose();
 
             // All static members must be manually unset
             ModuleInstance = null;

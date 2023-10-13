@@ -2,6 +2,7 @@
 using Blish_HUD.Controls;
 using Blish_HUD.Modules.Managers;
 using BlishEmotesList;
+using felix.BlishEmotes.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -101,14 +102,14 @@ namespace felix.BlishEmotes.UI.Controls
 
         private List<SelectionEntry> _selections;
 
-        public IconSelection(Container parent, Control attachedToControl, ContentsManager contentsManager)
+        public IconSelection(Container parent, Control attachedToControl)
         {
             Parent = parent;
             AttachedToControl = attachedToControl;
             _selections = new List<SelectionEntry>();
             ZIndex = 997;
             Visible = false;
-            Background = contentsManager.GetTexture(@"textures\156006.png");
+            Background = EmotesModule.ModuleInstance.TexturesManager.GetTexture(Textures.Background);
 
             UpdateSizeAndLocation();
 

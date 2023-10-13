@@ -70,7 +70,7 @@ namespace felix.BlishEmotes.UI.Views
 
         protected override void Build(Container buildPanel)
         {
-            IconSelection = new IconSelection(buildPanel, null, EmotesModule.ModuleInstance.ContentsManager)
+            IconSelection = new IconSelection(buildPanel, null)
             {
                 Options = Emotes.Select((emote) => new SelectionOption(emote.Texture, $"emotes/{emote.TextureRef}")).ToList(),
                 Padding = new Thickness(5),
