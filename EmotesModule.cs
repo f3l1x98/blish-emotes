@@ -444,6 +444,7 @@ namespace BlishEmotesList
             EmotesManager.Unload();
 
             // All static members must be manually unset
+            ModuleInstance = null;
         }
 
     }
