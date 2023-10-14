@@ -153,16 +153,18 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CategoriesManager.cs" />
-    <Compile Include="Category.cs" />
-    <Compile Include="Emote.cs" />
-    <Compile Include="EmotesManager.cs" />
+    <Compile Include="Services\CategoriesManager.cs" />
+    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\Emote.cs" />
+    <Compile Include="Services\EmotesManager.cs" />
     <Compile Include="EmotesModule.cs" />
     <Compile Include="Exceptions\NotFoundException.cs" />
     <Compile Include="Exceptions\UniqueViolationException.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="ModuleSettings.cs" />
-    <Compile Include="PersistenceManager.cs" />
+    <Compile Include="Services\PersistenceManager.cs" />
+    <Compile Include="Models\RadialBase.cs" />
+    <Compile Include="Services\TexturesManager.cs" />
     <Compile Include="Strings\Common.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -173,6 +175,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Emotes.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\IconSelection.cs" />
     <Compile Include="UI\Controls\RadialMenu.cs" />
     <Compile Include="UI\Controls\ReorderableMenu.cs" />
     <Compile Include="UI\Controls\ReorderableMenuItem.cs" />
@@ -253,7 +256,9 @@
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Console" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Diagnostics.Tracing" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Globalization.Calendars" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.IO" />
@@ -286,6 +291,7 @@
     <Reference Include="System.Runtime.InteropServices" />
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Security.Cryptography.Algorithms" />
     <Reference Include="System.Security.Cryptography.Encoding" />
     <Reference Include="System.Security.Cryptography.Primitives" />
@@ -309,6 +315,7 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.ReaderWriter" />
   </ItemGroup>
   <ItemGroup>

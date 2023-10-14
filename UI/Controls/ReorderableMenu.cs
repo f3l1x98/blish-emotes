@@ -57,11 +57,11 @@ namespace felix.BlishEmotes.UI.Controls
                     if (draggedOnIndex >= 0)
                     {
                         DragItem(draggedEntry, draggedOnIndex);
+
+                        Reordered?.Invoke(this, this.ReorderableChildren);
                     }
                 }
                 draggedEntry.Dragging = false;
-
-                Reordered?.Invoke(this, this.ReorderableChildren);
             }
         }
 

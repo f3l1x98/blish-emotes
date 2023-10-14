@@ -1,10 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using Blish_HUD;
+using felix.BlishEmotes.Services;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace felix.BlishEmotes
 {
-    class Category
+    public class Category : RadialBase
     {
         [JsonIgnore] public static readonly string FAVOURITES_CATEGORY_NAME = "Favourites";
         [JsonIgnore] public static readonly string VERSION = "V1";
@@ -13,8 +17,15 @@ namespace felix.BlishEmotes
         [JsonProperty("name", Required = Required.Always)] public string Name { get; set; }
         [JsonProperty("emoteIds", Required = Required.Always)] public List<string> EmoteIds { get; set; }
         [JsonProperty("isFavourite", DefaultValueHandling = DefaultValueHandling.Populate)] public bool IsFavourite { get; set; } = false;
+        [JsonProperty("textureFileName", DefaultValueHandling = DefaultValueHandling.Populate), DefaultValue(Textures.CategorySettingsIcon)]
+        public string TextureFileName { get; set; }
 
         [JsonIgnore] public List<Emote> Emotes { get; set; } = new List<Emote>();
+
+        [JsonIgnore]
+        public override string Label {
+            get => Name;
+        }
 
         public Category Clone()
         {
@@ -25,6 +36,8 @@ namespace felix.BlishEmotes
                 EmoteIds = new List<string>(this.EmoteIds), 
                 Emotes = new List<Emote>(this.Emotes), 
                 IsFavourite = this.IsFavourite, 
+                TextureFileName = this.TextureFileName,
+                Texture = this.Texture,
             };
         }
 
