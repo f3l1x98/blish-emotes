@@ -2,16 +2,22 @@
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Blish_HUD.Input;
+using BlishEmotesList;
+using felix.BlishEmotes.Services;
 using felix.BlishEmotes.Strings;
 using felix.BlishEmotes.UI.Controls;
 using felix.BlishEmotes.UI.Presenters;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Views
@@ -20,12 +26,12 @@ namespace felix.BlishEmotes.UI.Views
     {
         public string Name {  get; set; }
         public List<Emote> Emotes { get; set; }
+        public string TextureFileName { get; set; }
     }
 
     class CategorySettingsView : View
     {
-        private Helper helper;
-
+        private IconSelection IconSelection;
         private Panel CategoryListPanel;
         private ReorderableMenu CategoryListMenu;
         private StandardButton AddCategoryButton;
@@ -40,15 +46,15 @@ namespace felix.BlishEmotes.UI.Views
 
         public List<Emote> Emotes { get; set; }
 
+        private Category _editingCategory = null;
 
         private const int _labelWidth = 200;
         private const int _controlWidth = 150;
         private const int _height = 20;
 
-        public CategorySettingsView(CategoriesManager categoriesManager, EmotesManager emotesManager, Helper helper) : base()
+        public CategorySettingsView(CategoriesManager categoriesManager, EmotesManager emotesManager) : base()
         {
             this.WithPresenter(new CategorySettingsPresenter(this, (categoriesManager, emotesManager)));
-            this.helper = helper;
             MenuItemsMap = new Dictionary<ReorderableMenuItem, Category>();
         }
 
@@ -68,6 +74,19 @@ namespace felix.BlishEmotes.UI.Views
 
         protected override void Build(Container buildPanel)
         {
+            IconSelection = new IconSelection(buildPanel, null)
+            {
+                Options = Emotes.Select((emote) => new SelectionOption(emote.Texture, $"emotes/{emote.TextureRef}")).ToList(),
+                Padding = new Thickness(5),
+            };
+            IconSelection.Selected += (sender, item) =>
+            {
+                if (_editingCategory == null) return;
+
+                _editingCategory.TextureFileName = item.TextureRef;
+                _editingCategory.Texture = item.Texture;
+                BuildEditPanel();
+            };
             // Init left panel
             var addBtnHeight = 30;
             CategoryListPanel = new Panel()
@@ -132,7 +151,8 @@ namespace felix.BlishEmotes.UI.Views
             BuildCategoryMenuItems();
             if (category != null)
             {
-                BuildEditPanel(CategoryEditPanel, category);
+                _editingCategory = category.Clone();
+                BuildEditPanel();
             }
         }
 
@@ -152,7 +172,8 @@ namespace felix.BlishEmotes.UI.Views
                 };
                 menuItem.Click += delegate
                 {
-                    BuildEditPanel(CategoryEditPanel, category);
+                    _editingCategory = category.Clone();
+                    BuildEditPanel();
                 };
                 MenuItemsMap.Add(menuItem, category);
             }
@@ -175,15 +196,15 @@ namespace felix.BlishEmotes.UI.Views
             return rightClickMenu;
         }
 
-        private void BuildEditPanel(Panel parent, Category category)
+        private void BuildEditPanel()
         {
-            parent.ClearChildren();
+            CategoryEditPanel.ClearChildren();
             Panel settingsPanel = new Panel()
             {
-                Parent = parent,
+                Parent = CategoryEditPanel,
                 CanCollapse = false,
                 CanScroll = false,
-                Size = parent.ContentRegion.Size,
+                Size = CategoryEditPanel.ContentRegion.Size,
             };
 
             // Header containing Name of category + save button
@@ -195,15 +216,32 @@ namespace felix.BlishEmotes.UI.Views
                 CanScroll = false,
                 ShowBorder = false,
             };
-            
-            if (category.IsFavourite)
+
+            // TODO GIVE ICON A BORDER TO INDICATE AS CLICKABLE
+            Image icon = new Image()
+            {
+                Parent = header,
+                BasicTooltipText = "Click to change icon.",
+                Width = 40,
+                Height = 40,
+                Texture = _editingCategory.Texture,
+                Location = new Point(10),
+            };
+            IconSelection.AttachedToControl = icon;
+            icon.LeftMouseButtonPressed += delegate
+            {
+                Thread fileDialogThread = new Thread(new ThreadStart(OpenFileDialogThreadMethod));
+                fileDialogThread.SetApartmentState(ApartmentState.STA); // Important, otherwise (at best only this) program will freeze
+                fileDialogThread.Start();
+            };
+            if (_editingCategory.IsFavourite)
             {
                 Label categoryName = new Label()
                 {
                     Parent = header,
                     Width = 200,
                     Height = 40,
-                    Text = category.Name,
+                    Text = _editingCategory.Name,
                     Location = new Point(header.Size.X / 2 - 100, 10),
                     Font = GameService.Content.DefaultFont18,
                 };
@@ -215,7 +253,7 @@ namespace felix.BlishEmotes.UI.Views
                     Parent = header,
                     Width = 200,
                     Height = 40,
-                    Text = category.Name,
+                    Text = _editingCategory.Name,
                     MaxLength = 20,
                     Location = new Point(header.Size.X / 2 - 100, 10),
                     Font = GameService.Content.DefaultFont18,
@@ -224,7 +262,7 @@ namespace felix.BlishEmotes.UI.Views
                 {
                     if (args is ValueChangedEventArgs<string> valueArgs)
                     {
-                        category.Name = valueArgs.NewValue;
+                        _editingCategory.Name = valueArgs.NewValue;
                     }
                 };
             }
@@ -237,7 +275,7 @@ namespace felix.BlishEmotes.UI.Views
             };
             saveButton.Click += delegate
             {
-                UpdateCategory?.Invoke(this, category);
+                UpdateCategory?.Invoke(this, _editingCategory);
             };
 
             // Emotes
@@ -258,32 +296,55 @@ namespace felix.BlishEmotes.UI.Views
                 Label emoteInCategoryLabel = new Label()
                 {
                     Parent = emoteInCategoryRow,
-                    Text = helper.EmotesResourceManager.GetString(emote.Id),
+                    Text = emote.Label,
                     Size = new Point(100, _height),
                     Location = new Point(0, 0),
                 };
                 Checkbox emoteInCategoryCheckbox = new Checkbox()
                 {
                     Parent = emoteInCategoryRow,
-                    Checked = (this.Presenter as CategorySettingsPresenter).IsEmoteInCategory(category.Id, emote),
+                    Checked = (this.Presenter as CategorySettingsPresenter).IsEmoteInCategory(_editingCategory.Id, emote),
                     Size = new Point(_controlWidth, _height),
                     Location = new Point(_labelWidth + 5, 0),
                 };
                 emoteInCategoryCheckbox.CheckedChanged += (s, args) => {
                     if (args.Checked)
                     {
-                        category.AddEmote(emote);
+                        _editingCategory.AddEmote(emote);
                     }
                     else
                     {
-                        category.RemoveEmote(emote);
+                        _editingCategory.RemoveEmote(emote);
                     }
                 };
             }
         }
 
+        private void OpenFileDialogThreadMethod()
+        {
+            using (System.Windows.Forms.OpenFileDialog fileDialog = new System.Windows.Forms.OpenFileDialog())
+            {
+                fileDialog.InitialDirectory = "c:\\";
+                var extensionsFilterString = String.Join(";", TexturesManager.TextureExtensionMasks);
+                fileDialog.Filter = $"Image files|{extensionsFilterString}";
+                fileDialog.RestoreDirectory = true;
+
+                if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    //Get the path of specified file
+                    _editingCategory.TextureFileName = fileDialog.FileName;
+
+                    //Read the contents of the file into a stream
+                    var fileStream = fileDialog.OpenFile();
+                    _editingCategory.Texture = TextureUtil.FromStreamPremultiplied(fileStream);
+                    BuildEditPanel();
+                }
+            }
+        }
+
         protected override void Unload()
         {
+            this.IconSelection?.Dispose();
             this.CategoryListPanel?.Dispose();
             this.AddCategoryButton?.Dispose();
             this.CategoryEditPanel?.Dispose();

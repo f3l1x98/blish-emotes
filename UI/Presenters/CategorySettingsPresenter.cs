@@ -74,7 +74,7 @@ namespace felix.BlishEmotes.UI.Presenters
         {
             try
             {
-                var newCategory = this.Model.Item1.CreateCategory(e.Name, e.Emotes);
+                var newCategory = this.Model.Item1.CreateCategory(e.Name, e.TextureFileName, e.Emotes);
                 this.View.Categories = this.Model.Item1.GetAll();
                 this.View.Rebuild(newCategory);
             }

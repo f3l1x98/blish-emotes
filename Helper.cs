@@ -22,41 +22,6 @@ namespace felix.BlishEmotes
             return isDebug || GameService.Debug.EnableAdditionalDebugDisplay.Value;
         }
 
-        public ResourceManager EmotesResourceManager { get; private set; }
-
-        public Helper()
-        {
-            EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
-        }
-
-        public bool IsEmoteSynchronized { get; set; } = false;
-
-        public bool IsEmoteTargeted { get; set; } = false;
-
-        public void SendEmoteCommand(Emote emote)
-        {
-            if (emote.Locked)
-            {
-                Logger.Debug("SendEmoteCommand: Emote locked.");
-                return;
-            }
-            // Send emote command to chat if in game and map closed
-            if (GameService.GameIntegration.Gw2Instance.IsInGame && !GameService.Gw2Mumble.UI.IsMapOpen)
-            {
-                string command = emote.Command;
-                if (IsEmoteSynchronized)
-                {
-                    command += " *";
-                }
-                if (IsEmoteTargeted)
-                {
-                    command += " @";
-                }
-                Logger.Debug(command);
-                GameService.GameIntegration.Chat.Send(command);
-            }
-        }
-
         // Copied from https://github.com/manlaan/BlishHud-Mounts/blob/main/Helper.cs as part of Radial implementation
         public async Task TriggerKeybind(SettingEntry<KeyBinding> keybindingSetting)
         {

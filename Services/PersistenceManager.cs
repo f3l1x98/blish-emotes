@@ -20,7 +20,6 @@ namespace felix.BlishEmotes
     }
     class PersistenceManager
     {
-
         private static readonly Logger Logger = Logger.GetLogger<PersistenceManager>();
 
         private string _baseDirectoryPath;
