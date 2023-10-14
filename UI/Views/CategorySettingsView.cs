@@ -3,17 +3,21 @@ using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Blish_HUD.Input;
 using BlishEmotesList;
+using felix.BlishEmotes.Services;
 using felix.BlishEmotes.Strings;
 using felix.BlishEmotes.UI.Controls;
 using felix.BlishEmotes.UI.Presenters;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Views
@@ -81,7 +85,7 @@ namespace felix.BlishEmotes.UI.Views
 
                 _editingCategory.TextureFileName = item.TextureRef;
                 _editingCategory.Texture = item.Texture;
-                BuildEditPanel(CategoryEditPanel);
+                BuildEditPanel();
             };
             // Init left panel
             var addBtnHeight = 30;
@@ -148,7 +152,7 @@ namespace felix.BlishEmotes.UI.Views
             if (category != null)
             {
                 _editingCategory = category.Clone();
-                BuildEditPanel(CategoryEditPanel);
+                BuildEditPanel();
             }
         }
 
@@ -169,7 +173,7 @@ namespace felix.BlishEmotes.UI.Views
                 menuItem.Click += delegate
                 {
                     _editingCategory = category.Clone();
-                    BuildEditPanel(CategoryEditPanel);
+                    BuildEditPanel();
                 };
                 MenuItemsMap.Add(menuItem, category);
             }
@@ -192,15 +196,15 @@ namespace felix.BlishEmotes.UI.Views
             return rightClickMenu;
         }
 
-        private void BuildEditPanel(Panel parent)
+        private void BuildEditPanel()
         {
-            parent.ClearChildren();
+            CategoryEditPanel.ClearChildren();
             Panel settingsPanel = new Panel()
             {
-                Parent = parent,
+                Parent = CategoryEditPanel,
                 CanCollapse = false,
                 CanScroll = false,
-                Size = parent.ContentRegion.Size,
+                Size = CategoryEditPanel.ContentRegion.Size,
             };
 
             // Header containing Name of category + save button
@@ -226,7 +230,9 @@ namespace felix.BlishEmotes.UI.Views
             IconSelection.AttachedToControl = icon;
             icon.LeftMouseButtonPressed += delegate
             {
-                IconSelection.Show();
+                Thread fileDialogThread = new Thread(new ThreadStart(OpenFileDialogThreadMethod));
+                fileDialogThread.SetApartmentState(ApartmentState.STA); // Important, otherwise (at best only this) program will freeze
+                fileDialogThread.Start();
             };
             if (_editingCategory.IsFavourite)
             {
@@ -311,6 +317,28 @@ namespace felix.BlishEmotes.UI.Views
                         _editingCategory.RemoveEmote(emote);
                     }
                 };
+            }
+        }
+
+        private void OpenFileDialogThreadMethod()
+        {
+            using (System.Windows.Forms.OpenFileDialog fileDialog = new System.Windows.Forms.OpenFileDialog())
+            {
+                fileDialog.InitialDirectory = "c:\\";
+                var extensionsFilterString = String.Join(";", TexturesManager.TextureExtensionMasks);
+                fileDialog.Filter = $"Image files|{extensionsFilterString}";
+                fileDialog.RestoreDirectory = true;
+
+                if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    //Get the path of specified file
+                    _editingCategory.TextureFileName = fileDialog.FileName;
+
+                    //Read the contents of the file into a stream
+                    var fileStream = fileDialog.OpenFile();
+                    _editingCategory.Texture = TextureUtil.FromStreamPremultiplied(fileStream);
+                    BuildEditPanel();
+                }
             }
         }
 

@@ -1,7 +1,7 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Modules.Managers;
 using felix.BlishEmotes.Exceptions;
-using Gw2Sharp.WebApi.V2.Models;
+using felix.BlishEmotes.Services;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -13,24 +13,22 @@ namespace felix.BlishEmotes
     class CategoriesManager
     {
         public static readonly string NEW_CATEGORY_NAME = "New Category";
-        public const string DEFAULT_TEXTURE_FILE_NAME = "156909.png";
-        private Texture2D defaultTexture;
         private static readonly Logger Logger = Logger.GetLogger<CategoriesManager>();
-        private ContentsManager ContentsManager;
-        private PersistenceManager PersistenceManager;
+
+        public event EventHandler<List<Category>> CategoriesUpdated;
         // Cache special Favourite category id
         public Guid FavouriteCategoryId { get; private set; }
+
+        private TexturesManager TexturesManager;
+        private PersistenceManager PersistenceManager;
         // Cache mapping ids to objects
         private Dictionary<Guid, Category> categories;
 
-        public event EventHandler<List<Category>> CategoriesUpdated;
-
-        public CategoriesManager(ContentsManager contentsManager, PersistenceManager persistenceManager)
+        public CategoriesManager(TexturesManager texturesManager, PersistenceManager persistenceManager)
         {
-            ContentsManager = contentsManager;
+            TexturesManager = texturesManager;
             PersistenceManager = persistenceManager;
             categories = new Dictionary<Guid, Category>();
-            defaultTexture = ContentsManager.GetTexture(@"textures/" + DEFAULT_TEXTURE_FILE_NAME, ContentsManager.GetTexture(@"textures/missing-texture.png"));
         }
 
         public void Load()
@@ -65,6 +63,23 @@ namespace felix.BlishEmotes
             }
         }
 
+        private Texture2D GetTexture(Category category)
+        {
+            return GetTexture(category.TextureFileName);
+        }
+        private Texture2D GetTexture(string textureFileName)
+        {
+            return TexturesManager.GetTexture(GetTexturesManagerKey(textureFileName));
+        }
+        private string GetTexturesManagerKey(Category category)
+        {
+            return GetTexturesManagerKey(category.TextureFileName);
+        }
+        private string GetTexturesManagerKey(string textureFileName)
+        {
+            return Path.GetFileNameWithoutExtension(textureFileName);
+        }
+
         public void ReorderCategories(List<Category> newOrder, bool saveToFile = true)
         {
             if (newOrder.Count != categories.Count)
@@ -89,11 +104,11 @@ namespace felix.BlishEmotes
         {
             return CreateCategory(name, textureFileName, emotes?.Select((emote) => emote.Id).ToList(), emotes, false, saveToFile);
         }
-        private Category CreateCategory(string name, string textureFileName = DEFAULT_TEXTURE_FILE_NAME, List<string> emoteIds = null, List<Emote> emotes = null, bool isFavourite = false, bool saveToFile = true)
+        private Category CreateCategory(string name, string textureFileName = null, List<string> emoteIds = null, List<Emote> emotes = null, bool isFavourite = false, bool saveToFile = true)
         {
             emoteIds = emoteIds ?? new List<string>();
             emotes = emotes ?? new List<Emote>();
-            textureFileName = textureFileName ?? DEFAULT_TEXTURE_FILE_NAME;
+            textureFileName = textureFileName ?? Textures.CategorySettingsIcon.ToString();
 
             if (name == NEW_CATEGORY_NAME)
             {
@@ -148,13 +163,28 @@ namespace felix.BlishEmotes
                 AssertUniqueName(category.Name);
             }
 
+            // This works, because the new TextureFileName is the absolute fileName of the new texture
             if (current.TextureFileName != category.TextureFileName)
             {
-                if (current.Texture != defaultTexture)
+                if (File.Exists(category.TextureFileName))
                 {
-                    current.Texture?.Dispose();
+                    // Copy to emotes dir
+                    string newTextureFileName = $"{category.Name}{Path.GetExtension(category.TextureFileName)}";
+                    string absoluteFilePath = Path.Combine(TexturesManager.ModuleDataTexturesDirectory, newTextureFileName);
+                    if (File.Exists(absoluteFilePath))
+                    {
+                        File.Delete(absoluteFilePath);
+                    }
+                    File.Copy(category.TextureFileName, absoluteFilePath);
+
+                    // Update category and texture cache
+                    category.TextureFileName = newTextureFileName;
+                    var cacheKey = GetTexturesManagerKey(category);
+                    TexturesManager.UpdateTexture(cacheKey, category.Texture);
+                } else
+                {
+                    Logger.Error($"Unable to update texture - {category.TextureFileName} not found!");
                 }
-                // TODO set category.Texture here?!?!?
             }
 
             categories[category.Id] = category;
@@ -185,9 +215,11 @@ namespace felix.BlishEmotes
                 return false;
             }
 
-            if (category.Texture != defaultTexture)
+            if (category.TextureFileName != Textures.CategorySettingsIcon.ToString())
             {
-                category.Texture?.Dispose();
+                // Delete file
+                var fileName = Path.Combine(TexturesManager.ModuleDataTexturesDirectory, category.TextureFileName);
+                File.Delete(fileName);
             }
             categories.Remove(category.Id);
             // Recreate Dictionary in order to bypass optimization that would insert next item at the now empty space
@@ -271,31 +303,8 @@ namespace felix.BlishEmotes
 
         public void Unload()
         {
-            // Dispose all Textures
-            foreach (var category in categories.Values)
-            {
-                if (category.Texture != defaultTexture)
-                {
-                    category.Texture?.Dispose();
-                }
-            }
-            defaultTexture?.Dispose();
-
             // Save using PersistenceManager
             PersistenceManager.SaveCategories(categories.Values.ToList());
-        }
-
-        private Texture2D GetTexture(Category category)
-        {
-            return GetTexture(category.TextureFileName);
-        }
-        private Texture2D GetTexture(string textureFileName)
-        {
-            if (textureFileName == DEFAULT_TEXTURE_FILE_NAME)
-            {
-                return defaultTexture;
-            }
-            return ContentsManager.GetTexture(@"textures/" + textureFileName, ContentsManager.GetTexture(@"textures/missing-texture.png"));
         }
 
         private void CreateFavouriteCategory()

@@ -140,9 +140,9 @@ namespace BlishEmotesList
 
             // Init custom Manager
             PersistenceManager = new PersistenceManager(DirectoriesManager);
-            TexturesManager = new TexturesManager(ContentsManager);
+            TexturesManager = new TexturesManager(ContentsManager, DirectoriesManager);
             EmotesManager = new EmotesManager(ContentsManager, Settings);
-            CategoriesManager = new CategoriesManager(ContentsManager, PersistenceManager);
+            CategoriesManager = new CategoriesManager(TexturesManager, PersistenceManager);
 
             CategoriesManager.CategoriesUpdated += delegate
             {

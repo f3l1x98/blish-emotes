@@ -1,4 +1,5 @@
 ﻿using Blish_HUD;
+using felix.BlishEmotes.Services;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System;
@@ -16,7 +17,7 @@ namespace felix.BlishEmotes
         [JsonProperty("name", Required = Required.Always)] public string Name { get; set; }
         [JsonProperty("emoteIds", Required = Required.Always)] public List<string> EmoteIds { get; set; }
         [JsonProperty("isFavourite", DefaultValueHandling = DefaultValueHandling.Populate)] public bool IsFavourite { get; set; } = false;
-        [JsonProperty("textureFileName", DefaultValueHandling = DefaultValueHandling.Populate), DefaultValue(CategoriesManager.DEFAULT_TEXTURE_FILE_NAME)]
+        [JsonProperty("textureFileName", DefaultValueHandling = DefaultValueHandling.Populate), DefaultValue(Textures.CategorySettingsIcon)]
         public string TextureFileName { get; set; }
 
         [JsonIgnore] public List<Emote> Emotes { get; set; } = new List<Emote>();
