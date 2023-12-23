@@ -262,8 +262,10 @@ namespace felix.BlishEmotes.UI.Controls
                 var midAngle = currentAngle + sweepAngle / 2;
                 var endAngle = currentAngle + sweepAngle;
 
-                int x = (int)Math.Round(_radius + outerRadius * Math.Cos(midAngle));
-                int y = (int)Math.Round(_radius + outerRadius * Math.Sin(midAngle));
+                // Add _radius because Point(_radius) is center of radial and coordinates are top left based
+                int offset = _iconSize / 2;
+                int x = (int)Math.Round(_radius + (outerRadius - offset) * Math.Cos(midAngle));
+                int y = (int)Math.Round(_radius + (outerRadius - offset) * Math.Sin(midAngle));
 
                 newList.Add(new RadialContainer<T>()
                 {
