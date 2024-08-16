@@ -62,6 +62,16 @@ namespace felix.BlishEmotes
             }
         }
 
+        public void Reload()
+        {
+            foreach (var category in categories.Values)
+            {
+                category.Texture?.Dispose();
+            }
+            categories.Clear();
+            Load();
+        }
+
         private Texture2D GetTexture(Category category)
         {
             return GetTexture(category.TextureFileName);

@@ -85,6 +85,16 @@ namespace felix.BlishEmotes
             }
         }
 
+        public void Reload()
+        {
+            foreach (var emote in emotes.Values)
+            {
+                emote.Texture?.Dispose();
+            }
+            emotes.Clear();
+            Load();
+        }
+
         public void UpdateAll(List<Emote> newEmotes)
         {
             emotes.Clear();

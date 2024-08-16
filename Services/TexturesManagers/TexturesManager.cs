@@ -28,6 +28,16 @@ namespace felix.BlishEmotes.Services.TexturesManagers
 
         public abstract void LoadTextures();
 
+        public void ReloadTextures()
+        {
+            foreach (var texture in _textureCache.Values)
+            {
+                texture.Dispose();
+            }
+            _textureCache.Clear();
+            LoadTextures();
+        }
+
         protected void LoadTexturesFromDirectory(string[] textureExtensionMasks, string subdir = "")
         {
             string directory = Path.Combine(ModuleDataTexturesDirectory, subdir);

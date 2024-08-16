@@ -43,6 +43,7 @@ namespace BlishEmotesList
         #region Controls
         private CornerIcon _cornerIcon;
         private ContextMenuStrip _emoteListMenuStrip;
+        private ContextMenuStrip _optionsMenuStrip;
         private TabbedWindow2 _settingsWindow;
         private RadialMenu _radialMenu;
         #endregion
@@ -226,8 +227,44 @@ namespace BlishEmotesList
             };
             _cornerIcon.RightMouseButtonReleased += delegate
             {
+                ShowOptions();
+            };
+        }
+
+        private void ShowOptions()
+        {
+            _optionsMenuStrip?.Dispose();
+
+            _optionsMenuStrip = new ContextMenuStrip();
+            ContextMenuStripItem _settingsItem = new ContextMenuStripItem()
+            {
+                Text = Common.settings_button,
+            };
+            _settingsItem.Click += delegate
+            {
                 _settingsWindow.Show();
             };
+            ContextMenuStripItem _refreshTExturesItem = new ContextMenuStripItem()
+            {
+                Text = "Refresh",
+            };
+            _refreshTExturesItem.Click += delegate
+            {
+                Reload();
+            };
+            _optionsMenuStrip.AddMenuItems(new List<ContextMenuStripItem> { _settingsItem, _refreshTExturesItem });
+            _optionsMenuStrip?.Show(_cornerIcon);
+        }
+
+        private void Reload()
+        {
+            CategoryTexturesManager.ReloadTextures();
+            EmoteTexturesManager.ReloadTextures();
+            EmotesManager.Reload();
+            CategoriesManager.Reload();
+            // Update category Emotes
+            CategoriesManager.ResolveEmoteIds(EmotesManager.GetAll());
+            UpdateRadialMenu();
         }
 
         private void InitUI()
@@ -442,6 +479,8 @@ namespace BlishEmotesList
             // Unload here
             _cornerIcon?.Dispose();
             _settingsWindow?.Dispose();
+            _optionsMenuStrip?.Dispose();
+            _emoteListMenuStrip?.Dispose();
             _radialMenu.EmoteSelected -= OnEmoteSelected;
             _radialMenu?.Dispose();
             CategoriesManager.Unload();
