@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace felix.BlishEmotes.Services.TexturesManagers
 {
+    // TODO move this enum and all function using it to GeneralTexturesManager (afterall the others do not use it)
     public enum Textures
     {
         [Description("emotes_icon.png")]
@@ -64,7 +65,7 @@ namespace felix.BlishEmotes.Services.TexturesManagers
 
         protected abstract void LoadTextures(in Dictionary<string, Texture2D> textureCache);
 
-        protected void LoadDynamicTextures(string[] textureExtensionMasks, string subdir = "")
+        protected void LoadTexturesFromDirectory(string[] textureExtensionMasks, string subdir = "")
         {
             string directory = Path.Combine(ModuleDataTexturesDirectory, subdir);
             if (!Directory.Exists(directory))

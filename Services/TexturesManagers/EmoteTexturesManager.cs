@@ -13,7 +13,7 @@ namespace felix.BlishEmotes.Services.TexturesManagers
 
         protected override void LoadTextures(in Dictionary<string, Texture2D> textureCache)
         {
-            LoadDynamicTextures(new[] { "*.png" }, "emotes");
+            LoadTexturesFromDirectory(new[] { "*.png" }, "emotes");
         }
     }
 }
