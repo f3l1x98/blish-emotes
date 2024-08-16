@@ -1,5 +1,6 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Modules.Managers;
+using felix.BlishEmotes.Services.TexturesManagers;
 using felix.BlishEmotes.Strings;
 using Newtonsoft.Json;
 using System;
@@ -8,8 +9,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace felix.BlishEmotes
 {
@@ -21,15 +20,17 @@ namespace felix.BlishEmotes
         public bool IsEmoteTargeted { get; set; } = false;
 
         private ContentsManager ContentsManager;
+        private ITexturesManager TexturesManager;
         private ModuleSettings Settings;
         private ResourceManager EmotesResourceManager;
 
         // Cache mapping ids to objects
         private Dictionary<string, Emote> emotes;
 
-        public EmotesManager(ContentsManager contentsManager, ModuleSettings settings)
+        public EmotesManager(ContentsManager contentsManager, ITexturesManager texturesManager, ModuleSettings settings)
         {
             ContentsManager = contentsManager;
+            TexturesManager = texturesManager;
             Settings = settings;
             EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
             emotes = new Dictionary<string, Emote>();
@@ -62,7 +63,13 @@ namespace felix.BlishEmotes
                 var loadedEmotes = JsonConvert.DeserializeObject<List<Emote>>(fileContents);
                 foreach (var emote in loadedEmotes)
                 {
-                    emote.Texture = ContentsManager.GetTexture(@"textures/emotes/" + emote.TextureRef, ContentsManager.GetTexture(@"textures/missing-texture.png"));
+                    // TODO perhaps use the TexturesManager and have that one read first from documents (like for categories)
+                    // -> See Categories
+                    emote.Texture = TexturesManager.GetTexture(emote.Id);
+                    if (emote.Texture == null)
+                    {
+                        emote.Texture = ContentsManager.GetTexture(@"textures/emotes/" + emote.TextureRef, ContentsManager.GetTexture(@"textures/missing-texture.png"));
+                    }
                     emote.UpdateLabel(EmotesResourceManager);
                 }
                 foreach (var emote in loadedEmotes)

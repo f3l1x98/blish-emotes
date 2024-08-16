@@ -1,7 +1,6 @@
 ﻿using Blish_HUD;
-using Blish_HUD.Modules.Managers;
 using felix.BlishEmotes.Exceptions;
-using felix.BlishEmotes.Services;
+using felix.BlishEmotes.Services.TexturesManagers;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -19,12 +18,12 @@ namespace felix.BlishEmotes
         // Cache special Favourite category id
         public Guid FavouriteCategoryId { get; private set; }
 
-        private TexturesManager TexturesManager;
+        private ITexturesManager TexturesManager;
         private PersistenceManager PersistenceManager;
         // Cache mapping ids to objects
         private Dictionary<Guid, Category> categories;
 
-        public CategoriesManager(TexturesManager texturesManager, PersistenceManager persistenceManager)
+        public CategoriesManager(ITexturesManager texturesManager, PersistenceManager persistenceManager)
         {
             TexturesManager = texturesManager;
             PersistenceManager = persistenceManager;
@@ -181,7 +180,8 @@ namespace felix.BlishEmotes
                     category.TextureFileName = newTextureFileName;
                     var cacheKey = GetTexturesManagerKey(category);
                     TexturesManager.UpdateTexture(cacheKey, category.Texture);
-                } else
+                }
+                else
                 {
                     Logger.Error($"Unable to update texture - {category.TextureFileName} not found!");
                 }
