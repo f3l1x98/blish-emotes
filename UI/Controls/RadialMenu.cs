@@ -1,17 +1,13 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
 using felix.BlishEmotes.Strings;
-using felix.BlishEmotes.UI.Views;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using SemVer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Resources;
 using System.Threading.Tasks;
-using static Blish_HUD.ArcDps.ArcDpsEnums;
 
 namespace felix.BlishEmotes.UI.Controls
 {
@@ -251,7 +247,7 @@ namespace felix.BlishEmotes.UI.Controls
             }
         }
 
-        private List<RadialContainer<T>> CreateRadialContainerList<T> (int outerRadius, Func<T, bool> IsSelected, List<T> items) where T : RadialBase
+        private List<RadialContainer<T>> CreateRadialContainerList<T>(int outerRadius, Func<T, bool> IsSelected, List<T> items) where T : RadialBase
         {
             // Create RadialEmote wrapper for each emote
             double currentAngle = _startAngle;

@@ -1,5 +1,4 @@
 ﻿using Blish_HUD.Graphics.UI;
-using Blish_HUD.Settings.UI.Views;
 using felix.BlishEmotes.UI.Views;
 using System;
 using System.Threading.Tasks;

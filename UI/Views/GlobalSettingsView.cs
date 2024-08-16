@@ -1,17 +1,11 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
-using Blish_HUD.Input;
 using Blish_HUD.Settings;
-using Blish_HUD.Settings.UI.Views;
 using felix.BlishEmotes.Strings;
 using Microsoft.Xna.Framework;
-using SharpDX.DirectWrite;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Views
 {
@@ -33,7 +27,8 @@ namespace felix.BlishEmotes.UI.Views
         {
             this._settings = settings;
 
-            _settings.OnEmotesLoaded += delegate {
+            _settings.OnEmotesLoaded += delegate
+            {
                 BuildEmotesRadialEnabledPanel();
             };
         }
@@ -120,7 +115,8 @@ namespace felix.BlishEmotes.UI.Views
                 Size = new Point(_controlWidth, _height),
                 Location = new Point(_labelWidth + _padding, 0),
             };
-            _hideCornerIconCheckbox.CheckedChanged += delegate {
+            _hideCornerIconCheckbox.CheckedChanged += delegate
+            {
                 this._settings.GlobalHideCornerIcon.Value = _hideCornerIconCheckbox.Checked;
             };
 
@@ -196,7 +192,8 @@ namespace felix.BlishEmotes.UI.Views
             _useRadialDropdown.Items.Add("List menu");
             _useRadialDropdown.Items.Add("Radial menu");
             _useRadialDropdown.SelectedItem = this._settings.GlobalUseRadialMenu.Value ? "Radial menu" : "List menu";
-            _useRadialDropdown.ValueChanged += delegate {
+            _useRadialDropdown.ValueChanged += delegate
+            {
                 this._settings.GlobalUseRadialMenu.Value = _useRadialDropdown.SelectedItem.Equals("Radial menu");
             };
 
@@ -216,7 +213,8 @@ namespace felix.BlishEmotes.UI.Views
                 Size = new Point(_controlWidth, _height),
                 Location = new Point(_labelWidth + _padding, 0),
             };
-            _useCategoriesCheckbox.CheckedChanged += delegate {
+            _useCategoriesCheckbox.CheckedChanged += delegate
+            {
                 this._settings.GlobalUseCategories.Value = _useCategoriesCheckbox.Checked;
             };
         }
@@ -239,7 +237,8 @@ namespace felix.BlishEmotes.UI.Views
                 Size = new Point(_controlWidth, _height),
                 Location = new Point(_labelWidth + _padding, 0),
             };
-            _spawnAtCursorCheckbox.CheckedChanged += delegate {
+            _spawnAtCursorCheckbox.CheckedChanged += delegate
+            {
                 this._settings.RadialSpawnAtCursor.Value = _spawnAtCursorCheckbox.Checked;
             };
 
@@ -377,7 +376,8 @@ namespace felix.BlishEmotes.UI.Views
                     Size = new Point(_controlWidth, _height),
                     Location = new Point(_labelWidth + _padding, 0),
                 };
-                _emoteRadialEnableCheckbox.CheckedChanged += delegate {
+                _emoteRadialEnableCheckbox.CheckedChanged += delegate
+                {
                     entry.Value.Value = _emoteRadialEnableCheckbox.Checked;
                 };
             }

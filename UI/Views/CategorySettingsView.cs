@@ -1,30 +1,21 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
-using Blish_HUD.Input;
-using BlishEmotesList;
-using felix.BlishEmotes.Services;
+using felix.BlishEmotes.Services.TexturesManagers;
 using felix.BlishEmotes.Strings;
 using felix.BlishEmotes.UI.Controls;
 using felix.BlishEmotes.UI.Presenters;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Views
 {
     public class AddCategoryArgs
     {
-        public string Name {  get; set; }
+        public string Name { get; set; }
         public List<Emote> Emotes { get; set; }
         public string TextureFileName { get; set; }
     }
@@ -307,7 +298,8 @@ namespace felix.BlishEmotes.UI.Views
                     Size = new Point(_controlWidth, _height),
                     Location = new Point(_labelWidth + 5, 0),
                 };
-                emoteInCategoryCheckbox.CheckedChanged += (s, args) => {
+                emoteInCategoryCheckbox.CheckedChanged += (s, args) =>
+                {
                     if (args.Checked)
                     {
                         _editingCategory.AddEmote(emote);
