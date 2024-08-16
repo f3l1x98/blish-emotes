@@ -6,13 +6,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace felix.BlishEmotes.Services
+namespace felix.BlishEmotes.Services.TexturesManagers
 {
-    public enum Textures {
+    public enum Textures
+    {
         [Description("emotes_icon.png")]
         ModuleIcon = 0,
         [Description("156006.png")]
@@ -44,17 +42,29 @@ namespace felix.BlishEmotes.Services
         }
     }
 
-    public class TexturesManager : IDisposable
+    public abstract class TexturesManager : ITexturesManager
     {
         public static string[] TextureExtensionMasks = new[] { "*.png", "*.jpg", "*.bmp", "*.gif", "*.tif", "*.dds" };
-        private static readonly Logger Logger = Logger.GetLogger<PersistenceManager>();
+        private static readonly Logger Logger = Logger.GetLogger<TexturesManager>();
 
         public string ModuleDataTexturesDirectory { get; private set; }
 
         private bool _disposed = false;
         private Dictionary<string, Texture2D> _textureCache;
 
-        public TexturesManager(ContentsManager contentsManager, DirectoriesManager directoriesManager)
+        public TexturesManager(DirectoriesManager directoriesManager)
+        {
+            _textureCache = new Dictionary<string, Texture2D>();
+
+            IReadOnlyList<string> registeredDirectories = directoriesManager.RegisteredDirectories;
+            ModuleDataTexturesDirectory = Path.Combine(directoriesManager.GetFullDirectoryPath(registeredDirectories[0]), "textures");
+
+            LoadTextures(_textureCache);
+        }
+
+        protected abstract void LoadTextures(in Dictionary<string, Texture2D> textureCache);
+
+        /*public TexturesManager(ContentsManager contentsManager, DirectoriesManager directoriesManager)
         {
             _textureCache = new Dictionary<string, Texture2D>
             {
@@ -68,18 +78,39 @@ namespace felix.BlishEmotes.Services
                 { Textures.LockedTexture.ToString(), contentsManager.GetTexture(@"textures\2107931.png") }
             };
 
-            // Load categories textures
+            // Load dynamic textures
             IReadOnlyList<string> registeredDirectories = directoriesManager.RegisteredDirectories;
             ModuleDataTexturesDirectory = Path.Combine(directoriesManager.GetFullDirectoryPath(registeredDirectories[0]), "textures");
-            if (!Directory.Exists(ModuleDataTexturesDirectory))
+
+            this.LoadCategoriesTextures(directoriesManager);
+
+            this.LoadEmotesTextures(directoriesManager);
+        }
+
+        private void LoadCategoriesTextures(DirectoriesManager directoriesManager)
+        {
+            LoadDynamicTextures(directoriesManager, TextureExtensionMasks);
+        }
+
+        private void LoadEmotesTextures(DirectoriesManager directoriesManager)
+        {
+            // TODO if category with same name as emote exists, emote texture will override category texture and be used for both
+            LoadDynamicTextures(directoriesManager, new[] { "*.png" }, "emotes");
+        }*/
+
+        protected void LoadDynamicTextures(string[] textureExtensionMasks, string subdir = "")
+        {
+            string directory = Path.Combine(ModuleDataTexturesDirectory, subdir);
+            if (!Directory.Exists(directory))
             {
-                Directory.CreateDirectory(ModuleDataTexturesDirectory);
+                Directory.CreateDirectory(directory);
             }
-            var imageFiles = TextureExtensionMasks.SelectMany((extension) => Directory.EnumerateFiles(ModuleDataTexturesDirectory, extension));
+            var imageFiles = textureExtensionMasks.SelectMany((extension) => Directory.EnumerateFiles(directory, extension));
             foreach (var file in imageFiles)
             {
                 var fileStream = File.OpenRead(file);
-                _textureCache.Add(Path.GetFileNameWithoutExtension(file), TextureUtil.FromStreamPremultiplied(fileStream));
+                string cacheKey = Path.GetFileNameWithoutExtension(file);
+                _textureCache.Add(cacheKey, TextureUtil.FromStreamPremultiplied(fileStream));
             }
         }
 
@@ -106,6 +137,10 @@ namespace felix.BlishEmotes.Services
         public Texture2D GetTexture(string textureRef)
         {
             AssertAlive();
+            if (!_textureCache.ContainsKey(textureRef))
+            {
+                return null;
+            }
             return _textureCache[textureRef];
         }
 
