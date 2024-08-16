@@ -1,6 +1,4 @@
-﻿using Blish_HUD;
-using felix.BlishEmotes.Services;
-using Microsoft.Xna.Framework.Graphics;
+﻿using felix.BlishEmotes.Services.TexturesManagers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -23,19 +21,20 @@ namespace felix.BlishEmotes
         [JsonIgnore] public List<Emote> Emotes { get; set; } = new List<Emote>();
 
         [JsonIgnore]
-        public override string Label {
+        public override string Label
+        {
             get => Name;
         }
 
         public Category Clone()
         {
             return new Category()
-            { 
-                Id = this.Id, 
-                Name = this.Name, 
-                EmoteIds = new List<string>(this.EmoteIds), 
-                Emotes = new List<Emote>(this.Emotes), 
-                IsFavourite = this.IsFavourite, 
+            {
+                Id = this.Id,
+                Name = this.Name,
+                EmoteIds = new List<string>(this.EmoteIds),
+                Emotes = new List<Emote>(this.Emotes),
+                IsFavourite = this.IsFavourite,
                 TextureFileName = this.TextureFileName,
                 Texture = this.Texture,
             };

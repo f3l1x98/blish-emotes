@@ -5,6 +5,8 @@ namespace felix.BlishEmotes.Services.TexturesManagers
 {
     internal interface ITexturesManager : IDisposable
     {
+        string ModuleDataTexturesDirectory { get; }
+
         void UpdateTexture(Textures textureRef, Texture2D newTexture);
         void UpdateTexture(string textureRef, Texture2D newTexture);
 
