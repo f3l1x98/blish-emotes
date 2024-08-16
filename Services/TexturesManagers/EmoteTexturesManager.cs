@@ -1,18 +1,23 @@
-﻿using Blish_HUD.Modules.Managers;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
+﻿using Blish_HUD;
+using Blish_HUD.Modules.Managers;
 
 namespace felix.BlishEmotes.Services.TexturesManagers
 {
     public class EmoteTexturesManager : TexturesManager
     {
+        private static readonly Logger Logger = Logger.GetLogger<EmoteTexturesManager>();
 
         public EmoteTexturesManager(DirectoriesManager directoriesManager) : base(directoriesManager)
         {
         }
 
-        protected override void LoadTextures(in Dictionary<string, Texture2D> textureCache)
+        public override void LoadTextures()
         {
+            if (_textureCache.Count != 0)
+            {
+                Logger.Info("Skipping LoadTextures due to already loaded.");
+                return;
+            }
             LoadTexturesFromDirectory(new[] { "*.png" }, "emotes");
         }
     }

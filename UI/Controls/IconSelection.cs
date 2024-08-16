@@ -105,7 +105,7 @@ namespace felix.BlishEmotes.UI.Controls
             _selections = new List<SelectionEntry>();
             ZIndex = 997;
             Visible = false;
-            Background = EmotesModule.ModuleInstance.GeneralTexturesManager.GetTexture(Textures.Background);
+            Background = (EmotesModule.ModuleInstance.GeneralTexturesManager as GeneralTexturesManager).GetTexture(Textures.Background);
 
             UpdateSizeAndLocation();
 

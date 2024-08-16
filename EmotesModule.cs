@@ -33,9 +33,9 @@ namespace BlishEmotesList
         internal Gw2ApiManager Gw2ApiManager => this.ModuleParameters.Gw2ApiManager;
 
         internal PersistenceManager PersistenceManager;
-        internal ITexturesManager GeneralTexturesManager;
-        internal ITexturesManager CategoryTexturesManager;
-        internal ITexturesManager EmoteTexturesManager;
+        internal TexturesManager GeneralTexturesManager;
+        internal TexturesManager CategoryTexturesManager;
+        internal TexturesManager EmoteTexturesManager;
         internal CategoriesManager CategoriesManager;
         internal EmotesManager EmotesManager;
         #endregion
@@ -136,8 +136,11 @@ namespace BlishEmotesList
             // Init custom Manager
             PersistenceManager = new PersistenceManager(DirectoriesManager);
             GeneralTexturesManager = new GeneralTexturesManager(ContentsManager, DirectoriesManager);
-            CategoryTexturesManager = new CategoryTexturesManager(DirectoriesManager);
+            GeneralTexturesManager.LoadTextures();
+            CategoryTexturesManager = new CategoryTexturesManager(ContentsManager, DirectoriesManager);
+            CategoryTexturesManager.LoadTextures();
             EmoteTexturesManager = new EmoteTexturesManager(DirectoriesManager);
+            EmoteTexturesManager.LoadTextures();
             EmotesManager = new EmotesManager(ContentsManager, EmoteTexturesManager, Settings);
             CategoriesManager = new CategoriesManager(CategoryTexturesManager, PersistenceManager);
 
@@ -152,22 +155,22 @@ namespace BlishEmotesList
                 InitCornerIcon();
             }
 
-            _settingsWindow = new TabbedWindow2(GeneralTexturesManager.GetTexture(Textures.Background), new Rectangle(35, 36, 900, 640), new Rectangle(95, 42, 783 + 38, 592))
+            _settingsWindow = new TabbedWindow2((GeneralTexturesManager as GeneralTexturesManager).GetTexture(Textures.Background), new Rectangle(35, 36, 900, 640), new Rectangle(95, 42, 783 + 38, 592))
             {
                 Title = Common.settings_ui_title,
                 Parent = GameService.Graphics.SpriteScreen,
                 Location = new Point(100, 100),
-                Emblem = GeneralTexturesManager.GetTexture(Textures.SettingsIcon),
+                Emblem = (GeneralTexturesManager as GeneralTexturesManager).GetTexture(Textures.SettingsIcon),
                 Id = $"{this.Namespace}_SettingsWindow",
                 SavesPosition = true,
             };
 
             // Settings
-            _settingsWindow.Tabs.Add(new Tab(GeneralTexturesManager.GetTexture(Textures.GlobalSettingsIcon), () => new GlobalSettingsView(this.Settings), Common.settings_ui_global_tab));
+            _settingsWindow.Tabs.Add(new Tab((GeneralTexturesManager as GeneralTexturesManager).GetTexture(Textures.GlobalSettingsIcon), () => new GlobalSettingsView(this.Settings), Common.settings_ui_global_tab));
             // Category setting
-            _settingsWindow.Tabs.Add(new Tab(GeneralTexturesManager.GetTexture(Textures.CategorySettingsIcon), () => new CategorySettingsView(CategoriesManager, EmotesManager), Common.settings_ui_categories_tab));
+            _settingsWindow.Tabs.Add(new Tab((GeneralTexturesManager as GeneralTexturesManager).GetTexture(Textures.CategorySettingsIcon), () => new CategorySettingsView(CategoriesManager, EmotesManager), Common.settings_ui_categories_tab));
             // Emote Hotkey settings
-            _settingsWindow.Tabs.Add(new Tab(GeneralTexturesManager.GetTexture(Textures.HotkeySettingsIcon), () => new EmoteHotkeySettingsView(this.Settings), Common.settings_ui_emoteHotkeys_tab));
+            _settingsWindow.Tabs.Add(new Tab((GeneralTexturesManager as GeneralTexturesManager).GetTexture(Textures.HotkeySettingsIcon), () => new EmoteHotkeySettingsView(this.Settings), Common.settings_ui_emoteHotkeys_tab));
         }
 
         protected override async Task LoadAsync()
@@ -212,7 +215,7 @@ namespace BlishEmotesList
             _cornerIcon?.Dispose();
             _cornerIcon = new CornerIcon()
             {
-                Icon = GeneralTexturesManager.GetTexture(Textures.ModuleIcon),
+                Icon = (GeneralTexturesManager as GeneralTexturesManager).GetTexture(Textures.ModuleIcon),
                 BasicTooltipText = Common.cornerIcon_tooltip,
                 Priority = -620003847,
             };
@@ -232,7 +235,7 @@ namespace BlishEmotesList
             DrawEmoteListContextMenu();
 
             // Init radial menu
-            _radialMenu = new RadialMenu(this.Settings, GeneralTexturesManager.GetTexture(Textures.LockedTexture))
+            _radialMenu = new RadialMenu(this.Settings, (GeneralTexturesManager as GeneralTexturesManager).GetTexture(Textures.LockedTexture))
             {
                 Parent = GameService.Graphics.SpriteScreen,
                 Emotes = EmotesManager.GetRadial(),

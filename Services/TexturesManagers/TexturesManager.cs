@@ -3,46 +3,11 @@ using Blish_HUD.Modules.Managers;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
 namespace felix.BlishEmotes.Services.TexturesManagers
 {
-    // TODO move this enum and all function using it to GeneralTexturesManager (afterall the others do not use it)
-    public enum Textures
-    {
-        [Description("emotes_icon.png")]
-        ModuleIcon = 0,
-        [Description("156006.png")]
-        Background = 1,
-        [Description("102390.png")]
-        SettingsIcon = 2,
-        [Description("155052.png")]
-        GlobalSettingsIcon = 3,
-        [Description("156909.png")]
-        CategorySettingsIcon = 4,
-        [Description("156734+155150.png")]
-        HotkeySettingsIcon = 5,
-
-        [Description("missing-texture.png")]
-        MissingTexture = 6,
-        [Description("2107931.png")]
-        LockedTexture = 7,
-    }
-
-    public static class TexturesExtensions
-    {
-        public static string ToFileName(this Textures val)
-        {
-            DescriptionAttribute[] attributes = (DescriptionAttribute[])val
-               .GetType()
-               .GetField(val.ToString())
-               .GetCustomAttributes(typeof(DescriptionAttribute), false);
-            return attributes.Length > 0 ? attributes[0].Description : string.Empty;
-        }
-    }
-
     public abstract class TexturesManager : ITexturesManager
     {
         public static string[] TextureExtensionMasks = new[] { "*.png", "*.jpg", "*.bmp", "*.gif", "*.tif", "*.dds" };
@@ -51,7 +16,7 @@ namespace felix.BlishEmotes.Services.TexturesManagers
         public string ModuleDataTexturesDirectory { get; private set; }
 
         private bool _disposed = false;
-        private Dictionary<string, Texture2D> _textureCache;
+        protected Dictionary<string, Texture2D> _textureCache { get; private set; }
 
         public TexturesManager(DirectoriesManager directoriesManager)
         {
@@ -59,11 +24,9 @@ namespace felix.BlishEmotes.Services.TexturesManagers
 
             IReadOnlyList<string> registeredDirectories = directoriesManager.RegisteredDirectories;
             ModuleDataTexturesDirectory = Path.Combine(directoriesManager.GetFullDirectoryPath(registeredDirectories[0]), "textures");
-
-            LoadTextures(_textureCache);
         }
 
-        protected abstract void LoadTextures(in Dictionary<string, Texture2D> textureCache);
+        public abstract void LoadTextures();
 
         protected void LoadTexturesFromDirectory(string[] textureExtensionMasks, string subdir = "")
         {
@@ -81,10 +44,6 @@ namespace felix.BlishEmotes.Services.TexturesManagers
             }
         }
 
-        public void UpdateTexture(Textures textureRef, Texture2D newTexture)
-        {
-            UpdateTexture(textureRef.ToString(), newTexture);
-        }
         public void UpdateTexture(string textureRef, Texture2D newTexture)
         {
             AssertAlive();
@@ -97,10 +56,6 @@ namespace felix.BlishEmotes.Services.TexturesManagers
             _textureCache[textureRef] = newTexture;
         }
 
-        public Texture2D GetTexture(Textures textureRef)
-        {
-            return GetTexture(textureRef.ToString());
-        }
         public Texture2D GetTexture(string textureRef)
         {
             AssertAlive();
