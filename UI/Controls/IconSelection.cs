@@ -1,16 +1,12 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
-using Blish_HUD.Modules.Managers;
 using BlishEmotesList;
-using felix.BlishEmotes.Services;
+using felix.BlishEmotes.Services.TexturesManagers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Controls
 {
@@ -56,7 +52,7 @@ namespace felix.BlishEmotes.UI.Controls
 
         private int _columns = 10;
         public int Columns
-        { 
+        {
             get => _columns;
             set
             {
@@ -109,7 +105,7 @@ namespace felix.BlishEmotes.UI.Controls
             _selections = new List<SelectionEntry>();
             ZIndex = 997;
             Visible = false;
-            Background = EmotesModule.ModuleInstance.TexturesManager.GetTexture(Textures.Background);
+            Background = EmotesModule.ModuleInstance.GeneralTexturesManager.GetTexture(Textures.Background);
 
             UpdateSizeAndLocation();
 
@@ -134,7 +130,7 @@ namespace felix.BlishEmotes.UI.Controls
         {
             Point localized = control.Location;
             Container nextParent = control.Parent;
-            while(nextParent != localizedTo)
+            while (nextParent != localizedTo)
             {
                 if (nextParent == null)
                 {
