@@ -64,40 +64,6 @@ namespace felix.BlishEmotes.Services.TexturesManagers
 
         protected abstract void LoadTextures(in Dictionary<string, Texture2D> textureCache);
 
-        /*public TexturesManager(ContentsManager contentsManager, DirectoriesManager directoriesManager)
-        {
-            _textureCache = new Dictionary<string, Texture2D>
-            {
-                { Textures.ModuleIcon.ToString(), contentsManager.GetTexture(@"textures\emotes_icon.png") },
-                { Textures.Background.ToString(), contentsManager.GetTexture(@"textures\156006.png") },
-                { Textures.SettingsIcon.ToString(), contentsManager.GetTexture(@"textures\102390.png") },
-                { Textures.GlobalSettingsIcon.ToString(), contentsManager.GetTexture(@"textures\155052.png") },
-                { Textures.CategorySettingsIcon.ToString(), contentsManager.GetTexture(@"textures\156909.png") },
-                { Textures.HotkeySettingsIcon.ToString(), contentsManager.GetTexture(@"textures\156734+155150.png") },
-                { Textures.MissingTexture.ToString(), contentsManager.GetTexture(@"textures\missing-texture.png") },
-                { Textures.LockedTexture.ToString(), contentsManager.GetTexture(@"textures\2107931.png") }
-            };
-
-            // Load dynamic textures
-            IReadOnlyList<string> registeredDirectories = directoriesManager.RegisteredDirectories;
-            ModuleDataTexturesDirectory = Path.Combine(directoriesManager.GetFullDirectoryPath(registeredDirectories[0]), "textures");
-
-            this.LoadCategoriesTextures(directoriesManager);
-
-            this.LoadEmotesTextures(directoriesManager);
-        }
-
-        private void LoadCategoriesTextures(DirectoriesManager directoriesManager)
-        {
-            LoadDynamicTextures(directoriesManager, TextureExtensionMasks);
-        }
-
-        private void LoadEmotesTextures(DirectoriesManager directoriesManager)
-        {
-            // TODO if category with same name as emote exists, emote texture will override category texture and be used for both
-            LoadDynamicTextures(directoriesManager, new[] { "*.png" }, "emotes");
-        }*/
-
         protected void LoadDynamicTextures(string[] textureExtensionMasks, string subdir = "")
         {
             string directory = Path.Combine(ModuleDataTexturesDirectory, subdir);
