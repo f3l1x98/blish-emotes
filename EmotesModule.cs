@@ -119,6 +119,26 @@ namespace BlishEmotesList
             this.Settings.EmoteShortcutActivated += OnEmoteSelected;
         }
 
+        private void InitCornerIcon()
+        {
+            _cornerIcon?.Dispose();
+            _cornerIcon = new CornerIcon()
+            {
+                Icon = (GeneralTexturesManager as GeneralTexturesManager).GetTexture(Textures.ModuleIcon),
+                BasicTooltipText = Common.cornerIcon_tooltip,
+                Priority = -620003847,
+            };
+
+            _cornerIcon.Click += delegate
+            {
+                ShowEmoteList();
+            };
+            _cornerIcon.RightMouseButtonReleased += delegate
+            {
+                ShowOptions();
+            };
+        }
+
         protected override void Initialize()
         {
             // SOTO Fix
@@ -134,7 +154,19 @@ namespace BlishEmotesList
 
             Gw2ApiManager.SubtokenUpdated += OnApiSubTokenUpdated;
 
-            // Init custom Manager
+            InitManagers();
+
+            InitUI();
+        }
+
+        private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
+        {
+            // Update emotes with data from api
+            await UpdateEmotesFromApi();
+        }
+
+        private void InitManagers()
+        {
             PersistenceManager = new PersistenceManager(DirectoriesManager);
             GeneralTexturesManager = new GeneralTexturesManager(ContentsManager, DirectoriesManager);
             GeneralTexturesManager.LoadTextures();
@@ -149,8 +181,10 @@ namespace BlishEmotesList
             {
                 UpdateUI();
             };
+        }
 
-            // Init UI
+        private void InitUI()
+        {
             if (!this.Settings.GlobalHideCornerIcon.Value)
             {
                 InitCornerIcon();
@@ -188,7 +222,7 @@ namespace BlishEmotesList
                 CategoriesManager.ResolveEmoteIds(EmotesManager.GetAll());
 
                 this.Settings.InitEmotesSettings(EmotesManager.GetAll());
-                InitUI();
+                LoadUI();
             }
             catch (Exception e)
             {
@@ -209,26 +243,6 @@ namespace BlishEmotesList
             {
                 _radialMenu.Hide();
             }
-        }
-
-        private void InitCornerIcon()
-        {
-            _cornerIcon?.Dispose();
-            _cornerIcon = new CornerIcon()
-            {
-                Icon = (GeneralTexturesManager as GeneralTexturesManager).GetTexture(Textures.ModuleIcon),
-                BasicTooltipText = Common.cornerIcon_tooltip,
-                Priority = -620003847,
-            };
-
-            _cornerIcon.Click += delegate
-            {
-                ShowEmoteList();
-            };
-            _cornerIcon.RightMouseButtonReleased += delegate
-            {
-                ShowOptions();
-            };
         }
 
         private void ShowOptions()
@@ -267,7 +281,7 @@ namespace BlishEmotesList
             UpdateRadialMenu();
         }
 
-        private void InitUI()
+        private void LoadUI()
         {
             DrawEmoteListContextMenu();
 
@@ -310,12 +324,6 @@ namespace BlishEmotesList
             _emoteListMenuStrip = new ContextMenuStrip();
             var menuItems = this.Settings.GlobalUseCategories.Value ? GetCategoryMenuItems() : GetEmotesMenuItems(EmotesManager.GetAll());
             _emoteListMenuStrip.AddMenuItems(menuItems);
-        }
-
-        private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
-        {
-            // Update emotes with data from api
-            await UpdateEmotesFromApi();
         }
 
         private void ShowEmoteList(bool atCornerIcon = true)
