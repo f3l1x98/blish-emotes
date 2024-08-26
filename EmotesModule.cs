@@ -7,6 +7,7 @@ using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using felix.BlishEmotes;
 using felix.BlishEmotes.Exceptions;
+using felix.BlishEmotes.Services;
 using felix.BlishEmotes.Services.TexturesManagers;
 using felix.BlishEmotes.Strings;
 using felix.BlishEmotes.UI.Controls;
@@ -31,6 +32,7 @@ namespace BlishEmotesList
         internal ContentsManager ContentsManager => this.ModuleParameters.ContentsManager;
         internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
         internal Gw2ApiManager Gw2ApiManager => this.ModuleParameters.Gw2ApiManager;
+        internal EmotesApiService EmotesApiService;
 
         internal PersistenceManager PersistenceManager;
         internal TexturesManager GeneralTexturesManager;
@@ -152,11 +154,11 @@ namespace BlishEmotesList
                 catch { /* NOOP */ }
             }
 
-            Gw2ApiManager.SubtokenUpdated += OnApiSubTokenUpdated;
-
             InitManagers();
 
             InitUI();
+
+            Gw2ApiManager.SubtokenUpdated += OnApiSubTokenUpdated;
         }
 
         private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
@@ -167,6 +169,7 @@ namespace BlishEmotesList
 
         private void InitManagers()
         {
+            EmotesApiService = new EmotesApiService(this.Gw2ApiManager);
             PersistenceManager = new PersistenceManager(DirectoriesManager);
             GeneralTexturesManager = new GeneralTexturesManager(ContentsManager, DirectoriesManager);
             GeneralTexturesManager.LoadTextures();
@@ -427,7 +430,7 @@ namespace BlishEmotesList
         {
             Logger.Debug("Update emotes from api");
             // load emote information from api
-            var apiEmotes = await LoadEmotesFromApi();
+            var apiEmotes = await EmotesApiService.LoadEmotesFromApi();
             var emotes = EmotesManager.GetAll();
             // Set locks
             foreach (var emote in emotes)
@@ -441,41 +444,6 @@ namespace BlishEmotesList
                 }
             }
             EmotesManager.UpdateAll(emotes);
-        }
-
-        struct ApiEmotesReturn
-        {
-            public List<string> UnlockableEmotesIds;
-            public List<string> UnlockedEmotesIds;
-        }
-
-        private async Task<ApiEmotesReturn> LoadEmotesFromApi()
-        {
-            ApiEmotesReturn returnVal = new ApiEmotesReturn();
-            try
-            {
-                if (Gw2ApiManager.HasPermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression, Gw2Sharp.WebApi.V2.Models.TokenPermission.Unlocks }))
-                {
-                    Logger.Debug("Load emotes from API");
-                    // load locked emotes
-                    returnVal.UnlockableEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Emotes.IdsAsync());
-                    // load unlocked emotes
-                    returnVal.UnlockedEmotesIds = new List<string>(await Gw2ApiManager.Gw2ApiClient.V2.Account.Emotes.GetAsync());
-                }
-                else
-                {
-                    returnVal.UnlockableEmotesIds = new List<string>();
-                    returnVal.UnlockedEmotesIds = new List<string>();
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Warn("Failed to fetch emotes from API");
-                Logger.Debug(e.Message);
-                returnVal.UnlockableEmotesIds = new List<string>();
-                returnVal.UnlockedEmotesIds = new List<string>();
-            }
-            return returnVal;
         }
 
         /// <inheritdoc />

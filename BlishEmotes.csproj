@@ -156,6 +156,7 @@
     <Compile Include="Services\CategoriesManager.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Emote.cs" />
+    <Compile Include="Services\EmotesApiService.cs" />
     <Compile Include="Services\EmotesManager.cs" />
     <Compile Include="EmotesModule.cs" />
     <Compile Include="Exceptions\NotFoundException.cs" />
