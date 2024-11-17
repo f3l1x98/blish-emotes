@@ -168,6 +168,9 @@
   <data name="paper" xml:space="preserve">
     <value>Paper</value>
   </data>
+  <data name="petalthrow" xml:space="preserve">
+    <value>Petal throw</value>
+  </data>
   <data name="playdead" xml:space="preserve">
     <value>Playdead</value>
   </data>
@@ -242,6 +245,9 @@
   </data>
   <data name="threaten" xml:space="preserve">
     <value>Threaten</value>
+  </data>
+  <data name="unleash" xml:space="preserve">
+    <value>Unleash</value>
   </data>
   <data name="wave" xml:space="preserve">
     <value>Wave</value>

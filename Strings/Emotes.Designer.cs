@@ -214,6 +214,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Petal throw.
+        /// </summary>
+        internal static string petalthrow {
+            get {
+                return ResourceManager.GetString("petalthrow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Playdead.
         /// </summary>
         internal static string playdead {
@@ -435,6 +444,15 @@ namespace felix.BlishEmotes.Strings {
         internal static string threaten {
             get {
                 return ResourceManager.GetString("threaten", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unleash.
+        /// </summary>
+        internal static string unleash {
+            get {
+                return ResourceManager.GetString("unleash", resourceCulture);
             }
         }
         
