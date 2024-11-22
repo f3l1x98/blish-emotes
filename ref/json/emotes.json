@@ -68,6 +68,10 @@
     "command": "/paper"
   },
   {
+    "id": "petalthrow",
+    "command": "/petalthrow"
+  },
+  {
     "id": "playdead",
     "command": "/playdead"
   },
@@ -166,6 +170,10 @@
   {
     "id": "threaten",
     "command": "/threaten"
+  },
+  {
+    "id": "unleash",
+    "command": "/unleash"
   },
   {
     "id": "wave",
