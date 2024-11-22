@@ -1,5 +1,4 @@
 ﻿using Blish_HUD;
-using Blish_HUD.Modules.Managers;
 using felix.BlishEmotes.Exceptions;
 using felix.BlishEmotes.Services;
 using Microsoft.Xna.Framework.Graphics;
@@ -181,7 +180,8 @@ namespace felix.BlishEmotes
                     category.TextureFileName = newTextureFileName;
                     var cacheKey = GetTexturesManagerKey(category);
                     TexturesManager.UpdateTexture(cacheKey, category.Texture);
-                } else
+                }
+                else
                 {
                     Logger.Error($"Unable to update texture - {category.TextureFileName} not found!");
                 }
@@ -320,9 +320,9 @@ namespace felix.BlishEmotes
             CreateCategory("Greeting", null, new List<string>() { "beckon", "bow", "salute", "wave" }, null, false, false);
             CreateCategory("Reaction", null, new List<string>() { "cower", "cry", "facepalm", "hiss", "no", "sad", "shiver", "shiverplus", "shrug", "surprised", "thanks", "yes" }, null, false, false);
             CreateCategory("Fun", null, new List<string>() { "cheer", "laugh", "paper", "rock", "rockout", "scissors" }, null, false, false);
-            CreateCategory("Pose", null, new List<string>() { "bless", "crossarms", "heroic", "kneel", "magicjuggle", "playdead", "point", "serve", "sit", "sleep", "stretch", "threaten" }, null, false, false);
+            CreateCategory("Pose", null, new List<string>() { "bless", "crossarms", "heroic", "kneel", "magicjuggle", "playdead", "point", "serve", "sit", "sleep", "stretch", "threaten", "unleash" }, null, false, false);
             CreateCategory("Dance", null, new List<string>() { "dance", "geargrind", "shuffle", "step" }, null, false, false);
-            CreateCategory("Miscellaneous", null, new List<string>() { "ponder", "possessed", "rank", "readbook", "sipcoffee", "talk" }, null, false, false);
+            CreateCategory("Miscellaneous", null, new List<string>() { "petalthrow", "ponder", "possessed", "rank", "readbook", "sipcoffee", "talk" }, null, false, false);
             PersistenceManager.SaveCategories(categories.Values.ToList());
         }
 

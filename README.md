@@ -36,6 +36,7 @@ The following icons were used:
 - **magicjuggle:** <a href="https://www.flaticon.com/free-icons/juggler" title="juggler icons">Juggler icons created by Leremy - Flaticon</a>
 - **no:** <a href="https://www.flaticon.com/free-icons/disadvantage" title="disadvantage icons">Disadvantage icons created by Anggara - Flaticon</a>
 - **paper:** <a href="https://www.flaticon.com/free-icons/person" title="person icons">Person icons created by Leremy - Flaticon</a>
+- **petalthrow:** <a href="https://www.flaticon.com/free-icons/sakura" title="sakura icons">Sakura icons created by Freepik - Flaticon</a>
 - **playdead:** <a href="https://www.flaticon.com/free-icons/cardiac-arrest" title="cardiac arrest icons">Cardiac arrest icons created by Leremy - Flaticon</a>
 - **point:** <a href="https://www.flaticon.com/free-icons/pointing" title="pointing icons">Pointing icons created by Leremy - Flaticon</a>
 - **ponder:** <a href="https://www.flaticon.com/free-icons/yawning" title="yawning icons">Yawning icons created by Leremy - Flaticon</a>
@@ -61,5 +62,6 @@ The following icons were used:
 - **talk:** <a href="https://www.flaticon.com/free-icons/message" title="message icons">Message icons created by Anggara - Flaticon</a>
 - **thanks:** <a href="https://www.flaticon.com/free-icons/appreciative" title="appreciative icons">Appreciative icons created by Leremy - Flaticon</a>
 - **threaten:** <a href="https://www.flaticon.com/free-icons/stickman" title="stickman icons">Stickman icons created by Leremy - Flaticon</a>
+- **unleash:** <a href="https://www.flaticon.com/free-icons/powerful" title="powerful icons">Powerful icons created by Leremy - Flaticon</a>
 - **wave:** <a href="https://www.flaticon.com/free-icons/person" title="person icons">Person icons created by Leremy - Flaticon</a>
 - **yes:** <a href="https://www.flaticon.com/free-icons/good" title="good icons">Good icons created by Anggara - Flaticon</a>
