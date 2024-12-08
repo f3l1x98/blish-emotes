@@ -351,6 +351,7 @@
     <Content Include="ref\textures\emotes\beckon.png" />
     <Content Include="ref\textures\emotes\bless.png" />
     <Content Include="ref\textures\emotes\bow.png" />
+    <Content Include="ref\textures\emotes\breakdance.png" />
     <Content Include="ref\textures\emotes\cheer.png" />
     <Content Include="ref\textures\emotes\cower.png" />
     <Content Include="ref\textures\emotes\crossarms.png" />
