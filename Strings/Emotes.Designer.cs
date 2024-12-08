@@ -88,6 +88,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Breakdance.
+        /// </summary>
+        internal static string breakdance {
+            get {
+                return ResourceManager.GetString("breakdance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cheer.
         /// </summary>
         internal static string cheer {

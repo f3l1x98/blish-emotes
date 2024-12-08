@@ -12,6 +12,14 @@ For more detailed instructions see the Blish HUD [module install guide](https://
 ## For Contributers
 Contributions are welcome. Please note that this is my first "real" C# project so there might be some strange implementations.
 
+## Add new Emote
+In order to add a new Emote you need:
+- PNG texture for the new emote (existing are 64x64)
+- Add new emote command to .\ref\json\emotes.json
+- Add english name to .\Strings\Emotes.resx using the id of the json as key (and optionally other translations)
+- Add new emote to default category in `CategoriesManager#SetupDefaultCategories`
+**Note: Don't forget to attribute down below if required!**
+
 ### Building the Module
 1. Clone the repository
 2. Open the solution in your IDE of choice
@@ -22,6 +30,7 @@ The following icons were used:
 - **beckon:** <a href="https://www.flaticon.com/free-icons/body-language" title="body language icons">Body language icons created by Leremy - Flaticon</a>
 - **bless:** <a href="https://www.flaticon.com/free-icons/shinning" title="shinning icons">Shinning icons created by Leremy - Flaticon</a>
 - **bow:** <a href="https://www.flaticon.com/free-icons/bow" title="bow icons">Bow icons created by Leremy - Flaticon</a>
+- **breakdance:** <a href="https://www.flaticon.com/free-icons/hip-hop" title="hip hop icons">Hip hop icons created by Leremy - Flaticon</a>
 - **cheer:** <a href="https://www.flaticon.com/free-icons/pom" title="pom icons">Pom icons created by Leremy - Flaticon</a>
 - **cower:** <a href="https://www.flaticon.com/free-icons/cringe" title="cringe icons">Cringe icons created by Leremy - Flaticon</a>
 - **crossarms:** <a href="https://www.flaticon.com/free-icons/crossarms" title="crossarms icons">Crossarms icons created by Leremy - Flaticon</a>
