@@ -126,6 +126,9 @@
   <data name="bow" xml:space="preserve">
     <value>Bow</value>
   </data>
+  <data name="breakdance" xml:space="preserve">
+    <value>Breakdance</value>
+  </data>
   <data name="cheer" xml:space="preserve">
     <value>Cheer</value>
   </data>
