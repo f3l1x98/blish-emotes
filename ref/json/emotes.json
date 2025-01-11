@@ -8,6 +8,10 @@
     "command": "/bless"
   },
   {
+    "id": "boogie",
+    "command": "/boogie"
+  },
+  {
     "id": "bow",
     "command": "/bow"
   },

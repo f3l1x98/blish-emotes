@@ -79,6 +79,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bloodstone Boogie.
+        /// </summary>
+        internal static string boogie {
+            get {
+                return ResourceManager.GetString("boogie", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bow.
         /// </summary>
         internal static string bow {
