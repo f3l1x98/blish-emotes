@@ -30,6 +30,7 @@ The following icons were used:
 - **beckon:** <a href="https://www.flaticon.com/free-icons/body-language" title="body language icons">Body language icons created by Leremy - Flaticon</a>
 - **bless:** <a href="https://www.flaticon.com/free-icons/shinning" title="shinning icons">Shinning icons created by Leremy - Flaticon</a>
 - **bloodstone boogie:** <a href="https://www.flaticon.com/free-icons/person" title="person icons">Person icons created by Freepik - Flaticon</a>
+- **blowkiss:** <a href="https://www.flaticon.com/free-icons/affection" title="affection icons">Affection icons created by AbtoCreative - Flaticon</a>
 - **bow:** <a href="https://www.flaticon.com/free-icons/bow" title="bow icons">Bow icons created by Leremy - Flaticon</a>
 - **breakdance:** <a href="https://www.flaticon.com/free-icons/hip-hop" title="hip hop icons">Hip hop icons created by Leremy - Flaticon</a>
 - **cheer:** <a href="https://www.flaticon.com/free-icons/pom" title="pom icons">Pom icons created by Leremy - Flaticon</a>
@@ -44,6 +45,7 @@ The following icons were used:
 - **kneel:** <a href="https://www.flaticon.com/free-icons/servant" title="servant icons">Servant icons created by Leremy - Flaticon</a>
 - **laugh:** <a href="https://www.flaticon.com/free-icons/laugh" title="laugh icons">Laugh icons created by Leremy - Flaticon</a>
 - **magicjuggle:** <a href="https://www.flaticon.com/free-icons/juggler" title="juggler icons">Juggler icons created by Leremy - Flaticon</a>
+- **magictrick:** <a href="https://www.flaticon.com/free-icons/illusion" title="illusion icons">Illusion icons created by Leremy - Flaticon</a>
 - **no:** <a href="https://www.flaticon.com/free-icons/disadvantage" title="disadvantage icons">Disadvantage icons created by Anggara - Flaticon</a>
 - **paper:** <a href="https://www.flaticon.com/free-icons/person" title="person icons">Person icons created by Leremy - Flaticon</a>
 - **petalthrow:** <a href="https://www.flaticon.com/free-icons/sakura" title="sakura icons">Sakura icons created by Freepik - Flaticon</a>
