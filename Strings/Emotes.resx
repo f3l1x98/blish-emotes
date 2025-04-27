@@ -123,6 +123,9 @@
   <data name="bless" xml:space="preserve">
     <value>Bless</value>
   </data>
+  <data name="blowkiss" xml:space="preserve">
+    <value>Blow kiss</value>
+  </data>
   <data name="boogie" xml:space="preserve">
     <value>Bloodstone Boogie</value>
   </data>
@@ -167,6 +170,9 @@
   </data>
   <data name="magicjuggle" xml:space="preserve">
     <value>Magic Juggle</value>
+  </data>
+  <data name="magictrick" xml:space="preserve">
+    <value>Magic trick</value>
   </data>
   <data name="no" xml:space="preserve">
     <value>No</value>
