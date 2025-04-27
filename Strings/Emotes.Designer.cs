@@ -79,6 +79,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Blow kiss.
+        /// </summary>
+        internal static string blowkiss {
+            get {
+                return ResourceManager.GetString("blowkiss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bloodstone Boogie.
         /// </summary>
         internal static string boogie {
@@ -210,6 +219,15 @@ namespace felix.BlishEmotes.Strings {
         internal static string magicjuggle {
             get {
                 return ResourceManager.GetString("magicjuggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Magic trick.
+        /// </summary>
+        internal static string magictrick {
+            get {
+                return ResourceManager.GetString("magictrick", resourceCulture);
             }
         }
         

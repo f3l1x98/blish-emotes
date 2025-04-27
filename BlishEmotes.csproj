@@ -350,6 +350,7 @@
     <Content Include="ref\textures\2107931.png" />
     <Content Include="ref\textures\emotes\beckon.png" />
     <Content Include="ref\textures\emotes\bless.png" />
+    <Content Include="ref\textures\emotes\blowkiss.png" />
     <Content Include="ref\textures\emotes\boogie.png" />
     <Content Include="ref\textures\emotes\bow.png" />
     <Content Include="ref\textures\emotes\breakdance.png" />
@@ -365,6 +366,7 @@
     <Content Include="ref\textures\emotes\kneel.png" />
     <Content Include="ref\textures\emotes\laugh.png" />
     <Content Include="ref\textures\emotes\magicjuggle.png" />
+    <Content Include="ref\textures\emotes\magictrick.png" />
     <Content Include="ref\textures\emotes\no.png" />
     <Content Include="ref\textures\emotes\paper.png" />
     <Content Include="ref\textures\emotes\petalthrow.png" />

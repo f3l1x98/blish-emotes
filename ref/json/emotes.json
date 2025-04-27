@@ -12,6 +12,10 @@
     "command": "/boogie"
   },
   {
+    "id": "blowkiss",
+    "command": "/blowkiss"
+  },
+  {
     "id": "bow",
     "command": "/bow"
   },
@@ -62,6 +66,10 @@
   {
     "id": "laugh",
     "command": "/laugh"
+  },
+  {
+    "id": "magictrick",
+    "command": "/magictrick"
   },
   {
     "id": "magicjuggle",
