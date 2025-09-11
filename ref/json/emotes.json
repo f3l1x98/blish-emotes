@@ -1,5 +1,9 @@
 [
   {
+    "id": "barbecue",
+    "command": "/barbecue"
+  },
+  {
     "id": "beckon",
     "command": "/beckon"
   },

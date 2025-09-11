@@ -27,6 +27,7 @@ In order to add a new Emote you need:
 
 # Emote Icons Credits
 The following icons were used:
+- **barbecue:** <a href="https://www.flaticon.com/free-icons/recreation" title="recreation icons">Recreation icons created by Leremy - Flaticon</a>
 - **beckon:** <a href="https://www.flaticon.com/free-icons/body-language" title="body language icons">Body language icons created by Leremy - Flaticon</a>
 - **bless:** <a href="https://www.flaticon.com/free-icons/shinning" title="shinning icons">Shinning icons created by Leremy - Flaticon</a>
 - **bloodstone boogie:** <a href="https://www.flaticon.com/free-icons/person" title="person icons">Person icons created by Freepik - Flaticon</a>
