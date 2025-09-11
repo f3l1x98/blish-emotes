@@ -24,6 +24,10 @@
     "command": "/breakdance"
   },
   {
+    "id": "channel",
+    "command": "/channel"
+  },
+  {
     "id": "cheer",
     "command": "/cheer"
   },

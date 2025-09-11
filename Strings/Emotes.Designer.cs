@@ -115,6 +115,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Channel.
+        /// </summary>
+        internal static string channel {
+            get {
+                return ResourceManager.GetString("channel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cheer.
         /// </summary>
         internal static string cheer {

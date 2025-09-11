@@ -126,6 +126,9 @@
   <data name="bow" xml:space="preserve">
     <value>Reverence</value>
   </data>
+  <data name="channel" xml:space="preserve">
+    <value />
+  </data>
   <data name="cheer" xml:space="preserve">
     <value>Encourager</value>
   </data>

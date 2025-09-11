@@ -33,6 +33,7 @@ The following icons were used:
 - **blowkiss:** <a href="https://www.flaticon.com/free-icons/affection" title="affection icons">Affection icons created by AbtoCreative - Flaticon</a>
 - **bow:** <a href="https://www.flaticon.com/free-icons/bow" title="bow icons">Bow icons created by Leremy - Flaticon</a>
 - **breakdance:** <a href="https://www.flaticon.com/free-icons/hip-hop" title="hip hop icons">Hip hop icons created by Leremy - Flaticon</a>
+- **channel:** <a href="https://www.flaticon.com/free-icons/meditate" title="meditate icons">Meditate icons created by Leremy - Flaticon</a>
 - **cheer:** <a href="https://www.flaticon.com/free-icons/pom" title="pom icons">Pom icons created by Leremy - Flaticon</a>
 - **cower:** <a href="https://www.flaticon.com/free-icons/cringe" title="cringe icons">Cringe icons created by Leremy - Flaticon</a>
 - **crossarms:** <a href="https://www.flaticon.com/free-icons/crossarms" title="crossarms icons">Crossarms icons created by Leremy - Flaticon</a>

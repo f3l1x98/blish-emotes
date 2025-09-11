@@ -135,6 +135,9 @@
   <data name="breakdance" xml:space="preserve">
     <value>Breakdance</value>
   </data>
+  <data name="channel" xml:space="preserve">
+    <value>Channel</value>
+  </data>
   <data name="cheer" xml:space="preserve">
     <value>Cheer</value>
   </data>
