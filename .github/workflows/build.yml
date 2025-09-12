@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-vs-solution:
-    runs-on: windows-2019
+    runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: '${{ steps.version_extractor.outputs.VERSION }}'
+          custom_tag: "${{ steps.version_extractor.outputs.VERSION }}"
 
       - name: Create release
         uses: ncipollo/release-action@v1
