@@ -1,5 +1,9 @@
 [
   {
+    "id": "barbecue",
+    "command": "/barbecue"
+  },
+  {
     "id": "beckon",
     "command": "/beckon"
   },
@@ -22,6 +26,10 @@
   {
     "id": "breakdance",
     "command": "/breakdance"
+  },
+  {
+    "id": "channel",
+    "command": "/channel"
   },
   {
     "id": "cheer",
