@@ -40,6 +40,10 @@
     "command": "/cower"
   },
   {
+    "id": "crabdance",
+    "command": "/crabdance"
+  },
+  {
     "id": "crossarms",
     "command": "/crossarms"
   },
@@ -50,6 +54,10 @@
   {
     "id": "dance",
     "command": "/dance"
+  },
+  {
+    "id": "drink",
+    "command": "/drink"
   },
   {
     "id": "facepalm",
@@ -152,6 +160,10 @@
     "command": "/shiverplus"
   },
   {
+    "id": "shocked",
+    "command": "/shocked"
+  },
+  {
     "id": "shrug",
     "command": "/shrug"
   },
@@ -194,6 +206,14 @@
   {
     "id": "threaten",
     "command": "/threaten"
+  },
+  {
+    "id": "thumbsdown",
+    "command": "/thumbsdown"
+  },
+  {
+    "id": "thumbsup",
+    "command": "/thumbsup"
   },
   {
     "id": "unleash",

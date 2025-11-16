@@ -403,6 +403,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to shocked.
+        /// </summary>
+        internal static string shocked {
+            get {
+                return ResourceManager.GetString("shocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shrug.
         /// </summary>
         internal static string shrug {
@@ -498,6 +507,24 @@ namespace felix.BlishEmotes.Strings {
         internal static string threaten {
             get {
                 return ResourceManager.GetString("threaten", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thumbs down.
+        /// </summary>
+        internal static string thumbsdown {
+            get {
+                return ResourceManager.GetString("thumbsdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thumbs up.
+        /// </summary>
+        internal static string thumbsup {
+            get {
+                return ResourceManager.GetString("thumbsup", resourceCulture);
             }
         }
         

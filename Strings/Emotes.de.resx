@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="barbecue" xml:space="preserve">
-    <value />
+    <value>Grillen</value>
   </data>
   <data name="beckon" xml:space="preserve">
     <value>Herbeiwinken</value>
@@ -204,6 +204,9 @@
   <data name="shiverplus" xml:space="preserve">
     <value>Zittern Plus</value>
   </data>
+  <data name="shocked" xml:space="preserve">
+    <value>Schockiert</value>
+  </data>
   <data name="shrug" xml:space="preserve">
     <value>Schulterzucken</value>
   </data>
@@ -236,6 +239,12 @@
   </data>
   <data name="threaten" xml:space="preserve">
     <value>Drohen</value>
+  </data>
+  <data name="thumbsdown" xml:space="preserve">
+    <value />
+  </data>
+  <data name="thumbsup" xml:space="preserve">
+    <value />
   </data>
   <data name="wave" xml:space="preserve">
     <value>Winken</value>

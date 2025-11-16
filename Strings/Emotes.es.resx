@@ -204,6 +204,9 @@
   <data name="shiverplus" xml:space="preserve">
     <value>Tiritar mucho</value>
   </data>
+  <data name="shocked" xml:space="preserve">
+    <value />
+  </data>
   <data name="shrug" xml:space="preserve">
     <value>Encogerse</value>
   </data>
@@ -236,6 +239,12 @@
   </data>
   <data name="threaten" xml:space="preserve">
     <value>Amenaza</value>
+  </data>
+  <data name="thumbsdown" xml:space="preserve">
+    <value />
+  </data>
+  <data name="thumbsup" xml:space="preserve">
+    <value />
   </data>
   <data name="wave" xml:space="preserve">
     <value>Saludar</value>

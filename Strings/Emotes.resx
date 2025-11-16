@@ -231,6 +231,9 @@
   <data name="shiverplus" xml:space="preserve">
     <value>Shiver plus</value>
   </data>
+  <data name="shocked" xml:space="preserve">
+    <value>shocked</value>
+  </data>
   <data name="shrug" xml:space="preserve">
     <value>Shrug</value>
   </data>
@@ -263,6 +266,12 @@
   </data>
   <data name="threaten" xml:space="preserve">
     <value>Threaten</value>
+  </data>
+  <data name="thumbsdown" xml:space="preserve">
+    <value>Thumbs down</value>
+  </data>
+  <data name="thumbsup" xml:space="preserve">
+    <value>Thumbs up</value>
   </data>
   <data name="unleash" xml:space="preserve">
     <value>Unleash</value>
