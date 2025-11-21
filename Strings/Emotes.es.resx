@@ -135,6 +135,9 @@
   <data name="cower" xml:space="preserve">
     <value>Cobarde</value>
   </data>
+  <data name="crabdance" xml:space="preserve">
+    <value />
+  </data>
   <data name="crossarms" xml:space="preserve">
     <value>Cruzarse</value>
   </data>
@@ -143,6 +146,9 @@
   </data>
   <data name="dance" xml:space="preserve">
     <value>Bailar</value>
+  </data>
+  <data name="drink" xml:space="preserve">
+    <value />
   </data>
   <data name="facepalm" xml:space="preserve">
     <value>Disgustado</value>
@@ -204,6 +210,9 @@
   <data name="shiverplus" xml:space="preserve">
     <value>Tiritar mucho</value>
   </data>
+  <data name="shocked" xml:space="preserve">
+    <value />
+  </data>
   <data name="shrug" xml:space="preserve">
     <value>Encogerse</value>
   </data>
@@ -236,6 +245,12 @@
   </data>
   <data name="threaten" xml:space="preserve">
     <value>Amenaza</value>
+  </data>
+  <data name="thumbsdown" xml:space="preserve">
+    <value />
+  </data>
+  <data name="thumbsup" xml:space="preserve">
+    <value />
   </data>
   <data name="wave" xml:space="preserve">
     <value>Saludar</value>
