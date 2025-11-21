@@ -358,9 +358,11 @@
     <Content Include="ref\textures\emotes\channel.png" />
     <Content Include="ref\textures\emotes\cheer.png" />
     <Content Include="ref\textures\emotes\cower.png" />
+    <Content Include="ref\textures\emotes\crabdance.png" />
     <Content Include="ref\textures\emotes\crossarms.png" />
     <Content Include="ref\textures\emotes\cry.png" />
     <Content Include="ref\textures\emotes\dance.png" />
+    <Content Include="ref\textures\emotes\drink.png" />
     <Content Include="ref\textures\emotes\facepalm.png" />
     <Content Include="ref\textures\emotes\geargrind.png" />
     <Content Include="ref\textures\emotes\heroic.png" />
@@ -386,6 +388,7 @@
     <Content Include="ref\textures\emotes\serve.png" />
     <Content Include="ref\textures\emotes\shiver.png" />
     <Content Include="ref\textures\emotes\shiverplus.png" />
+    <Content Include="ref\textures\emotes\shocked.png" />
     <Content Include="ref\textures\emotes\shrug.png" />
     <Content Include="ref\textures\emotes\shuffle.png" />
     <Content Include="ref\textures\emotes\sipcoffee.png" />
@@ -397,6 +400,8 @@
     <Content Include="ref\textures\emotes\talk.png" />
     <Content Include="ref\textures\emotes\thanks.png" />
     <Content Include="ref\textures\emotes\threaten.png" />
+    <Content Include="ref\textures\emotes\thumbsDown.png" />
+    <Content Include="ref\textures\emotes\thumbsUp.png" />
     <Content Include="ref\textures\emotes\unleash.png" />
     <Content Include="ref\textures\emotes\wave.png" />
     <Content Include="ref\textures\emotes\yes.png" />

@@ -151,6 +151,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Crabdance.
+        /// </summary>
+        internal static string crabdance {
+            get {
+                return ResourceManager.GetString("crabdance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Crossarms.
         /// </summary>
         internal static string crossarms {
@@ -174,6 +183,15 @@ namespace felix.BlishEmotes.Strings {
         internal static string dance {
             get {
                 return ResourceManager.GetString("dance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drink.
+        /// </summary>
+        internal static string drink {
+            get {
+                return ResourceManager.GetString("drink", resourceCulture);
             }
         }
         
@@ -403,6 +421,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shocked.
+        /// </summary>
+        internal static string shocked {
+            get {
+                return ResourceManager.GetString("shocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shrug.
         /// </summary>
         internal static string shrug {
@@ -498,6 +525,24 @@ namespace felix.BlishEmotes.Strings {
         internal static string threaten {
             get {
                 return ResourceManager.GetString("threaten", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thumbs down.
+        /// </summary>
+        internal static string thumbsdown {
+            get {
+                return ResourceManager.GetString("thumbsdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thumbs up.
+        /// </summary>
+        internal static string thumbsup {
+            get {
+                return ResourceManager.GetString("thumbsup", resourceCulture);
             }
         }
         

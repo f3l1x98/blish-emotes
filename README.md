@@ -37,9 +37,11 @@ The following icons were used:
 - **channel:** <a href="https://www.flaticon.com/free-icons/meditate" title="meditate icons">Meditate icons created by Leremy - Flaticon</a>
 - **cheer:** <a href="https://www.flaticon.com/free-icons/pom" title="pom icons">Pom icons created by Leremy - Flaticon</a>
 - **cower:** <a href="https://www.flaticon.com/free-icons/cringe" title="cringe icons">Cringe icons created by Leremy - Flaticon</a>
+- **crabdance:** <a href="https://www.flaticon.com/free-icons/crab" title="crab icons">Crab icons created by Freepik - Flaticon</a>
 - **crossarms:** <a href="https://www.flaticon.com/free-icons/crossarms" title="crossarms icons">Crossarms icons created by Leremy - Flaticon</a>
 - **cry:** <a href="https://www.flaticon.com/free-icons/crying" title="crying icons">Crying icons created by Leremy - Flaticon</a>
 - **dance:** <a href="https://www.flaticon.com/free-icons/dance" title="dance icons">Dance icons created by Leremy - Flaticon</a>
+- **drink:** <a href="https://www.flaticon.com/free-icons/tumbler" title="tumbler icons">Tumbler icons created by Leremy - Flaticon</a>
 - **facepalm:** <a href="https://www.flaticon.com/free-icons/regret" title="regret icons">Regret icons created by Leremy - Flaticon</a>
 - **geargrind:** <a href="https://www.flaticon.com/free-icons/runner" title="runner icons">Runner icons created by Leremy - Flaticon</a>
 - **heroic:** <a href="https://www.flaticon.com/free-icons/superman" title="superman icons">Superman icons created by Leremy - Flaticon</a>
@@ -65,6 +67,7 @@ The following icons were used:
 - **serve:** <a href="https://www.flaticon.com/free-icons/dishes" title="dishes icons">Dishes icons created by Leremy - Flaticon</a>
 - **shiver:** <a href="https://www.flaticon.com/free-icons/anxiety" title="anxiety icons">Anxiety icons created by Leremy - Flaticon</a>
 - **shiverplus:** <a href="https://www.flaticon.com/free-icons/cold" title="cold icons">Cold icons created by Leremy - Flaticon</a>
+- **shocked:** <a href="https://www.flaticon.com/free-icons/scared" title="scared icons">Scared icons created by Leremy - Flaticon</a>
 - **shrug:** <a href="https://www.flaticon.com/free-icons/behind" title="behind icons">Behind icons created by Leremy - Flaticon</a>
 - **shuffle:** <a href="https://www.flaticon.com/free-icons/shuffle-arrows" title="shuffle arrows icons">Shuffle arrows icons created by Vitaly Gorbachev - Flaticon</a>
 - **sipcoffee:** <a href="https://www.flaticon.com/free-icons/beverage" title="beverage icons">Beverage icons created by Leremy - Flaticon</a>
@@ -76,6 +79,8 @@ The following icons were used:
 - **talk:** <a href="https://www.flaticon.com/free-icons/message" title="message icons">Message icons created by Anggara - Flaticon</a>
 - **thanks:** <a href="https://www.flaticon.com/free-icons/appreciative" title="appreciative icons">Appreciative icons created by Leremy - Flaticon</a>
 - **threaten:** <a href="https://www.flaticon.com/free-icons/stickman" title="stickman icons">Stickman icons created by Leremy - Flaticon</a>
+- **thumbsDown:** <a href="https://www.flaticon.com/free-icons/critique" title="critique icons">Critique icons created by Leremy - Flaticon</a>
+- **thumbsUp:** <a href="https://www.flaticon.com/free-icons/thumb-up" title="thumb up icons">Thumb up icons created by Leremy - Flaticon</a>
 - **unleash:** <a href="https://www.flaticon.com/free-icons/powerful" title="powerful icons">Powerful icons created by Leremy - Flaticon</a>
 - **wave:** <a href="https://www.flaticon.com/free-icons/person" title="person icons">Person icons created by Leremy - Flaticon</a>
 - **yes:** <a href="https://www.flaticon.com/free-icons/good" title="good icons">Good icons created by Anggara - Flaticon</a>
