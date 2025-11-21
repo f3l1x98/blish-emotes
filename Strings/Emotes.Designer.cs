@@ -151,6 +151,15 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Crabdance.
+        /// </summary>
+        internal static string crabdance {
+            get {
+                return ResourceManager.GetString("crabdance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Crossarms.
         /// </summary>
         internal static string crossarms {
@@ -174,6 +183,15 @@ namespace felix.BlishEmotes.Strings {
         internal static string dance {
             get {
                 return ResourceManager.GetString("dance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drink.
+        /// </summary>
+        internal static string drink {
+            get {
+                return ResourceManager.GetString("drink", resourceCulture);
             }
         }
         
@@ -403,7 +421,7 @@ namespace felix.BlishEmotes.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to shocked.
+        ///   Looks up a localized string similar to Shocked.
         /// </summary>
         internal static string shocked {
             get {

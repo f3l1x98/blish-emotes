@@ -147,6 +147,9 @@
   <data name="cower" xml:space="preserve">
     <value>Cower</value>
   </data>
+  <data name="crabdance" xml:space="preserve">
+    <value>Crabdance</value>
+  </data>
   <data name="crossarms" xml:space="preserve">
     <value>Crossarms</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="dance" xml:space="preserve">
     <value>Dance</value>
+  </data>
+  <data name="drink" xml:space="preserve">
+    <value>Drink</value>
   </data>
   <data name="facepalm" xml:space="preserve">
     <value>Facepalm</value>
@@ -232,7 +238,7 @@
     <value>Shiver plus</value>
   </data>
   <data name="shocked" xml:space="preserve">
-    <value>shocked</value>
+    <value>Shocked</value>
   </data>
   <data name="shrug" xml:space="preserve">
     <value>Shrug</value>

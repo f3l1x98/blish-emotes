@@ -135,6 +135,9 @@
   <data name="cower" xml:space="preserve">
     <value>Ducken</value>
   </data>
+  <data name="crabdance" xml:space="preserve">
+    <value />
+  </data>
   <data name="crossarms" xml:space="preserve">
     <value>Arme kreuzen</value>
   </data>
@@ -143,6 +146,9 @@
   </data>
   <data name="dance" xml:space="preserve">
     <value>Tanzen</value>
+  </data>
+  <data name="drink" xml:space="preserve">
+    <value />
   </data>
   <data name="facepalm" xml:space="preserve">
     <value>Verärgert</value>
