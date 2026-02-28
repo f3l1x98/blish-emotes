@@ -116,6 +116,22 @@
     "command": "/ponder"
   },
   {
+    "id": "poseheart",
+    "command": "/poseheart"
+  },
+  {
+    "id": "posepeace",
+    "command": "/posepeace"
+  },
+  {
+    "id": "posesassy",
+    "command": "/posesassy"
+  },
+  {
+    "id": "poseshy",
+    "command": "/poseshy"
+  },
+  {
     "id": "possessed",
     "command": "/possessed"
   },
