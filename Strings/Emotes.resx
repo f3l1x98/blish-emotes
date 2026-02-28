@@ -288,4 +288,16 @@
   <data name="yes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="poseshy" xml:space="preserve">
+    <value>Pose shy</value>
+  </data>
+  <data name="poseheart" xml:space="preserve">
+    <value>Pose heart</value>
+  </data>
+  <data name="posepeace" xml:space="preserve">
+    <value>Pose peace</value>
+  </data>
+  <data name="posesassy" xml:space="preserve">
+    <value>Pose sassy</value>
+  </data>
 </root>
