@@ -56,6 +56,10 @@ The following icons were used:
 - **playdead:** <a href="https://www.flaticon.com/free-icons/cardiac-arrest" title="cardiac arrest icons">Cardiac arrest icons created by Leremy - Flaticon</a>
 - **point:** <a href="https://www.flaticon.com/free-icons/pointing" title="pointing icons">Pointing icons created by Leremy - Flaticon</a>
 - **ponder:** <a href="https://www.flaticon.com/free-icons/yawning" title="yawning icons">Yawning icons created by Leremy - Flaticon</a>
+- **poseheart:** <a href="https://www.flaticon.com/free-icons/hands-and-gestures" title="hands and gestures icons">Hands and gestures icons created by Freepik - Flaticon</a>
+- **posepeace:** <a href="https://www.flaticon.com/free-icons/pose" title="pose icons">Pose icons created by Leremy - Flaticon</a>
+- **posesassy:** <a href="https://www.flaticon.com/free-icons/cool" title="cool icons">Cool icons created by Leremy - Flaticon</a>
+- **poseshy:** <a href="https://www.flaticon.com/free-icons/shy" title="shy icons">Shy icons created by Leremy - Flaticon</a>
 - **possessed:** <a href="https://www.flaticon.com/free-icons/possession" title="possession icons">Possession icons created by Leremy - Flaticon</a>
 - **rank:** <a href="https://www.flaticon.com/free-icons/succeed" title="succeed icons">Succeed icons created by Leremy - Flaticon</a>
 - **readbook:** <a href="https://www.flaticon.com/free-icons/read" title="read icons">Read icons created by Leremy - Flaticon</a>
