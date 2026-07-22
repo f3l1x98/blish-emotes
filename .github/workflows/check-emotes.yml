@@ -1,9 +1,9 @@
 name: GW2 Daily Emote Checker
 
-#on:
-#  schedule:
-#    - cron: '0 0 * * *' # Midnight UTC
-#  workflow_dispatch:
+on:
+  #schedule:
+  #  - cron: '0 0 * * *' # Midnight UTC
+  workflow_dispatch:
 
 jobs:
   check-and-notify:
