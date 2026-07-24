@@ -44,12 +44,14 @@ The following icons were used:
 - **drink:** <a href="https://www.flaticon.com/free-icons/tumbler" title="tumbler icons">Tumbler icons created by Leremy - Flaticon</a>
 - **facepalm:** <a href="https://www.flaticon.com/free-icons/regret" title="regret icons">Regret icons created by Leremy - Flaticon</a>
 - **geargrind:** <a href="https://www.flaticon.com/free-icons/runner" title="runner icons">Runner icons created by Leremy - Flaticon</a>
+- **happydance:** <a href="https://www.flaticon.com/free-icons/romp" title="romp icons">Romp icons created by Leremy - Flaticon</a>
 - **heroic:** <a href="https://www.flaticon.com/free-icons/superman" title="superman icons">Superman icons created by Leremy - Flaticon</a>
 - **hiss:** <a href="https://www.flaticon.com/free-icons/anaconda" title="anaconda icons">Anaconda icons created by Leremy - Flaticon</a>
 - **kneel:** <a href="https://www.flaticon.com/free-icons/servant" title="servant icons">Servant icons created by Leremy - Flaticon</a>
 - **laugh:** <a href="https://www.flaticon.com/free-icons/laugh" title="laugh icons">Laugh icons created by Leremy - Flaticon</a>
 - **magicjuggle:** <a href="https://www.flaticon.com/free-icons/juggler" title="juggler icons">Juggler icons created by Leremy - Flaticon</a>
 - **magictrick:** <a href="https://www.flaticon.com/free-icons/illusion" title="illusion icons">Illusion icons created by Leremy - Flaticon</a>
+- **masterpiece:** <a href="https://www.flaticon.com/free-icons/reassure" title="reassure icons">Reassure icons created by Leremy - Flaticon</a>
 - **no:** <a href="https://www.flaticon.com/free-icons/disadvantage" title="disadvantage icons">Disadvantage icons created by Anggara - Flaticon</a>
 - **paper:** <a href="https://www.flaticon.com/free-icons/person" title="person icons">Person icons created by Leremy - Flaticon</a>
 - **petalthrow:** <a href="https://www.flaticon.com/free-icons/sakura" title="sakura icons">Sakura icons created by Freepik - Flaticon</a>
@@ -85,6 +87,7 @@ The following icons were used:
 - **threaten:** <a href="https://www.flaticon.com/free-icons/stickman" title="stickman icons">Stickman icons created by Leremy - Flaticon</a>
 - **thumbsDown:** <a href="https://www.flaticon.com/free-icons/critique" title="critique icons">Critique icons created by Leremy - Flaticon</a>
 - **thumbsUp:** <a href="https://www.flaticon.com/free-icons/thumb-up" title="thumb up icons">Thumb up icons created by Leremy - Flaticon</a>
+- **transform:** <a href="https://www.flaticon.com/free-icons/magic-wand" title="magic wand icons">Magic wand icons created by Smashicons - Flaticon</a>
 - **unleash:** <a href="https://www.flaticon.com/free-icons/powerful" title="powerful icons">Powerful icons created by Leremy - Flaticon</a>
 - **wave:** <a href="https://www.flaticon.com/free-icons/person" title="person icons">Person icons created by Leremy - Flaticon</a>
 - **yes:** <a href="https://www.flaticon.com/free-icons/good" title="good icons">Good icons created by Anggara - Flaticon</a>

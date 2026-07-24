@@ -366,12 +366,14 @@
     <Content Include="ref\textures\emotes\drink.png" />
     <Content Include="ref\textures\emotes\facepalm.png" />
     <Content Include="ref\textures\emotes\geargrind.png" />
+    <Content Include="ref\textures\emotes\happydance.png" />
     <Content Include="ref\textures\emotes\heroic.png" />
     <Content Include="ref\textures\emotes\hiss.png" />
     <Content Include="ref\textures\emotes\kneel.png" />
     <Content Include="ref\textures\emotes\laugh.png" />
     <Content Include="ref\textures\emotes\magicjuggle.png" />
     <Content Include="ref\textures\emotes\magictrick.png" />
+    <Content Include="ref\textures\emotes\masterpiece.png" />
     <Content Include="ref\textures\emotes\no.png" />
     <Content Include="ref\textures\emotes\paper.png" />
     <Content Include="ref\textures\emotes\petalthrow.png" />
@@ -407,6 +409,7 @@
     <Content Include="ref\textures\emotes\threaten.png" />
     <Content Include="ref\textures\emotes\thumbsDown.png" />
     <Content Include="ref\textures\emotes\thumbsUp.png" />
+    <Content Include="ref\textures\emotes\transform.png" />
     <Content Include="ref\textures\emotes\unleash.png" />
     <Content Include="ref\textures\emotes\wave.png" />
     <Content Include="ref\textures\emotes\yes.png" />

@@ -68,6 +68,10 @@
     "command": "/geargrind"
   },
   {
+    "id": "happydance",
+    "command": "/happydance"
+  },
+  {
     "id": "heroic",
     "command": "/heroic"
   },
@@ -84,12 +88,16 @@
     "command": "/laugh"
   },
   {
+    "id": "magicjuggle",
+    "command": "/magicjuggle"
+  },
+  {
     "id": "magictrick",
     "command": "/magictrick"
   },
   {
-    "id": "magicjuggle",
-    "command": "/magicjuggle"
+    "id": "masterpiece",
+    "command": "/masterpiece"
   },
   {
     "id": "no",
@@ -230,6 +238,10 @@
   {
     "id": "thumbsup",
     "command": "/thumbsup"
+  },
+  {
+    "id": "transform",
+    "command": "/transform"
   },
   {
     "id": "unleash",

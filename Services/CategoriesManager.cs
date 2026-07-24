@@ -318,10 +318,10 @@ namespace felix.BlishEmotes
             // Create default categories
             CreateFavouriteCategory();
             CreateCategory("Greeting", null, new List<string>() { "beckon", "bow", "salute", "wave" }, null, false, false);
-            CreateCategory("Reaction", null, new List<string>() { "cower", "cry", "facepalm", "hiss", "no", "sad", "shiver", "shiverplus", "shocked", "shrug", "surprised", "thanks", "thumbsdown", "thumbsup", "yes" }, null, false, false);
+            CreateCategory("Reaction", null, new List<string>() { "cower", "cry", "facepalm", "hiss", "masterpiece", "no", "sad", "shiver", "shiverplus", "shocked", "shrug", "surprised", "thanks", "thumbsdown", "thumbsup", "yes" }, null, false, false);
             CreateCategory("Fun", null, new List<string>() { "cheer", "laugh", "paper", "rock", "rockout", "scissors" }, null, false, false);
-            CreateCategory("Pose", null, new List<string>() { "bless", "blowkiss", "channel", "crossarms", "heroic", "kneel", "magicjuggle", "magictrick", "playdead", "point", "poseheart", "posepeace", "posesassy", "poseshy", "serve", "sit", "sleep", "stretch", "threaten", "unleash" }, null, false, false);
-            CreateCategory("Dance", null, new List<string>() { "boogie", "breakdance", "crabdance", "dance", "geargrind", "shuffle", "step" }, null, false, false);
+            CreateCategory("Pose", null, new List<string>() { "bless", "blowkiss", "channel", "crossarms", "heroic", "kneel", "magicjuggle", "magictrick", "playdead", "point", "poseheart", "posepeace", "posesassy", "poseshy", "serve", "sit", "sleep", "stretch", "threaten", "transform", "unleash" }, null, false, false);
+            CreateCategory("Dance", null, new List<string>() { "boogie", "breakdance", "crabdance", "dance", "geargrind", "happydance", "shuffle", "step" }, null, false, false);
             CreateCategory("Miscellaneous", null, new List<string>() { "barbecue", "drink", "petalthrow", "ponder", "possessed", "rank", "readbook", "sipcoffee", "talk" }, null, false, false);
             PersistenceManager.SaveCategories(categories.Values.ToList());
         }
