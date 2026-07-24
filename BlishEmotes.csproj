@@ -210,6 +210,7 @@
     <Reference Include="MonoGame.Framework, Version=3.8.0.1641, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\MonoGame.Framework.WindowsDX.3.8.0.1641\lib\net452\MonoGame.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="mscorlib" />
     <Reference Include="NAudio.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
       <HintPath>packages\NAudio.Core.2.0.0\lib\netstandard2.0\NAudio.Core.dll</HintPath>
     </Reference>
@@ -300,8 +301,8 @@
     <Reference Include="System.ServiceModel.Primitives, Version=4.9.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.ServiceModel.Primitives.4.9.0\lib\net461\System.ServiceModel.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="System.Text.Encodings.Web, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.Text.Encodings.Web.5.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    <Reference Include="System.Text.Encodings.Web, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Encodings.Web.5.0.1\lib\net461\System.Text.Encodings.Web.dll</HintPath>
     </Reference>
     <Reference Include="System.Text.Json, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Text.Json.5.0.0\lib\net461\System.Text.Json.dll</HintPath>
@@ -365,12 +366,14 @@
     <Content Include="ref\textures\emotes\drink.png" />
     <Content Include="ref\textures\emotes\facepalm.png" />
     <Content Include="ref\textures\emotes\geargrind.png" />
+    <Content Include="ref\textures\emotes\happydance.png" />
     <Content Include="ref\textures\emotes\heroic.png" />
     <Content Include="ref\textures\emotes\hiss.png" />
     <Content Include="ref\textures\emotes\kneel.png" />
     <Content Include="ref\textures\emotes\laugh.png" />
     <Content Include="ref\textures\emotes\magicjuggle.png" />
     <Content Include="ref\textures\emotes\magictrick.png" />
+    <Content Include="ref\textures\emotes\masterpiece.png" />
     <Content Include="ref\textures\emotes\no.png" />
     <Content Include="ref\textures\emotes\paper.png" />
     <Content Include="ref\textures\emotes\petalthrow.png" />
@@ -406,6 +409,7 @@
     <Content Include="ref\textures\emotes\threaten.png" />
     <Content Include="ref\textures\emotes\thumbsDown.png" />
     <Content Include="ref\textures\emotes\thumbsUp.png" />
+    <Content Include="ref\textures\emotes\transform.png" />
     <Content Include="ref\textures\emotes\unleash.png" />
     <Content Include="ref\textures\emotes\wave.png" />
     <Content Include="ref\textures\emotes\yes.png" />

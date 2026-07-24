@@ -300,4 +300,13 @@
   <data name="posesassy" xml:space="preserve">
     <value>Pose sassy</value>
   </data>
+  <data name="transform" xml:space="preserve">
+    <value>Transform</value>
+  </data>
+  <data name="happydance" xml:space="preserve">
+    <value>Happy Dance</value>
+  </data>
+  <data name="masterpiece" xml:space="preserve">
+    <value>Masterpiece</value>
+  </data>
 </root>
