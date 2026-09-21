@@ -14,6 +14,7 @@ namespace BlishEmotes.Tests
             CatalogParsingTests.Run();
             CatalogCacheTests.Run();
             CatalogClientTests.Run();
+            CatalogSyncTests.Run();
             return TestRunner.Finish();
         }
     }

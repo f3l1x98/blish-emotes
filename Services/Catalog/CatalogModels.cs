@@ -59,4 +59,27 @@ namespace felix.BlishEmotes.Services.Catalog
         /// <summary>File path (relative to the catalog root, e.g. <c>emotes.json</c> or <c>textures/barbecue.png</c>) to raw bytes.</summary>
         public Dictionary<string, byte[]> Files { get; set; } = new Dictionary<string, byte[]>();
     }
+
+    /// <summary>The final state of a catalog sync, exposed to the UX.</summary>
+    public enum CatalogSyncState
+    {
+        FirstFetch,
+        Downloading,
+        UpToDate,
+        Updated,
+        Failed,
+        SchemaTooNew,
+    }
+
+    /// <summary>Outcome of a catalog sync: state, remote version, and which emotes are new since the cache.</summary>
+    public class CatalogSyncResult
+    {
+        public CatalogSyncState State { get; set; }
+        /// <summary>Remote catalog version when known; otherwise the cached version.</summary>
+        public long? Version { get; set; }
+        /// <summary>Ids of emotes present in the fetched catalog but not in the previous cache.</summary>
+        public List<string> NewEmoteIds { get; set; } = new List<string>();
+        /// <summary>Human-readable detail for <see cref="CatalogSyncState.Failed"/>.</summary>
+        public string ErrorMessage { get; set; }
+    }
 }

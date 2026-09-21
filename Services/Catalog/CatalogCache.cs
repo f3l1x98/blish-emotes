@@ -16,6 +16,7 @@ namespace felix.BlishEmotes.Services.Catalog
     {
         public const string CacheDirectoryName = "catalog";
         public const string StagingDirectoryName = "catalog-staging";
+        public const string ETagFileName = "etag.txt";
 
         /// <param name="dataRootDirectory">The module data directory the cache lives in (e.g. the <c>emotes</c> directory).</param>
         public CatalogCache(string dataRootDirectory)
@@ -23,11 +24,13 @@ namespace felix.BlishEmotes.Services.Catalog
             DataRootDirectory = dataRootDirectory;
             CacheDirectory = Path.Combine(dataRootDirectory, CacheDirectoryName);
             StagingDirectory = Path.Combine(dataRootDirectory, StagingDirectoryName);
+            ETagFilePath = Path.Combine(CacheDirectory, ETagFileName);
         }
 
         public string DataRootDirectory { get; }
         public string CacheDirectory { get; }
         public string StagingDirectory { get; }
+        public string ETagFilePath { get; }
 
         public bool HasCache()
         {
@@ -93,7 +96,52 @@ namespace felix.BlishEmotes.Services.Catalog
 
         public string GetTextureFilePath(string emoteId)
         {
-            return Path.Combine(CacheDirectory, CatalogPaths.TextureFile(emoteId).Replace('/', Path.DirectorySeparatorChar));
+            return GetFilePath(CatalogPaths.TextureFile(emoteId));
+        }
+
+        public string GetFilePath(string path)
+        {
+            return Path.Combine(CacheDirectory, path.Replace('/', Path.DirectorySeparatorChar));
+        }
+
+        /// <summary>Reads the stored ETag, or <c>null</c> when there is none.</summary>
+        public string LoadETag()
+        {
+            if (!File.Exists(ETagFilePath))
+            {
+                return null;
+            }
+            try
+            {
+                return File.ReadAllText(ETagFilePath, Encoding.UTF8);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>Persists the ETag.</summary>
+        public void StoreETag(string etag)
+        {
+            if (etag == null)
+            {
+                if (File.Exists(ETagFilePath))
+                {
+                    File.Delete(ETagFilePath);
+                }
+                return;
+            }
+            File.WriteAllText(ETagFilePath, etag, Encoding.UTF8);
+        }
+
+        /// <summary>Removes the staging directory if it exists.</summary>
+        public void DiscardStaging()
+        {
+            if (Directory.Exists(StagingDirectory))
+            {
+                Directory.Delete(StagingDirectory, true);
+            }
         }
 
         private void WriteStaging(FetchedCatalog fetched)
@@ -134,14 +182,6 @@ namespace felix.BlishEmotes.Services.Catalog
                 Directory.Delete(CacheDirectory, true);
             }
             Directory.Move(StagingDirectory, CacheDirectory);
-        }
-
-        private void DiscardStaging()
-        {
-            if (Directory.Exists(StagingDirectory))
-            {
-                Directory.Delete(StagingDirectory, true);
-            }
         }
     }
 }

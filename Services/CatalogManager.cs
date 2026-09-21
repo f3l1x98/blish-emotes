@@ -1,7 +1,6 @@
 using Blish_HUD;
 using Blish_HUD.Modules.Managers;
 using felix.BlishEmotes.Services.Catalog;
-using felix.BlishEmotes.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,12 +8,12 @@ using System.Threading.Tasks;
 namespace felix.BlishEmotes.Services
 {
     /// <summary>
-    /// Module-facing catalog service: loads the local cache (what the module runs from offline)
-    /// and refreshes it with a background full-pull fetch. A fetch failure or a catalog that fails
-    /// parsing/sanity-checking never replaces current data — the module just stays on the cache
-    /// (or the embedded fallback) and retries on the next launch.
+    /// Module-facing catalog service: loads the local cache (what the module runs from offline) and
+    /// refreshes it with a cheap conditional sync. A sync failure or a catalog that fails parsing
+    /// or invariants never replaces current data and never updates the stored
+    /// ETag, so the next check genuinely retries instead of 304-ing past a bad version.
     /// </summary>
-    class CatalogManager
+    public class CatalogManager
     {
         private static readonly Logger Logger = Logger.GetLogger<CatalogManager>();
 
@@ -35,6 +34,9 @@ namespace felix.BlishEmotes.Services
             string dataDirectory = directoriesManager.GetFullDirectoryPath(registeredDirectories[0]);
             _cache = new CatalogCache(dataDirectory);
         }
+
+        /// <summary>The outcome of the most recent sync, including transient <see cref="CatalogSyncState.Downloading"/> state.</summary>
+        public CatalogSyncResult LastSyncResult { get; private set; } = new CatalogSyncResult { State = CatalogSyncState.UpToDate };
 
         /// <summary>The cached catalog, or null when there is no usable cache (fresh install / corrupted).</summary>
         public CatalogData LoadCachedCatalogOrNull()
@@ -58,32 +60,24 @@ namespace felix.BlishEmotes.Services
         }
 
         /// <summary>
-        /// Fetches the catalog and swaps it into the cache. Returns the fetched catalog, or null on
-        /// any failure (network, hash mismatch, parse failure, invalid data) — callers keep their
-        /// current data in that case.
+        /// Cheap conditional sync: one conditional GET on the manifest, hash-diff against the cache,
+        /// re-pull only changed files, stage and validate before swapping. Returns a detailed outcome
+        /// for the UX; applied catalog updates take effect at the next module launch.
         /// </summary>
-        public async Task<CatalogData> FetchAsync()
+        public async Task<CatalogSyncResult> SyncAsync()
         {
-            try
+            CatalogData previousCache = LoadCachedCatalogOrNull();
+            LastSyncResult = new CatalogSyncResult
             {
-                using (var client = new CatalogClient(CatalogUrl))
-                {
-                    var fetched = await client.FetchAsync().ConfigureAwait(false);
-                    _cache.Store(fetched);
-                    Logger.Info($"Fetched emote catalog {fetched.Data.Manifest.Version} ({fetched.Data.Emotes.Count} emotes) and updated the cache");
-                    return fetched.Data;
-                }
-            }
-            catch (CatalogException e)
+                State = CatalogSyncState.Downloading,
+                Version = previousCache?.Manifest?.Version,
+            };
+
+            using (var client = new CatalogClient(CatalogUrl))
             {
-                Logger.Warn($"Catalog fetch failed - staying on current emote data. {e.Message}");
-                return null;
-            }
-            catch (Exception e)
-            {
-                Logger.Warn("Catalog fetch failed - staying on current emote data.");
-                Logger.Warn(e.ToString());
-                return null;
+                LastSyncResult = await CatalogSync.RunAsync(client, _cache, previousCache).ConfigureAwait(false);
+                LogResult(LastSyncResult);
+                return LastSyncResult;
             }
         }
 
@@ -91,6 +85,28 @@ namespace felix.BlishEmotes.Services
         public string GetTextureFilePath(string emoteId)
         {
             return _cache.GetTextureFilePath(emoteId);
+        }
+
+        private void LogResult(CatalogSyncResult result)
+        {
+            switch (result.State)
+            {
+                case CatalogSyncState.UpToDate:
+                    Logger.Info($"Emote catalog up to date (version {result.Version}).");
+                    break;
+                case CatalogSyncState.FirstFetch:
+                    Logger.Info($"Fetched emote catalog for the first time (version {result.Version}, {result.NewEmoteIds.Count} new emotes) and cached it.");
+                    break;
+                case CatalogSyncState.Updated:
+                    Logger.Info($"Updated emote catalog to version {result.Version} ({result.NewEmoteIds.Count} new emotes); changes take effect on next launch.");
+                    break;
+                case CatalogSyncState.SchemaTooNew:
+                    Logger.Warn($"Emote catalog version {result.Version} uses a schema newer than this module supports - running from cache.");
+                    break;
+                case CatalogSyncState.Failed:
+                    Logger.Warn($"Emote catalog sync failed: {result.ErrorMessage}");
+                    break;
+            }
         }
     }
 }

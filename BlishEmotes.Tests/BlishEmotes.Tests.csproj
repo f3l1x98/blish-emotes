@@ -56,6 +56,9 @@
     <Compile Include="..\Services\Catalog\CatalogClient.cs">
       <Link>Catalog\CatalogClient.cs</Link>
     </Compile>
+    <Compile Include="..\Services\Catalog\CatalogSync.cs">
+      <Link>Catalog\CatalogSync.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="TestRunner.cs" />
     <Compile Include="CatalogNamesTests.cs" />
@@ -65,6 +68,8 @@
     <Compile Include="CatalogParsingTests.cs" />
     <Compile Include="CatalogCacheTests.cs" />
     <Compile Include="CatalogClientTests.cs" />
+    <Compile Include="CatalogSyncTests.cs" />
+    <Compile Include="CatalogServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

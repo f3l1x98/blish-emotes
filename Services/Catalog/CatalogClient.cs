@@ -1,18 +1,16 @@
 using felix.BlishEmotes.Exceptions;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.Services.Catalog
 {
     /// <summary>
-    /// Fetches the catalog over HTTP(S) from a raw GitHub-style base URL (branch-qualified, per the
-    /// transport decision). Naive full pull: manifest first, then every file in its <c>files</c> map,
-    /// each hash-verified against the manifest, then parsed and validated before anything is handed
-    /// back. The cheap conditional (ETag) sync is a later ticket.
+    /// Fetches catalog files over HTTP(S) from a raw GitHub-style base URL (branch-qualified, per the
+    /// transport decision): a conditional GET on the manifest (<c>If-None-Match</c> / <c>304</c>) plus
+    /// hash-verified single-file GETs. Orchestration - schema gate, hash-diff, staging, swap - lives
+    /// in <see cref="CatalogSync"/>.
     /// </summary>
     public class CatalogClient : IDisposable
     {
@@ -28,42 +26,64 @@ namespace felix.BlishEmotes.Services.Catalog
             };
         }
 
-        /// <summary>Fetches, hash-verifies and parses the catalog. Throws <see cref="CatalogException"/> on any failure.</summary>
-        public async Task<FetchedCatalog> FetchAsync()
+        /// <summary>Result of a conditional manifest GET.</summary>
+        public class ManifestFetchResult
         {
-            byte[] manifestJson = await GetAsync(CatalogPaths.ManifestFile).ConfigureAwait(false);
-            var manifest = Deserialize<CatalogManifest>(manifestJson);
-            if (manifest.SchemaVersion > CatalogValidator.SupportedSchemaVersion)
-            {
-                throw new CatalogException(
-                    $"catalog schemaVersion {manifest.SchemaVersion} is newer than supported {CatalogValidator.SupportedSchemaVersion} - update the module");
-            }
+            /// <summary>True when the server returned <c>304 Not Modified</c>.</summary>
+            public bool NotModified { get; set; }
+            /// <summary>The manifest bytes for a <c>200 OK</c> response.</summary>
+            public byte[] ManifestJson { get; set; }
+            /// <summary>ETag returned by the server, to store for the next conditional request.</summary>
+            public string ETag { get; set; }
+        }
 
-            var files = new Dictionary<string, byte[]>();
-            foreach (var entry in manifest.Files)
+        /// <summary>
+        /// Performs a conditional GET on the manifest. Returns <see cref="ManifestFetchResult.NotModified"/>
+        /// when the server replies <c>304</c>; otherwise returns the manifest bytes and the new ETag.
+        /// </summary>
+        public async Task<ManifestFetchResult> GetManifestAsync(string etag)
+        {
+            string url = _baseUrl + CatalogPaths.ManifestFile;
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             {
-                string path = entry.Key;
-                byte[] bytes = await GetAsync(path).ConfigureAwait(false);
-                if (!CatalogHash.Verify(bytes, entry.Value))
+                if (!string.IsNullOrEmpty(etag))
                 {
-                    throw new CatalogException($"hash mismatch for {path}");
+                    request.Headers.TryAddWithoutValidation("If-None-Match", etag);
                 }
-                files[path] = bytes;
+
+                using (var response = await _httpClient.SendAsync(request).ConfigureAwait(false))
+                {
+                    if ((int)response.StatusCode == 304)
+                    {
+                        return new ManifestFetchResult { NotModified = true, ETag = etag };
+                    }
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new CatalogException($"failed to fetch manifest: {(int)response.StatusCode} {response.ReasonPhrase}");
+                    }
+
+                    byte[] manifestJson = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                    string responseEtag = null;
+                    if (response.Headers.TryGetValues("ETag", out var etagValues))
+                    {
+                        responseEtag = etagValues.FirstOrDefault();
+                    }
+
+                    return new ManifestFetchResult { NotModified = false, ManifestJson = manifestJson, ETag = responseEtag };
+                }
             }
+        }
 
-            if (!files.ContainsKey(CatalogPaths.EmotesFile) || !files.ContainsKey(CatalogPaths.CategoriesFile))
+        /// <summary>Fetches a single catalog file and verifies it against the manifest hash.</summary>
+        public async Task<byte[]> GetFileAsync(string path, string expectedHash)
+        {
+            byte[] bytes = await GetAsync(path).ConfigureAwait(false);
+            if (!CatalogHash.Verify(bytes, expectedHash))
             {
-                throw new CatalogException("manifest does not list emotes.json/categories.json");
+                throw new CatalogException($"hash mismatch for {path}");
             }
-
-            var data = new CatalogData
-            {
-                Manifest = manifest,
-                Emotes = Deserialize<List<CatalogEmote>>(files[CatalogPaths.EmotesFile]),
-                Categories = Deserialize<List<CatalogCategory>>(files[CatalogPaths.CategoriesFile]),
-            };
-
-            return new FetchedCatalog { Data = data, ManifestJson = manifestJson, Files = files };
+            return bytes;
         }
 
         private async Task<byte[]> GetAsync(string path)
@@ -90,18 +110,6 @@ namespace felix.BlishEmotes.Services.Catalog
             catch (Exception e)
             {
                 throw new CatalogException($"failed to fetch {path}", e);
-            }
-        }
-
-        private static T Deserialize<T>(byte[] json)
-        {
-            try
-            {
-                return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(json));
-            }
-            catch (Exception e)
-            {
-                throw new CatalogException($"failed to parse {typeof(T)}", e);
             }
         }
 

@@ -173,6 +173,7 @@
     <Compile Include="Services\Catalog\CatalogNames.cs" />
     <Compile Include="Services\Catalog\CatalogPaths.cs" />
     <Compile Include="Services\Catalog\CatalogValidator.cs" />
+    <Compile Include="Services\Catalog\CatalogSync.cs" />
     <Compile Include="Services\TexturesManager.cs" />
     <Compile Include="Strings\Common.Designer.cs">
       <AutoGen>True</AutoGen>
