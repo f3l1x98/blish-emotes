@@ -6,6 +6,7 @@ using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using felix.BlishEmotes;
+using felix.BlishEmotes.Services.Catalog;
 using felix.BlishEmotes.Exceptions;
 using felix.BlishEmotes.Services;
 using felix.BlishEmotes.Strings;
@@ -43,6 +44,7 @@ namespace BlishEmotesList
         internal TexturesManager TexturesManager;
         internal CategoriesManager CategoriesManager;
         internal EmotesManager EmotesManager;
+        internal CatalogManager CatalogManager;
         #endregion
 
         #region Controls
@@ -51,6 +53,9 @@ namespace BlishEmotesList
         private TabbedWindow2 _settingsWindow;
         private RadialMenu _radialMenu;
         #endregion
+
+        // Set in Unload; guards the background catalog fetch from applying after the module is gone.
+        private volatile bool _unloaded = false;
 
         #region Settings
         public ModuleSettings Settings;
@@ -141,7 +146,8 @@ namespace BlishEmotesList
             // Init custom Manager
             PersistenceManager = new PersistenceManager(DirectoriesManager);
             TexturesManager = new TexturesManager(ContentsManager, DirectoriesManager);
-            EmotesManager = new EmotesManager(ContentsManager, Settings);
+            CatalogManager = new CatalogManager(DirectoriesManager);
+            EmotesManager = new EmotesManager(ContentsManager, Settings, CatalogManager);
             CategoriesManager = new CategoriesManager(TexturesManager, PersistenceManager);
 
             CategoriesManager.CategoriesUpdated += delegate
@@ -179,8 +185,16 @@ namespace BlishEmotesList
             {
                 // Load categories
                 CategoriesManager.Load();
-                // Load emotes
-                EmotesManager.Load();
+                // Load emotes: cached catalog if we have one (offline-capable), embedded data otherwise
+                var cachedCatalog = CatalogManager.LoadCachedCatalogOrNull();
+                if (cachedCatalog != null)
+                {
+                    EmotesManager.LoadFromCatalog(cachedCatalog);
+                }
+                else
+                {
+                    EmotesManager.LoadEmbedded();
+                }
                 // Update emotes with data from api
                 await UpdateEmotesFromApi();
                 // Update category Emotes
@@ -188,12 +202,69 @@ namespace BlishEmotesList
 
                 this.Settings.InitEmotesSettings(EmotesManager.GetAll());
                 InitUI();
+
+                // Tracer bullet (ticket 02): non-blocking catalog refresh. Fresh install -> fetch,
+                // validate, cache, and render from the catalog; any failure leaves the current data
+                // (cache or embedded fallback) in place. Naive full pull; the cheap conditional sync
+                // (ETag/hash-diff) is a later ticket.
+                _ = RefreshCatalogAsync();
             }
             catch (Exception e)
             {
                 Logger.Fatal("LoadAsync failed!");
                 Logger.Error(e.ToString());
             }
+        }
+
+        private async Task RefreshCatalogAsync()
+        {
+            try
+            {
+                Logger.Debug("Refreshing emote catalog in the background");
+                var fetched = await CatalogManager.FetchAsync().ConfigureAwait(false);
+                if (fetched == null)
+                {
+                    Logger.Warn("Staying on current emote data until the next successful fetch");
+                    return;
+                }
+                ApplyCatalog(fetched);
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Catalog refresh failed!");
+                Logger.Error(e.ToString());
+            }
+        }
+
+        private void ApplyCatalog(CatalogData catalog)
+        {
+            if (_unloaded)
+            {
+                return;
+            }
+            // Build-then-swap on the game thread: textures need the GraphicsDevice and the UI
+            // rebuild must not race the render loop. The existing UpdateUI chain redraws everything.
+            GameService.Graphics.QueueMainThreadRender(device =>
+            {
+                if (_unloaded)
+                {
+                    return;
+                }
+                try
+                {
+                    EmotesManager.ApplyCatalog(catalog);
+                    CategoriesManager.ResolveEmoteIds(EmotesManager.GetAll());
+                    this.Settings.InitEmotesSettings(EmotesManager.GetAll());
+                    UpdateUI();
+                    // Lock pass over the swapped-in emote instances
+                    _ = UpdateEmotesFromApi();
+                }
+                catch (Exception e)
+                {
+                    Logger.Error("Failed to apply fetched catalog!");
+                    Logger.Error(e.ToString());
+                }
+            });
         }
 
         public override IView GetSettingsView()
@@ -435,6 +506,7 @@ namespace BlishEmotesList
         /// <inheritdoc />
         protected override void Unload()
         {
+            _unloaded = true;
             Gw2ApiManager.SubtokenUpdated -= OnApiSubTokenUpdated;
             this.Settings.EmoteShortcutActivated -= OnEmoteSelected;
             this.Settings.Unload();

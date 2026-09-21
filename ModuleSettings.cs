@@ -1,4 +1,5 @@
-﻿using Blish_HUD.Input;
+﻿using Blish_HUD;
+using Blish_HUD.Input;
 using Blish_HUD.Settings;
 using felix.BlishEmotes.Strings;
 using System;
@@ -50,6 +51,12 @@ namespace felix.BlishEmotes
 
         public Dictionary<Emote, SettingEntry<KeyBinding>> EmotesShortcutsKeybindsMap { get; private set; }
 
+        // Handler bookkeeping so InitEmotesShortcuts/InitEmotesRadialEnabled can be re-run when a
+        // fetched catalog swaps the emote set in (build-then-swap): existing settings entries keep
+        // their values, but their handlers are re-bound to the new Emote instances exactly once.
+        private readonly Dictionary<string, EventHandler<EventArgs>> _shortcutActivatedHandlers = new Dictionary<string, EventHandler<EventArgs>>();
+        private readonly Dictionary<string, EventHandler<ValueChangedEventArgs<bool>>> _radialSettingChangedHandlers = new Dictionary<string, EventHandler<ValueChangedEventArgs<bool>>>();
+
         public event EventHandler<Emote> EmoteShortcutActivated;
 
         private void DefineEmotesKeybindSettings(SettingCollection settings)
@@ -63,13 +70,26 @@ namespace felix.BlishEmotes
             this.EmotesShortcutsKeybindsMap.Clear();
             foreach (Emote emote in emotes)
             {
-                this.EmotesShortcutsKeybindsMap.Add(emote, this.EmotesShortcutsSettings.DefineSetting(nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.Id, new KeyBinding(), () => emote.Label));
-
-                this.EmotesShortcutsKeybindsMap[emote].Value.Enabled = !emote.Locked;
-                this.EmotesShortcutsKeybindsMap[emote].Value.Activated += delegate
+                string entryKey = nameof(this.EmotesShortcutsKeybindsMap) + "_" + emote.Id;
+                if (!this.EmotesShortcutsSettings.TryGetSetting(entryKey, out SettingEntry<KeyBinding> entry))
                 {
-                    EmoteShortcutActivated.Invoke(this, emote);
+                    entry = this.EmotesShortcutsSettings.DefineSetting(entryKey, new KeyBinding(), () => emote.Label);
+                }
+                entry.GetDisplayNameFunc = () => emote.Label;
+
+                if (this._shortcutActivatedHandlers.TryGetValue(emote.Id, out EventHandler<EventArgs> existingHandler))
+                {
+                    entry.Value.Activated -= existingHandler;
+                }
+                EventHandler<EventArgs> handler = delegate
+                {
+                    EmoteShortcutActivated?.Invoke(this, emote);
                 };
+                entry.Value.Activated += handler;
+                this._shortcutActivatedHandlers[emote.Id] = handler;
+
+                this.EmotesShortcutsKeybindsMap.Add(emote, entry);
+                entry.Value.Enabled = !emote.Locked;
             }
         }
         #endregion
@@ -125,12 +145,25 @@ namespace felix.BlishEmotes
             this.EmotesRadialEnabledMap.Clear();
             foreach (Emote emote in emotes)
             {
-                var newSetting = this.EmotesRadialSettings.DefineSetting(nameof(this.EmotesRadialEnabledMap) + "_" + emote.Id, true, () => emote.Label);
-                this.EmotesRadialEnabledMap.Add(emote, newSetting);
-                newSetting.SettingChanged += delegate
+                string entryKey = nameof(this.EmotesRadialEnabledMap) + "_" + emote.Id;
+                if (!this.EmotesRadialSettings.TryGetSetting(entryKey, out SettingEntry<bool> entry))
+                {
+                    entry = this.EmotesRadialSettings.DefineSetting(entryKey, true, () => emote.Label);
+                }
+                entry.GetDisplayNameFunc = () => emote.Label;
+
+                if (this._radialSettingChangedHandlers.TryGetValue(emote.Id, out EventHandler<ValueChangedEventArgs<bool>> existingHandler))
+                {
+                    entry.SettingChanged -= existingHandler;
+                }
+                EventHandler<ValueChangedEventArgs<bool>> handler = delegate
                 {
                     OnAnyEmotesRadialSettingsChanged?.Invoke(this, null);
                 };
+                entry.SettingChanged += handler;
+                this._radialSettingChangedHandlers[emote.Id] = handler;
+
+                this.EmotesRadialEnabledMap.Add(emote, entry);
             }
         }
 

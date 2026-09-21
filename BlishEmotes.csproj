@@ -158,12 +158,21 @@
     <Compile Include="Models\Emote.cs" />
     <Compile Include="Services\EmotesManager.cs" />
     <Compile Include="EmotesModule.cs" />
+    <Compile Include="Exceptions\CatalogException.cs" />
     <Compile Include="Exceptions\NotFoundException.cs" />
     <Compile Include="Exceptions\UniqueViolationException.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="ModuleSettings.cs" />
     <Compile Include="Services\PersistenceManager.cs" />
     <Compile Include="Models\RadialBase.cs" />
+    <Compile Include="Services\CatalogManager.cs" />
+    <Compile Include="Services\Catalog\CatalogCache.cs" />
+    <Compile Include="Services\Catalog\CatalogClient.cs" />
+    <Compile Include="Services\Catalog\CatalogHash.cs" />
+    <Compile Include="Services\Catalog\CatalogModels.cs" />
+    <Compile Include="Services\Catalog\CatalogNames.cs" />
+    <Compile Include="Services\Catalog\CatalogPaths.cs" />
+    <Compile Include="Services\Catalog\CatalogValidator.cs" />
     <Compile Include="Services\TexturesManager.cs" />
     <Compile Include="Strings\Common.Designer.cs">
       <AutoGen>True</AutoGen>
