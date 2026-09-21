@@ -1,0 +1,38 @@
+[
+  {
+    "id": "greeting",
+    "names": {
+      "en": "Greeting"
+    }
+  },
+  {
+    "id": "reaction",
+    "names": {
+      "en": "Reaction"
+    }
+  },
+  {
+    "id": "fun",
+    "names": {
+      "en": "Fun"
+    }
+  },
+  {
+    "id": "pose",
+    "names": {
+      "en": "Pose"
+    }
+  },
+  {
+    "id": "dance",
+    "names": {
+      "en": "Dance"
+    }
+  },
+  {
+    "id": "miscellaneous",
+    "names": {
+      "en": "Miscellaneous"
+    }
+  }
+]

@@ -1,0 +1,1039 @@
+[
+  {
+    "alternativeCommands": [
+      "/bbq",
+      "/grill"
+    ],
+    "categories": [
+      "miscellaneous"
+    ],
+    "command": "/barbecue",
+    "credit": {
+      "text": "Recreation icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/recreation"
+    },
+    "id": "barbecue",
+    "names": {
+      "de": "Grillen",
+      "en": "Barbecue"
+    }
+  },
+  {
+    "categories": [
+      "greeting"
+    ],
+    "command": "/beckon",
+    "credit": {
+      "text": "Body language icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/body-language"
+    },
+    "id": "beckon",
+    "names": {
+      "de": "Herbeiwinken",
+      "en": "Beckon",
+      "es": "Señas",
+      "fr": "Approcher"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/bless",
+    "credit": {
+      "text": "Shinning icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/shinning"
+    },
+    "id": "bless",
+    "names": {
+      "en": "Bless",
+      "fr": "Bénir"
+    }
+  },
+  {
+    "alternativeCommands": [
+      "/bloodstoneboogie"
+    ],
+    "categories": [
+      "dance"
+    ],
+    "command": "/boogie",
+    "credit": {
+      "text": "Person icons created by Freepik - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/person"
+    },
+    "id": "boogie",
+    "names": {
+      "en": "Bloodstone Boogie"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/blowkiss",
+    "credit": {
+      "text": "Affection icons created by AbtoCreative - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/affection"
+    },
+    "id": "blowkiss",
+    "names": {
+      "en": "Blow kiss"
+    }
+  },
+  {
+    "categories": [
+      "greeting"
+    ],
+    "command": "/bow",
+    "credit": {
+      "text": "Bow icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/bow"
+    },
+    "id": "bow",
+    "names": {
+      "de": "Verbeugen",
+      "en": "Bow",
+      "es": "Inclinarse",
+      "fr": "Reverence"
+    }
+  },
+  {
+    "categories": [
+      "dance"
+    ],
+    "command": "/breakdance",
+    "credit": {
+      "text": "Hip hop icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/hip-hop"
+    },
+    "id": "breakdance",
+    "names": {
+      "en": "Breakdance"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/channel",
+    "credit": {
+      "text": "Meditate icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/meditate"
+    },
+    "id": "channel",
+    "names": {
+      "en": "Channel"
+    }
+  },
+  {
+    "categories": [
+      "fun"
+    ],
+    "command": "/cheer",
+    "credit": {
+      "text": "Pom icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/pom"
+    },
+    "id": "cheer",
+    "names": {
+      "de": "Jubeln",
+      "en": "Cheer",
+      "es": "Animar",
+      "fr": "Encourager"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/cower",
+    "credit": {
+      "text": "Cringe icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/cringe"
+    },
+    "id": "cower",
+    "names": {
+      "de": "Ducken",
+      "en": "Cower",
+      "es": "Cobarde",
+      "fr": "Lache"
+    }
+  },
+  {
+    "categories": [
+      "dance"
+    ],
+    "command": "/crabdance",
+    "credit": {
+      "text": "Crab icons created by Freepik - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/crab"
+    },
+    "id": "crabdance",
+    "names": {
+      "en": "Crabdance"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/crossarms",
+    "credit": {
+      "text": "Crossarms icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/crossarms"
+    },
+    "id": "crossarms",
+    "names": {
+      "de": "Arme kreuzen",
+      "en": "Crossarms",
+      "es": "Cruzarse",
+      "fr": "Brascroises"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/cry",
+    "credit": {
+      "text": "Crying icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/crying"
+    },
+    "id": "cry",
+    "names": {
+      "de": "Weinen",
+      "en": "Cry",
+      "es": "Llorar",
+      "fr": "Pleurer"
+    }
+  },
+  {
+    "categories": [
+      "dance"
+    ],
+    "command": "/dance",
+    "credit": {
+      "text": "Dance icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/dance"
+    },
+    "id": "dance",
+    "names": {
+      "de": "Tanzen",
+      "en": "Dance",
+      "es": "Bailar",
+      "fr": "Danse"
+    }
+  },
+  {
+    "categories": [
+      "miscellaneous"
+    ],
+    "command": "/drink",
+    "credit": {
+      "text": "Tumbler icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/tumbler"
+    },
+    "id": "drink",
+    "names": {
+      "en": "Drink"
+    }
+  },
+  {
+    "alternativeCommands": [
+      "/upset"
+    ],
+    "categories": [
+      "reaction"
+    ],
+    "command": "/facepalm",
+    "credit": {
+      "text": "Regret icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/regret"
+    },
+    "id": "facepalm",
+    "names": {
+      "de": "Verärgert",
+      "en": "Facepalm",
+      "es": "Disgustado",
+      "fr": "Fache"
+    }
+  },
+  {
+    "categories": [
+      "dance"
+    ],
+    "command": "/geargrind",
+    "credit": {
+      "text": "Runner icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/runner"
+    },
+    "id": "geargrind",
+    "names": {
+      "de": "Endlos",
+      "en": "Geargrind",
+      "es": "Corredor",
+      "fr": "Coureur"
+    }
+  },
+  {
+    "categories": [
+      "dance"
+    ],
+    "command": "/happydance",
+    "credit": {
+      "text": "Romp icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/romp"
+    },
+    "id": "happydance",
+    "names": {
+      "en": "Happy Dance"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/heroic",
+    "credit": {
+      "text": "Superman icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/superman"
+    },
+    "id": "heroic",
+    "names": {
+      "en": "Heroic"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/hiss",
+    "credit": {
+      "text": "Anaconda icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/anaconda"
+    },
+    "id": "hiss",
+    "names": {
+      "de": "Zischen",
+      "en": "Hiss",
+      "es": "Bufar",
+      "fr": "Feule"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/kneel",
+    "credit": {
+      "text": "Servant icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/servant"
+    },
+    "id": "kneel",
+    "names": {
+      "de": "Hinknien",
+      "en": "Kneel",
+      "es": "Arrodillarse",
+      "fr": "Genoux"
+    }
+  },
+  {
+    "categories": [
+      "fun"
+    ],
+    "command": "/laugh",
+    "credit": {
+      "text": "Laugh icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/laugh"
+    },
+    "id": "laugh",
+    "names": {
+      "de": "Lachen",
+      "en": "Laugh",
+      "es": "Reír",
+      "fr": "Rire"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/magicjuggle",
+    "credit": {
+      "text": "Juggler icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/juggler"
+    },
+    "id": "magicjuggle",
+    "names": {
+      "de": "Magisches Jonglieren",
+      "en": "Magic Juggle",
+      "es": "Malabar magico",
+      "fr": "Jongagle magique"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/magictrick",
+    "credit": {
+      "text": "Illusion icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/illusion"
+    },
+    "id": "magictrick",
+    "names": {
+      "en": "Magic trick"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/masterpiece",
+    "credit": {
+      "text": "Reassure icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/reassure"
+    },
+    "id": "masterpiece",
+    "names": {
+      "en": "Masterpiece"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/no",
+    "credit": {
+      "text": "Disadvantage icons created by Anggara - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/disadvantage"
+    },
+    "id": "no",
+    "names": {
+      "de": "Nein",
+      "en": "No",
+      "es": "No",
+      "fr": "Non"
+    }
+  },
+  {
+    "categories": [
+      "fun"
+    ],
+    "command": "/paper",
+    "credit": {
+      "text": "Person icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/person"
+    },
+    "id": "paper",
+    "names": {
+      "de": "Papier",
+      "en": "Paper",
+      "es": "Papel",
+      "fr": "Feuille"
+    }
+  },
+  {
+    "categories": [
+      "miscellaneous"
+    ],
+    "command": "/petalthrow",
+    "credit": {
+      "text": "Sakura icons created by Freepik - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/sakura"
+    },
+    "id": "petalthrow",
+    "names": {
+      "en": "Petal throw"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/playdead",
+    "credit": {
+      "text": "Cardiac arrest icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/cardiac-arrest"
+    },
+    "id": "playdead",
+    "names": {
+      "de": "Totstellen",
+      "en": "Playdead",
+      "es": "Yacer",
+      "fr": "Fait le mort"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/point",
+    "credit": {
+      "text": "Pointing icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/pointing"
+    },
+    "id": "point",
+    "names": {
+      "de": "Deuten",
+      "en": "Point",
+      "es": "Señalar",
+      "fr": "Montrer"
+    }
+  },
+  {
+    "categories": [
+      "miscellaneous"
+    ],
+    "command": "/ponder",
+    "credit": {
+      "text": "Yawning icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/yawning"
+    },
+    "id": "ponder",
+    "names": {
+      "de": "Grübeln",
+      "en": "Ponder",
+      "es": "Reflexionar",
+      "fr": "Cogite"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/poseheart",
+    "credit": {
+      "text": "Hands and gestures icons created by Freepik - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/hands-and-gestures"
+    },
+    "id": "poseheart",
+    "names": {
+      "en": "Pose heart"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/posepeace",
+    "credit": {
+      "text": "Pose icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/pose"
+    },
+    "id": "posepeace",
+    "names": {
+      "en": "Pose peace"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/posesassy",
+    "credit": {
+      "text": "Cool icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/cool"
+    },
+    "id": "posesassy",
+    "names": {
+      "en": "Pose sassy"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/poseshy",
+    "credit": {
+      "text": "Shy icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/shy"
+    },
+    "id": "poseshy",
+    "names": {
+      "en": "Pose shy"
+    }
+  },
+  {
+    "categories": [
+      "miscellaneous"
+    ],
+    "command": "/possessed",
+    "credit": {
+      "text": "Possession icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/possession"
+    },
+    "id": "possessed",
+    "names": {
+      "en": "Possessed"
+    }
+  },
+  {
+    "categories": [
+      "miscellaneous"
+    ],
+    "command": "/rank",
+    "credit": {
+      "text": "Succeed icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/succeed"
+    },
+    "id": "rank",
+    "names": {
+      "de": "Rang",
+      "en": "Rank",
+      "es": "Rango",
+      "fr": "Rang"
+    }
+  },
+  {
+    "categories": [
+      "miscellaneous"
+    ],
+    "command": "/readbook",
+    "credit": {
+      "text": "Read icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/read"
+    },
+    "id": "readbook",
+    "names": {
+      "en": "Read book"
+    }
+  },
+  {
+    "categories": [
+      "fun"
+    ],
+    "command": "/rock",
+    "credit": {
+      "text": "Strongman icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/strongman"
+    },
+    "id": "rock",
+    "names": {
+      "de": "Stein",
+      "en": "Rock",
+      "es": "Piedra",
+      "fr": "Pierre"
+    }
+  },
+  {
+    "categories": [
+      "fun"
+    ],
+    "command": "/rockout",
+    "credit": {
+      "text": "Electric icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/electric"
+    },
+    "id": "rockout",
+    "names": {
+      "de": "Abrocken",
+      "en": "Rockout",
+      "es": "Rockear",
+      "fr": "Hardrock"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/sad",
+    "credit": {
+      "text": "Trouble icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/trouble"
+    },
+    "id": "sad",
+    "names": {
+      "de": "Traurig",
+      "en": "Sad",
+      "es": "Triste",
+      "fr": "Triste"
+    }
+  },
+  {
+    "categories": [
+      "greeting"
+    ],
+    "command": "/salute",
+    "credit": {
+      "text": "Obey icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/obey"
+    },
+    "id": "salute",
+    "names": {
+      "de": "Salutieren",
+      "en": "Salute",
+      "es": "Firmes",
+      "fr": "Salut"
+    }
+  },
+  {
+    "alternativeCommands": [
+      "/scis"
+    ],
+    "categories": [
+      "fun"
+    ],
+    "command": "/scissors",
+    "credit": {
+      "text": "Scissors icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/scissors"
+    },
+    "id": "scissors",
+    "names": {
+      "de": "Schere",
+      "en": "Scissors",
+      "es": "Tijeras",
+      "fr": "Ciseaux"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/serve",
+    "credit": {
+      "text": "Dishes icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/dishes"
+    },
+    "id": "serve",
+    "names": {
+      "de": "Servieren",
+      "en": "Serve",
+      "es": "Servir",
+      "fr": "Servir"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/shiver",
+    "credit": {
+      "text": "Anxiety icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/anxiety"
+    },
+    "id": "shiver",
+    "names": {
+      "de": "Zittern",
+      "en": "Shiver",
+      "es": "Tiritar",
+      "fr": "Tremble"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/shiverplus",
+    "credit": {
+      "text": "Cold icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/cold"
+    },
+    "id": "shiverplus",
+    "names": {
+      "de": "Zittern Plus",
+      "en": "Shiver plus",
+      "es": "Tiritar mucho",
+      "fr": "Tremble fort"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/shocked",
+    "credit": {
+      "text": "Scared icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/scared"
+    },
+    "id": "shocked",
+    "names": {
+      "de": "Schockiert",
+      "en": "Shocked"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/shrug",
+    "credit": {
+      "text": "Behind icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/behind"
+    },
+    "id": "shrug",
+    "names": {
+      "de": "Schulterzucken",
+      "en": "Shrug",
+      "es": "Encogerse",
+      "fr": "Epaules"
+    }
+  },
+  {
+    "categories": [
+      "dance"
+    ],
+    "command": "/shuffle",
+    "credit": {
+      "text": "Shuffle arrows icons created by Vitaly Gorbachev - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/shuffle-arrows"
+    },
+    "id": "shuffle",
+    "names": {
+      "de": "Shuffle",
+      "en": "Shuffle",
+      "es": "Mezclador",
+      "fr": "Shuffle"
+    }
+  },
+  {
+    "categories": [
+      "miscellaneous"
+    ],
+    "command": "/sipcoffee",
+    "credit": {
+      "text": "Beverage icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/beverage"
+    },
+    "id": "sipcoffee",
+    "names": {
+      "de": "Kaffee trinken",
+      "en": "Sip coffee",
+      "es": "Tomar café",
+      "fr": "Siroter un café"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/sit",
+    "credit": {
+      "text": "Meditation icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/meditation"
+    },
+    "id": "sit",
+    "names": {
+      "de": "Hinsetzen",
+      "en": "Sit",
+      "es": "Sentarse",
+      "fr": "Asseoir"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/sleep",
+    "credit": {
+      "text": "Sleep icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/sleep"
+    },
+    "id": "sleep",
+    "names": {
+      "de": "Schlafen",
+      "en": "Sleep",
+      "es": "Dormir",
+      "fr": "Dormir"
+    }
+  },
+  {
+    "categories": [
+      "dance"
+    ],
+    "command": "/step",
+    "credit": {
+      "text": "Backward icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/backward"
+    },
+    "id": "step",
+    "names": {
+      "de": "Schritt",
+      "en": "Step",
+      "es": "Paso",
+      "fr": "Esquive"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/stretch",
+    "credit": {
+      "text": "Workout icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/workout"
+    },
+    "id": "stretch",
+    "names": {
+      "de": "Dehnen",
+      "en": "Stretch",
+      "es": "Estirarse",
+      "fr": "Étrement"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/surprised",
+    "credit": {
+      "text": "Panic icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/panic"
+    },
+    "id": "surprised",
+    "names": {
+      "de": "Überrascht",
+      "en": "Surprised",
+      "es": "Sorpresa",
+      "fr": "Surpris"
+    }
+  },
+  {
+    "categories": [
+      "miscellaneous"
+    ],
+    "command": "/talk",
+    "credit": {
+      "text": "Message icons created by Anggara - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/message"
+    },
+    "id": "talk",
+    "names": {
+      "de": "Sprechen",
+      "en": "Talk",
+      "es": "Hablar",
+      "fr": "Parler"
+    }
+  },
+  {
+    "alternativeCommands": [
+      "/thank",
+      "/thx",
+      "/ty"
+    ],
+    "categories": [
+      "reaction"
+    ],
+    "command": "/thanks",
+    "credit": {
+      "text": "Appreciative icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/appreciative"
+    },
+    "id": "thanks",
+    "names": {
+      "de": "Danke",
+      "en": "Thanks",
+      "es": "Gracias",
+      "fr": "Merci"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/threaten",
+    "credit": {
+      "text": "Stickman icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/stickman"
+    },
+    "id": "threaten",
+    "names": {
+      "de": "Drohen",
+      "en": "Threaten",
+      "es": "Amenaza",
+      "fr": "Menace"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/thumbsdown",
+    "credit": {
+      "text": "Critique icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/critique"
+    },
+    "id": "thumbsdown",
+    "names": {
+      "en": "Thumbs down"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/thumbsup",
+    "credit": {
+      "text": "Thumb up icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/thumb-up"
+    },
+    "id": "thumbsup",
+    "names": {
+      "en": "Thumbs up"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/transform",
+    "credit": {
+      "text": "Magic wand icons created by Smashicons - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/magic-wand"
+    },
+    "id": "transform",
+    "names": {
+      "en": "Transform"
+    }
+  },
+  {
+    "categories": [
+      "pose"
+    ],
+    "command": "/unleash",
+    "credit": {
+      "text": "Powerful icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/powerful"
+    },
+    "id": "unleash",
+    "names": {
+      "en": "Unleash"
+    }
+  },
+  {
+    "categories": [
+      "greeting"
+    ],
+    "command": "/wave",
+    "credit": {
+      "text": "Person icons created by Leremy - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/person"
+    },
+    "id": "wave",
+    "names": {
+      "de": "Winken",
+      "en": "Wave",
+      "es": "Saludar",
+      "fr": "Coucou"
+    }
+  },
+  {
+    "categories": [
+      "reaction"
+    ],
+    "command": "/yes",
+    "credit": {
+      "text": "Good icons created by Anggara - Flaticon",
+      "url": "https://www.flaticon.com/free-icons/good"
+    },
+    "id": "yes",
+    "names": {
+      "de": "Ja",
+      "en": "Yes",
+      "es": "Si",
+      "fr": "Oui"
+    }
+  }
+]
