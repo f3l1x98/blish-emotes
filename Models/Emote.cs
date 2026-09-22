@@ -1,12 +1,8 @@
 ﻿using Blish_HUD;
 using felix.BlishEmotes.Services.Catalog;
-using felix.BlishEmotes.Strings;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Resources;
 
 namespace felix.BlishEmotes
 {
@@ -34,19 +30,13 @@ namespace felix.BlishEmotes
         }
 
         /// <summary>
-        /// Resolves the display name: fetched emotes use their catalog names (locale → en →
-        /// title-cased id); embedded emotes use the resx, falling back to the title-cased id.
+        /// Resolves the display name from the catalog (locale → en → title-cased id).
         /// </summary>
-        public void UpdateLabel(ResourceManager embeddedNames, CultureInfo locale)
+        public void UpdateLabel(CultureInfo locale)
         {
-            if (Names != null)
-            {
-                _Label = CatalogNames.Resolve(Names, locale, Id);
-            }
-            else
-            {
-                _Label = embeddedNames.GetString(Id) ?? CatalogNames.TitleCaseId(Id);
-            }
+            _Label = Names != null
+                ? CatalogNames.Resolve(Names, locale, Id)
+                : CatalogNames.TitleCaseId(Id);
         }
     }
 }

@@ -183,11 +183,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Common.resx</DependentUpon>
     </Compile>
-    <Compile Include="Strings\Emotes.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Emotes.resx</DependentUpon>
-    </Compile>
     <Compile Include="UI\Controls\IconSelection.cs" />
     <Compile Include="UI\Controls\RadialMenu.cs" />
     <Compile Include="UI\Controls\ReorderableMenu.cs" />
@@ -346,7 +341,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="ref\json\emotes.json" />
     <None Include="ref\_instructions.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -362,70 +356,6 @@
     <Content Include="ref\textures\156734+155150.png" />
     <Content Include="ref\textures\156909.png" />
     <Content Include="ref\textures\2107931.png" />
-    <Content Include="ref\textures\emotes\barbecue.png" />
-    <Content Include="ref\textures\emotes\beckon.png" />
-    <Content Include="ref\textures\emotes\bless.png" />
-    <Content Include="ref\textures\emotes\blowkiss.png" />
-    <Content Include="ref\textures\emotes\boogie.png" />
-    <Content Include="ref\textures\emotes\bow.png" />
-    <Content Include="ref\textures\emotes\breakdance.png" />
-    <Content Include="ref\textures\emotes\channel.png" />
-    <Content Include="ref\textures\emotes\cheer.png" />
-    <Content Include="ref\textures\emotes\cower.png" />
-    <Content Include="ref\textures\emotes\crabdance.png" />
-    <Content Include="ref\textures\emotes\crossarms.png" />
-    <Content Include="ref\textures\emotes\cry.png" />
-    <Content Include="ref\textures\emotes\dance.png" />
-    <Content Include="ref\textures\emotes\drink.png" />
-    <Content Include="ref\textures\emotes\facepalm.png" />
-    <Content Include="ref\textures\emotes\geargrind.png" />
-    <Content Include="ref\textures\emotes\happydance.png" />
-    <Content Include="ref\textures\emotes\heroic.png" />
-    <Content Include="ref\textures\emotes\hiss.png" />
-    <Content Include="ref\textures\emotes\kneel.png" />
-    <Content Include="ref\textures\emotes\laugh.png" />
-    <Content Include="ref\textures\emotes\magicjuggle.png" />
-    <Content Include="ref\textures\emotes\magictrick.png" />
-    <Content Include="ref\textures\emotes\masterpiece.png" />
-    <Content Include="ref\textures\emotes\no.png" />
-    <Content Include="ref\textures\emotes\paper.png" />
-    <Content Include="ref\textures\emotes\petalthrow.png" />
-    <Content Include="ref\textures\emotes\playdead.png" />
-    <Content Include="ref\textures\emotes\point.png" />
-    <Content Include="ref\textures\emotes\ponder.png" />
-    <Content Include="ref\textures\emotes\poseheart.png" />
-    <Content Include="ref\textures\emotes\posepeace.png" />
-    <Content Include="ref\textures\emotes\posesassy.png" />
-    <Content Include="ref\textures\emotes\poseshy.png" />
-    <Content Include="ref\textures\emotes\possessed.png" />
-    <Content Include="ref\textures\emotes\rank.png" />
-    <Content Include="ref\textures\emotes\readbook.png" />
-    <Content Include="ref\textures\emotes\rock.png" />
-    <Content Include="ref\textures\emotes\rockout.png" />
-    <Content Include="ref\textures\emotes\sad.png" />
-    <Content Include="ref\textures\emotes\salute.png" />
-    <Content Include="ref\textures\emotes\scissors.png" />
-    <Content Include="ref\textures\emotes\serve.png" />
-    <Content Include="ref\textures\emotes\shiver.png" />
-    <Content Include="ref\textures\emotes\shiverplus.png" />
-    <Content Include="ref\textures\emotes\shocked.png" />
-    <Content Include="ref\textures\emotes\shrug.png" />
-    <Content Include="ref\textures\emotes\shuffle.png" />
-    <Content Include="ref\textures\emotes\sipcoffee.png" />
-    <Content Include="ref\textures\emotes\sit.png" />
-    <Content Include="ref\textures\emotes\sleep.png" />
-    <Content Include="ref\textures\emotes\step.png" />
-    <Content Include="ref\textures\emotes\stretch.png" />
-    <Content Include="ref\textures\emotes\surprised.png" />
-    <Content Include="ref\textures\emotes\talk.png" />
-    <Content Include="ref\textures\emotes\thanks.png" />
-    <Content Include="ref\textures\emotes\threaten.png" />
-    <Content Include="ref\textures\emotes\thumbsDown.png" />
-    <Content Include="ref\textures\emotes\thumbsUp.png" />
-    <Content Include="ref\textures\emotes\transform.png" />
-    <Content Include="ref\textures\emotes\unleash.png" />
-    <Content Include="ref\textures\emotes\wave.png" />
-    <Content Include="ref\textures\emotes\yes.png" />
     <Content Include="ref\textures\emotes_icon.png" />
     <Content Include="ref\textures\missing-texture.png" />
     <Content Include="SharpDX.D3DCompiler.dll" />
@@ -439,14 +369,6 @@
     <EmbeddedResource Include="Strings\Common.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Common.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Strings\Emotes.de.resx" />
-    <EmbeddedResource Include="Strings\Emotes.es.resx" />
-    <EmbeddedResource Include="Strings\Emotes.fr.resx" />
-    <EmbeddedResource Include="Strings\Emotes.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Emotes.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

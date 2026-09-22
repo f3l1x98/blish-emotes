@@ -1,17 +1,13 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Modules.Managers;
-using felix.BlishEmotes.Services.Catalog;
 using felix.BlishEmotes.Services;
-using felix.BlishEmotes.Strings;
+using felix.BlishEmotes.Services.Catalog;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Resources;
-using System.Threading.Tasks;
 using Gw2SharpLocale = Gw2Sharp.WebApi.Locale;
 
 namespace felix.BlishEmotes
@@ -26,7 +22,6 @@ namespace felix.BlishEmotes
         private ContentsManager ContentsManager;
         private ModuleSettings Settings;
         private CatalogManager CatalogManager;
-        private ResourceManager EmotesResourceManager;
 
         // Cache mapping ids to objects
         private Dictionary<string, Emote> emotes;
@@ -46,7 +41,6 @@ namespace felix.BlishEmotes
             ContentsManager = contentsManager;
             Settings = settings;
             CatalogManager = catalogManager;
-            EmotesResourceManager = new ResourceManager("felix.BlishEmotes.Strings.Emotes", typeof(Common).Assembly);
             emotes = new Dictionary<string, Emote>();
             _currentCulture = CurrentCulture();
             GameService.Overlay.UserLocaleChanged += OnLocaleChanged;
@@ -83,36 +77,7 @@ namespace felix.BlishEmotes
         {
             foreach (var emote in emotes.Values)
             {
-                emote.UpdateLabel(EmotesResourceManager, _currentCulture);
-            }
-        }
-
-        /// <summary>Embedded fallback load path (expand half of expand-contract; runs when no catalog cache exists).</summary>
-        public void LoadEmbedded()
-        {
-            try
-            {
-                string fileContents;
-                using (StreamReader reader = new StreamReader(ContentsManager.GetFileStream(@"json/emotes.json")))
-                {
-                    fileContents = reader.ReadToEnd();
-                }
-                var loadedEmotes = JsonConvert.DeserializeObject<List<Emote>>(fileContents);
-                foreach (var emote in loadedEmotes)
-                {
-                    emote.Texture = ContentsManager.GetTexture(@"textures/emotes/" + emote.TextureRef, ContentsManager.GetTexture(@"textures/missing-texture.png"));
-                    emote.UpdateLabel(EmotesResourceManager, _currentCulture);
-                }
-                foreach (var emote in loadedEmotes)
-                {
-                    emotes.Add(emote.Id, emote);
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to load emotes.");
-                Logger.Error(ex.Message);
-                Logger.Debug(ex.StackTrace);
+                emote.UpdateLabel(_currentCulture);
             }
         }
 
@@ -180,7 +145,7 @@ namespace felix.BlishEmotes
                     Categories = entry.Categories,
                 };
                 emote.Texture = LoadCatalogTexture(emote.Id);
-                emote.UpdateLabel(EmotesResourceManager, _currentCulture);
+                emote.UpdateLabel(_currentCulture);
                 built.Add(emote.Id, emote);
             }
             return built;
