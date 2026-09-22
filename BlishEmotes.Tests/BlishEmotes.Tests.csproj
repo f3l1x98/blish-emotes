@@ -59,6 +59,15 @@
     <Compile Include="..\Services\Catalog\CatalogSync.cs">
       <Link>Catalog\CatalogSync.cs</Link>
     </Compile>
+    <Compile Include="..\Services\Persistence\UserCategoriesModels.cs">
+      <Link>Persistence\UserCategoriesModels.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\Persistence\UserCategoriesFile.cs">
+      <Link>Persistence\UserCategoriesFile.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\Catalog\CatalogMerge.cs">
+      <Link>Catalog\CatalogMerge.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="TestRunner.cs" />
     <Compile Include="CatalogNamesTests.cs" />
@@ -66,6 +75,8 @@
     <Compile Include="CatalogHashTests.cs" />
     <Compile Include="CatalogValidatorTests.cs" />
     <Compile Include="CatalogParsingTests.cs" />
+    <Compile Include="UserCategoriesFileTests.cs" />
+    <Compile Include="CatalogMergeTests.cs" />
     <Compile Include="CatalogCacheTests.cs" />
     <Compile Include="CatalogClientTests.cs" />
     <Compile Include="CatalogSyncTests.cs" />

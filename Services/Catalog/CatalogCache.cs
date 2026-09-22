@@ -1,4 +1,5 @@
 using felix.BlishEmotes.Exceptions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,7 @@ namespace felix.BlishEmotes.Services.Catalog
         public const string CacheDirectoryName = "catalog";
         public const string StagingDirectoryName = "catalog-staging";
         public const string ETagFileName = "etag.txt";
+        public const string PendingUpdateFileName = "pending-merge.json";
 
         /// <param name="dataRootDirectory">The module data directory the cache lives in (e.g. the <c>emotes</c> directory).</param>
         public CatalogCache(string dataRootDirectory)
@@ -25,12 +27,19 @@ namespace felix.BlishEmotes.Services.Catalog
             CacheDirectory = Path.Combine(dataRootDirectory, CacheDirectoryName);
             StagingDirectory = Path.Combine(dataRootDirectory, StagingDirectoryName);
             ETagFilePath = Path.Combine(CacheDirectory, ETagFileName);
+            PendingUpdateFilePath = Path.Combine(dataRootDirectory, PendingUpdateFileName);
         }
 
         public string DataRootDirectory { get; }
         public string CacheDirectory { get; }
         public string StagingDirectory { get; }
         public string ETagFilePath { get; }
+
+        /// <summary>
+        /// The pending-merge record lives in the data root (not inside the cache directory,
+        /// which every swap deletes wholesale).
+        /// </summary>
+        public string PendingUpdateFilePath { get; }
 
         public bool HasCache()
         {
@@ -141,6 +150,39 @@ namespace felix.BlishEmotes.Services.Catalog
             if (Directory.Exists(StagingDirectory))
             {
                 Directory.Delete(StagingDirectory, true);
+            }
+        }
+
+        /// <summary>Reads the pending-merge record, or <c>null</c> when there is none (or it is unreadable — it is rewritten by the next successful sync anyway).</summary>
+        public PendingCatalogUpdate ReadPendingUpdateOrNull()
+        {
+            if (!File.Exists(PendingUpdateFilePath))
+            {
+                return null;
+            }
+            try
+            {
+                return JsonConvert.DeserializeObject<PendingCatalogUpdate>(
+                    File.ReadAllText(PendingUpdateFilePath, Encoding.UTF8));
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>Records what a successful sync changed, for the merge that applies it.</summary>
+        public void StorePendingUpdate(PendingCatalogUpdate pending)
+        {
+            File.WriteAllText(PendingUpdateFilePath, JsonConvert.SerializeObject(pending), Encoding.UTF8);
+        }
+
+        /// <summary>Removes the pending-merge record once it has been applied (or discarded as stale).</summary>
+        public void ClearPendingUpdate()
+        {
+            if (File.Exists(PendingUpdateFilePath))
+            {
+                File.Delete(PendingUpdateFilePath);
             }
         }
 

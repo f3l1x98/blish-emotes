@@ -1,4 +1,5 @@
 using felix.BlishEmotes.Services.Catalog;
+using felix.BlishEmotes.Services.Persistence;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -266,6 +267,146 @@ namespace BlishEmotes.Tests
                     }
                 }
             });
+
+            TestRunner.Run("first fetch records a pending merge of the whole catalog", () =>
+            {
+                using (var server = new CatalogServer())
+                using (var fixture = new CatalogCacheTests.Fixture())
+                using (var client = new CatalogClient(server.BaseUrl))
+                {
+                    var cache = new CatalogCache(fixture.DataRoot);
+                    TestRunner.True(cache.ReadPendingUpdateOrNull() == null, "nothing recorded before any sync");
+
+                    var result = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
+                    TestRunner.Equal(CatalogSyncState.FirstFetch, result.State);
+
+                    var pending = cache.ReadPendingUpdateOrNull();
+                    TestRunner.NotNull(pending);
+                    TestRunner.Equal(1, pending.CatalogVersion);
+                    TestRunner.Equal(64, pending.NewEmoteIds.Count);
+                    TestRunner.Equal(6, pending.NewCategoryIds.Count);
+                    TestRunner.True(pending.NewCategoryIds.Contains("greeting"));
+                    TestRunner.True(pending.NewEmoteIds.Contains("barbecue"));
+                }
+            });
+
+            TestRunner.Run("update records a pending merge with only what changed", () =>
+            {
+                using (var server = new CatalogServer())
+                using (var fixture = new CatalogCacheTests.Fixture())
+                {
+                    var cache = new CatalogCache(fixture.DataRoot);
+                    var previous = SeedCache(server, cache);
+                    cache.ClearPendingUpdate();
+
+                    var newCatalog = AddEmoteAndCategory("waltz", "/waltz", "ceremony");
+                    server.SetManifestEtag("\"v2\"");
+                    server.SetFile("manifest.json", newCatalog.ManifestJson);
+                    server.SetFile("emotes.json", newCatalog.EmotesJson);
+                    server.SetFile("categories.json", newCatalog.CategoriesJson);
+                    server.SetFile("textures/waltz.png", newCatalog.TextureBytes);
+
+                    using (var client = new CatalogClient(server.BaseUrl))
+                    {
+                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+
+                        TestRunner.Equal(CatalogSyncState.Updated, result.State);
+                        TestRunner.Equal(1, result.NewCategoryIds.Count);
+                        TestRunner.True(result.NewCategoryIds.Contains("ceremony"));
+
+                        var pending = cache.ReadPendingUpdateOrNull();
+                        TestRunner.NotNull(pending);
+                        TestRunner.Equal(2, pending.CatalogVersion);
+                        TestRunner.True(pending.NewEmoteIds.SequenceEqual(new[] { "waltz" }));
+                        TestRunner.True(pending.NewCategoryIds.SequenceEqual(new[] { "ceremony" }));
+                    }
+                }
+            });
+
+            TestRunner.Run("unchanged catalog (304) writes no pending merge", () =>
+            {
+                using (var server = new CatalogServer())
+                using (var fixture = new CatalogCacheTests.Fixture())
+                {
+                    var cache = new CatalogCache(fixture.DataRoot);
+                    var previous = SeedCache(server, cache);
+                    cache.ClearPendingUpdate();
+
+                    using (var client = new CatalogClient(server.BaseUrl))
+                    {
+                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        TestRunner.Equal(CatalogSyncState.UpToDate, result.State);
+                        TestRunner.True(cache.ReadPendingUpdateOrNull() == null);
+                    }
+                }
+            });
+
+            TestRunner.Run("failed sync writes no pending merge and keeps the old cache", () =>
+            {
+                using (var server = new CatalogServer())
+                using (var fixture = new CatalogCacheTests.Fixture())
+                {
+                    var cache = new CatalogCache(fixture.DataRoot);
+                    var previous = SeedCache(server, cache);
+                    string etag = cache.LoadETag();
+                    cache.ClearPendingUpdate();
+
+                    byte[] newTexture = server.GetFile("textures/beckon.png");
+                    byte[] badBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
+                    server.SetManifestEtag("\"v2\"");
+                    server.SetFile("manifest.json", BuildManifest(2, "textures/barbecue.png", newTexture));
+                    server.SetFile("textures/barbecue.png", newTexture);
+                    server.Tamper("textures/barbecue.png", bytes => badBytes);
+
+                    using (var client = new CatalogClient(server.BaseUrl))
+                    {
+                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        TestRunner.Equal(CatalogSyncState.Failed, result.State);
+
+                        // Old cache, ETag and no pending record (the record is written only after
+                        // every file has been fetched and verified, right before the swap).
+                        TestRunner.Equal(etag, cache.LoadETag());
+                        TestRunner.Equal(1, cache.Load().Manifest.Version);
+                        TestRunner.True(cache.ReadPendingUpdateOrNull() == null);
+                    }
+                }
+            });
+
+            TestRunner.Run("an orphaned pending merge (swap failed after recording) is discarded", () =>
+            {
+                using (var fixture = new CatalogCacheTests.Fixture())
+                {
+                    var cache = new CatalogCache(fixture.DataRoot);
+
+                    // A record was written for a v2 catalog whose cache swap then failed — the
+                    // loaded cache is still v1, so the merge against it must discard the record.
+                    cache.StorePendingUpdate(new PendingCatalogUpdate
+                    {
+                        CatalogVersion = 2,
+                        NewEmoteIds = new List<string> { "waltz" },
+                        NewCategoryIds = new List<string>(),
+                    });
+
+                    using (var server = new CatalogServer())
+                    {
+                        var catalog = SeedCache(server, cache); // v1
+                        var document = new UserCategoriesDocument
+                        {
+                            Categories = new List<PersistedCategory>
+                            {
+                                new PersistedCategory { Id = Guid.NewGuid(), Name = "Greeting", EmoteIds = new List<string>(), CatalogId = "greeting" },
+                            },
+                            MergedCatalogVersion = 1,
+                        };
+                        var merged = CatalogMerge.Apply(document, catalog, cache.ReadPendingUpdateOrNull(), System.Globalization.CultureInfo.InvariantCulture);
+                        TestRunner.Equal(CatalogMergeOutcome.Noop, merged.Outcome);
+
+                        // And it is cleared so it cannot linger.
+                        cache.ClearPendingUpdate();
+                        TestRunner.True(cache.ReadPendingUpdateOrNull() == null);
+                    }
+                }
+            });
         }
 
         private static CatalogData SeedCache(CatalogServer server, CatalogCache cache)
@@ -308,6 +449,7 @@ namespace BlishEmotes.Tests
             public byte[] ManifestJson { get; set; }
             public byte[] EmotesJson { get; set; }
             public byte[] TextureBytes { get; set; }
+            public byte[] CategoriesJson { get; set; }
         }
 
         private static EmoteCatalogOverride AddEmote(CatalogServer server, CatalogCache cache, string id, string command, string category)
@@ -332,6 +474,39 @@ namespace BlishEmotes.Tests
             {
                 ManifestJson = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(manifest, Formatting.Indented)),
                 EmotesJson = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(emotes, Formatting.Indented)),
+                TextureBytes = textureBytes,
+            };
+        }
+        private static EmoteCatalogOverride AddEmoteAndCategory(string id, string command, string categoryId)
+        {
+            string catalogDir = CatalogParsingTests.RepoPath("catalog");
+            var manifest = JsonConvert.DeserializeObject<CatalogManifest>(File.ReadAllText(Path.Combine(catalogDir, "manifest.json"), Encoding.UTF8));
+            var emotes = JsonConvert.DeserializeObject<List<CatalogEmote>>(File.ReadAllText(Path.Combine(catalogDir, "emotes.json"), Encoding.UTF8));
+            var categories = JsonConvert.DeserializeObject<List<CatalogCategory>>(File.ReadAllText(Path.Combine(catalogDir, "categories.json"), Encoding.UTF8));
+            byte[] textureBytes = File.ReadAllBytes(Path.Combine(catalogDir, "textures", "barbecue.png"));
+
+            emotes.Add(new CatalogEmote
+            {
+                Id = id,
+                Command = command,
+                Names = new Dictionary<string, string> { { "en", id } },
+                Categories = new List<string> { categoryId },
+            });
+            categories.Add(new CatalogCategory
+            {
+                Id = categoryId,
+                Names = new Dictionary<string, string> { { "en", categoryId } },
+            });
+            manifest.Version = 2;
+            manifest.Files[CatalogPaths.TextureFile(id)] = CatalogHash.Sha256Hex(textureBytes);
+            manifest.Files["emotes.json"] = CatalogHash.Sha256Hex(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(emotes, Formatting.Indented)));
+            manifest.Files["categories.json"] = CatalogHash.Sha256Hex(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(categories, Formatting.Indented)));
+
+            return new EmoteCatalogOverride
+            {
+                ManifestJson = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(manifest, Formatting.Indented)),
+                EmotesJson = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(emotes, Formatting.Indented)),
+                CategoriesJson = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(categories, Formatting.Indented)),
                 TextureBytes = textureBytes,
             };
         }

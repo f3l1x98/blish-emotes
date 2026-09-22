@@ -32,7 +32,7 @@ namespace felix.BlishEmotes.Services.Catalog
                 var manifestResult = await client.GetManifestAsync(etag).ConfigureAwait(false);
                 if (manifestResult.NotModified)
                 {
-                    return Result(CatalogSyncState.UpToDate, previousVersion, new List<string>());
+                    return Result(CatalogSyncState.UpToDate, previousVersion, new List<string>(), new List<string>());
                 }
 
                 var remoteManifest = Deserialize<CatalogManifest>(manifestResult.ManifestJson);
@@ -42,7 +42,7 @@ namespace felix.BlishEmotes.Services.Catalog
                 {
                     // Deliberately do not store the ETag: a future check must re-fetch the
                     // too-new manifest so the UX can keep reporting schema-too-new.
-                    return Result(CatalogSyncState.SchemaTooNew, remoteVersion, new List<string>());
+                    return Result(CatalogSyncState.SchemaTooNew, remoteVersion, new List<string>(), new List<string>());
                 }
 
                 if (remoteManifest == null || remoteManifest.Files == null)
@@ -88,12 +88,25 @@ namespace felix.BlishEmotes.Services.Catalog
                     Files = allFiles,
                 };
 
+                var newEmoteIds = NewEmoteIds(previousCache, data);
+                var newCategoryIds = NewCategoryIds(previousCache, data);
+
+                // Record what this update changed before swapping the cache: the merge consumes
+                // the record when the update is applied (next launch, until live apply lands).
+                // Written first on purpose — if the swap fails afterwards the orphaned record is
+                // neutralized by the version check in the merge and cleared on the next apply.
+                cache.StorePendingUpdate(new PendingCatalogUpdate
+                {
+                    CatalogVersion = remoteManifest.Version,
+                    NewEmoteIds = newEmoteIds,
+                    NewCategoryIds = newCategoryIds,
+                });
+
                 cache.Store(fetched);
                 cache.StoreETag(manifestResult.ETag);
 
-                var newEmoteIds = NewEmoteIds(previousCache, data);
                 var state = hadCache ? CatalogSyncState.Updated : CatalogSyncState.FirstFetch;
-                return Result(state, remoteVersion, newEmoteIds);
+                return Result(state, remoteVersion, newEmoteIds, newCategoryIds);
             }
             catch (Exception e)
             {
@@ -103,18 +116,20 @@ namespace felix.BlishEmotes.Services.Catalog
                     State = CatalogSyncState.Failed,
                     Version = previousVersion,
                     NewEmoteIds = new List<string>(),
+                    NewCategoryIds = new List<string>(),
                     ErrorMessage = message,
                 };
             }
         }
 
-        private static CatalogSyncResult Result(CatalogSyncState state, long? version, List<string> newEmoteIds)
+        private static CatalogSyncResult Result(CatalogSyncState state, long? version, List<string> newEmoteIds, List<string> newCategoryIds)
         {
             return new CatalogSyncResult
             {
                 State = state,
                 Version = version,
                 NewEmoteIds = newEmoteIds ?? new List<string>(),
+                NewCategoryIds = newCategoryIds ?? new List<string>(),
             };
         }
 
@@ -131,6 +146,21 @@ namespace felix.BlishEmotes.Services.Catalog
         {
             var previousIds = new HashSet<string>(EmoteIds(previous));
             return EmoteIds(current).Where(id => !previousIds.Contains(id)).ToList();
+        }
+
+        private static List<string> CategoryIds(CatalogData data)
+        {
+            if (data?.Categories == null)
+            {
+                return new List<string>();
+            }
+            return data.Categories.Select(c => c.Id).ToList();
+        }
+
+        private static List<string> NewCategoryIds(CatalogData previous, CatalogData current)
+        {
+            var previousIds = new HashSet<string>(CategoryIds(previous));
+            return CategoryIds(current).Where(id => !previousIds.Contains(id)).ToList();
         }
 
         private static List<string> DiffAgainstCache(CatalogCache cache, CatalogManifest manifest)

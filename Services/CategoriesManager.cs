@@ -1,9 +1,12 @@
 ﻿using Blish_HUD;
 using felix.BlishEmotes.Exceptions;
 using felix.BlishEmotes.Services;
+using felix.BlishEmotes.Services.Catalog;
+using felix.BlishEmotes.Services.Persistence;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -34,10 +37,10 @@ namespace felix.BlishEmotes
         {
             try
             {
-                var loadedCategories = PersistenceManager.LoadCategories();
-                foreach (var category in loadedCategories)
+                var document = PersistenceManager.LoadDocument();
+                foreach (var persisted in document.Categories)
                 {
-                    category.Texture = GetTexture(category);
+                    var category = FromPersisted(persisted);
                     if (category.IsFavourite)
                     {
                         FavouriteCategoryId = category.Id;
@@ -62,9 +65,19 @@ namespace felix.BlishEmotes
             }
         }
 
-        private Texture2D GetTexture(Category category)
+        private Category FromPersisted(PersistedCategory persisted)
         {
-            return GetTexture(category.TextureFileName);
+            string textureFileName = persisted.TextureFileName ?? Textures.CategorySettingsIcon.ToString();
+            return new Category()
+            {
+                Id = persisted.Id,
+                Name = persisted.Name,
+                EmoteIds = persisted.EmoteIds,
+                IsFavourite = persisted.IsFavourite,
+                TextureFileName = textureFileName,
+                CatalogId = persisted.CatalogId,
+                Texture = GetTexture(textureFileName),
+            };
         }
         private Texture2D GetTexture(string textureFileName)
         {
@@ -224,6 +237,12 @@ namespace felix.BlishEmotes
             categories.Remove(category.Id);
             // Recreate Dictionary in order to bypass optimization that would insert next item at the now empty space
             categories = new Dictionary<Guid, Category>(categories);
+            if (current.CatalogId != null)
+            {
+                // The user deleted a linked category: tombstone its catalog category so a later
+                // catalog update never auto-creates it again (emotes tagged with it land uncategorized).
+                PersistenceManager.RecordDeletedCatalogCategory(current.CatalogId);
+            }
             if (saveToFile)
             {
                 PersistenceManager.SaveCategories(categories.Values.ToList());
@@ -298,6 +317,69 @@ namespace felix.BlishEmotes
             foreach (var category in categories.Values)
             {
                 category.Emotes = emotes.Where((emote) => category.EmoteIds.Contains(emote.Id)).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Reconciles the user's categories with a (cached) catalog — the one-time V2 migration
+        /// (stamp name-matched categories with their catalogId) and, when a fetched update was
+        /// applied to the cache since the last launch, the merge (place new emotes into linked
+        /// categories, auto-create untombstoned catalog categories the user doesn't have, prune
+        /// nothing). The decisions live in the Blish-free, unit-tested <see cref="CatalogMerge"/>;
+        /// this applies its result to the live state, persists once, and refreshes the UI.
+        /// Must run on the game thread.
+        /// </summary>
+        public CatalogMergeResult ApplyCatalog(CatalogData catalog, PendingCatalogUpdate pendingUpdate, CultureInfo locale, List<Emote> emotes)
+        {
+            // Snapshot the live state; the merge works on the persisted shape only.
+            var document = new UserCategoriesDocument
+            {
+                Categories = categories.Values.Select(PersistenceManager.ToPersisted).ToList(),
+                DeletedCatalogCategoryIds = new List<string>(PersistenceManager.DeletedCatalogCategoryIds),
+                MergedCatalogVersion = PersistenceManager.MergedCatalogVersion,
+            };
+
+            var result = CatalogMerge.Apply(document, catalog, pendingUpdate, locale);
+            if (result.Outcome == CatalogMergeOutcome.Noop)
+            {
+                return result;
+            }
+
+            ApplyDocument(document);
+            PersistenceManager.MarkMerged(document.MergedCatalogVersion ?? catalog.Manifest.Version);
+            PersistenceManager.SaveCategories(categories.Values.ToList());
+            ResolveEmoteIds(emotes);
+
+            Logger.Info($"Catalog merge ({result.Outcome}): linked {result.MigratedCategoryNames.Count} categories by name, "
+                + $"created {result.CreatedCategoryNames.Count} ({string.Join(", ", result.CreatedCategoryNames)}), "
+                + $"placed {result.PlacedEmoteCount} emotes"
+                + (result.SkippedNameConflicts.Count > 0 ? $", skipped name conflicts: {string.Join(", ", result.SkippedNameConflicts)}" : ""));
+            CategoriesUpdated?.Invoke(this, GetAll());
+            return result;
+        }
+
+        private void ApplyDocument(UserCategoriesDocument document)
+        {
+            var documentById = document.Categories.ToDictionary(category => category.Id);
+            foreach (var live in categories.Values)
+            {
+                PersistedCategory persisted;
+                if (!documentById.TryGetValue(live.Id, out persisted))
+                {
+                    continue; // the merge never removes categories
+                }
+                live.Name = persisted.Name;
+                live.CatalogId = persisted.CatalogId;
+                live.EmoteIds = persisted.EmoteIds;
+            }
+            // Categories the merge created append at the end of the user's order.
+            foreach (var persisted in document.Categories)
+            {
+                if (!categories.ContainsKey(persisted.Id))
+                {
+                    var created = FromPersisted(persisted);
+                    categories.Add(created.Id, created);
+                }
             }
         }
 

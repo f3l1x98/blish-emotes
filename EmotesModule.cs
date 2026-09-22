@@ -187,6 +187,16 @@ namespace BlishEmotesList
                 if (cachedCatalog != null)
                 {
                     EmotesManager.LoadFromCatalog(cachedCatalog);
+                    // Reconcile the persisted categories with the cached catalog: the one-time V2
+                    // migration (stamp name-matched categories), and — when a fetched update was
+                    // applied to the cache since the last launch — the merge that places new
+                    // emotes into linked categories and auto-creates untombstoned ones.
+                    var pendingUpdate = CatalogManager.ReadPendingUpdateOrNull();
+                    CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, EmotesManager.GetAll());
+                    if (pendingUpdate != null)
+                    {
+                        CatalogManager.ClearPendingUpdate();
+                    }
                 }
                 else
                 {
@@ -216,13 +226,57 @@ namespace BlishEmotesList
             try
             {
                 Logger.Debug("Refreshing emote catalog in the background");
-                await CatalogManager.SyncAsync().ConfigureAwait(false);
+                var result = await CatalogManager.SyncAsync().ConfigureAwait(false);
+                if (result.State == CatalogSyncState.FirstFetch || result.State == CatalogSyncState.Updated)
+                {
+                    QueueFirstRunMigration();
+                }
             }
             catch (Exception e)
             {
                 Logger.Error("Catalog refresh failed unexpectedly!");
                 Logger.Error(e.ToString());
             }
+        }
+
+        /// <summary>
+        /// A user upgrading from 1.x migrates on the first 2.0 run — the moment a catalog first
+        /// becomes available (a fetch just succeeded). Stamping catalogIds onto name-matched
+        /// categories changes nothing rendered, so it is safe to apply immediately; the fetched
+        /// emotes and any new categories themselves take effect on the next launch (live apply is
+        /// ticket 05). No-op when the state is already migrated.
+        /// </summary>
+        private void QueueFirstRunMigration()
+        {
+            var cachedCatalog = CatalogManager.LoadCachedCatalogOrNull();
+            if (cachedCatalog == null)
+            {
+                return;
+            }
+            var pendingUpdate = CatalogManager.ReadPendingUpdateOrNull();
+            GameService.Graphics.QueueMainThreadRender(device =>
+            {
+                try
+                {
+                    if (PersistenceManager.MergedCatalogVersion == null)
+                    {
+                        CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, EmotesManager.GetAll());
+                        // The record was superseded by the migration's baseline (the migration
+                        // never places emotes), so it must not survive as a stale update.
+                        if (pendingUpdate != null)
+                        {
+                            CatalogManager.ClearPendingUpdate();
+                        }
+                    }
+                    // Already migrated: the update stays recorded and is applied at the next
+                    // launch, per the ticket-03 apply semantics.
+                }
+                catch (Exception e)
+                {
+                    Logger.Error("Catalog migration failed - retrying at the next launch.");
+                    Logger.Error(e.ToString());
+                }
+            });
         }
 
         public override IView GetSettingsView()

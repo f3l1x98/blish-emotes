@@ -87,6 +87,22 @@ namespace felix.BlishEmotes.Services
             return _cache.GetTextureFilePath(emoteId);
         }
 
+        /// <summary>
+        /// The update a successful sync recorded for the merge to apply (new emotes/categories since
+        /// the previous cache), or null. Consumed — and then <see cref="ClearPendingUpdate"/> —
+        /// when the update is applied to the user's categories.
+        /// </summary>
+        public PendingCatalogUpdate ReadPendingUpdateOrNull()
+        {
+            return _cache.ReadPendingUpdateOrNull();
+        }
+
+        /// <summary>Removes the recorded pending update once applied (or discarded as stale/orphaned).</summary>
+        public void ClearPendingUpdate()
+        {
+            _cache.ClearPendingUpdate();
+        }
+
         private void LogResult(CatalogSyncResult result)
         {
             switch (result.State)

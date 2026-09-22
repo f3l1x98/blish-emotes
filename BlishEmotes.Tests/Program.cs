@@ -12,6 +12,8 @@ namespace BlishEmotes.Tests
             CatalogHashTests.Run();
             CatalogValidatorTests.Run();
             CatalogParsingTests.Run();
+            UserCategoriesFileTests.Run();
+            CatalogMergeTests.Run();
             CatalogCacheTests.Run();
             CatalogClientTests.Run();
             CatalogSyncTests.Run();

@@ -10,19 +10,23 @@ namespace felix.BlishEmotes
 {
     public class Category : RadialBase
     {
-        [JsonIgnore] public static readonly string FAVOURITES_CATEGORY_NAME = "Favourites";
-        [JsonIgnore] public static readonly string VERSION = "V1";
+        public static readonly string FAVOURITES_CATEGORY_NAME = "Favourites";
 
-        [JsonProperty("id", Required = Required.Always)] public Guid Id { get; set; }
-        [JsonProperty("name", Required = Required.Always)] public string Name { get; set; }
-        [JsonProperty("emoteIds", Required = Required.Always)] public List<string> EmoteIds { get; set; }
-        [JsonProperty("isFavourite", DefaultValueHandling = DefaultValueHandling.Populate)] public bool IsFavourite { get; set; } = false;
-        [JsonProperty("textureFileName", DefaultValueHandling = DefaultValueHandling.Populate), DefaultValue(Textures.CategorySettingsIcon)]
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public List<string> EmoteIds { get; set; }
+        public bool IsFavourite { get; set; } = false;
         public string TextureFileName { get; set; }
 
-        [JsonIgnore] public List<Emote> Emotes { get; set; } = new List<Emote>();
+        /// <summary>
+        /// Id of the catalog category this category is linked to ("linked category" in CONTEXT.md):
+        /// it receives newly fetched emotes tagged with that catalog category. Null = purely
+        /// user-owned. Persisted via the V2 categories.json; see CatalogMerge.
+        /// </summary>
+        public string CatalogId { get; set; }
 
-        [JsonIgnore]
+        public List<Emote> Emotes { get; set; } = new List<Emote>();
+
         public override string Label {
             get => Name;
         }
@@ -38,6 +42,7 @@ namespace felix.BlishEmotes
                 IsFavourite = this.IsFavourite, 
                 TextureFileName = this.TextureFileName,
                 Texture = this.Texture,
+                CatalogId = this.CatalogId,
             };
         }
 

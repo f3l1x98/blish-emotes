@@ -34,6 +34,9 @@ namespace felix.BlishEmotes
         // Current overlay locale, kept in sync via UserLocaleChanged
         private CultureInfo _currentCulture;
 
+        /// <summary>The current overlay locale, for resolving catalog names (e.g. auto-created category names).</summary>
+        internal CultureInfo CurrentLocale => _currentCulture;
+
         public EmotesManager(ContentsManager contentsManager, ModuleSettings settings, CatalogManager catalogManager)
         {
             ContentsManager = contentsManager;

@@ -60,6 +60,21 @@ namespace felix.BlishEmotes.Services.Catalog
         public Dictionary<string, byte[]> Files { get; set; } = new Dictionary<string, byte[]>();
     }
 
+    /// <summary>
+    /// A catalog update recorded when a sync swaps a new catalog into the cache, and consumed by
+    /// the category merge when that update is applied (at the next launch, until live apply
+    /// lands): which catalog version it was and which emote/category ids were new relative to
+    /// the previous cache. Stored next to the cache; an orphaned record (its cache swap failed
+    /// after it was written) is neutralized by the version check in <see cref="CatalogMerge"/>
+    /// and cleared on the next apply.
+    /// </summary>
+    public class PendingCatalogUpdate
+    {
+        [JsonProperty("catalogVersion", Required = Required.Always)] public long CatalogVersion { get; set; }
+        [JsonProperty("newEmoteIds", Required = Required.Always)] public List<string> NewEmoteIds { get; set; }
+        [JsonProperty("newCategoryIds", Required = Required.Always)] public List<string> NewCategoryIds { get; set; }
+    }
+
     /// <summary>The final state of a catalog sync, exposed to the UX.</summary>
     public enum CatalogSyncState
     {
@@ -79,6 +94,8 @@ namespace felix.BlishEmotes.Services.Catalog
         public long? Version { get; set; }
         /// <summary>Ids of emotes present in the fetched catalog but not in the previous cache.</summary>
         public List<string> NewEmoteIds { get; set; } = new List<string>();
+        /// <summary>Ids of catalog categories present in the fetched catalog but not in the previous cache.</summary>
+        public List<string> NewCategoryIds { get; set; } = new List<string>();
         /// <summary>Human-readable detail for <see cref="CatalogSyncState.Failed"/>.</summary>
         public string ErrorMessage { get; set; }
     }
