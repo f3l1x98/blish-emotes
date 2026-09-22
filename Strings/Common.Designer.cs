@@ -356,5 +356,248 @@ namespace felix.BlishEmotes.Strings {
                 return ResourceManager.GetString("settings_global_sync_schemaTooNew", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emote catalog.
+        /// </summary>
+        public static string settings_global_catalog_groupTitle {
+            get {
+                return ResourceManager.GetString("settings_global_catalog_groupTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to fetched from GitHub.
+        /// </summary>
+        public static string settings_global_catalog_groupSubtitle {
+            get {
+                return ResourceManager.GetString("settings_global_catalog_groupSubtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Catalog status.
+        /// </summary>
+        public static string settings_global_catalog_status {
+            get {
+                return ResourceManager.GetString("settings_global_catalog_status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check on startup.
+        /// </summary>
+        public static string settings_global_catalog_checkOnStartup {
+            get {
+                return ResourceManager.GetString("settings_global_catalog_checkOnStartup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retry now.
+        /// </summary>
+        public static string settings_global_catalog_retryNow {
+            get {
+                return ResourceManager.GetString("settings_global_catalog_retryNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to v{0} · last checked: {1}.
+        /// </summary>
+        public static string settings_global_sync_statusLine {
+            get {
+                return ResourceManager.GetString("settings_global_sync_statusLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading emote catalog… {0} / {1} files.
+        /// </summary>
+        public static string settings_global_sync_downloading {
+            get {
+                return ResourceManager.GetString("settings_global_sync_downloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First run — your emotes appear as soon as this finishes. You can keep playing..
+        /// </summary>
+        public static string settings_global_sync_downloading_sub {
+            get {
+                return ResourceManager.GetString("settings_global_sync_downloading_sub", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You're up to date — catalog v{0}..
+        /// </summary>
+        public static string settings_global_sync_upToDate_detail {
+            get {
+                return ResourceManager.GetString("settings_global_sync_upToDate_detail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Catalog updated {0} → {1} — {2} new emote(s): {3}..
+        /// </summary>
+        public static string settings_global_sync_updated_detail {
+            get {
+                return ResourceManager.GetString("settings_global_sync_updated_detail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emotes updated — {0}..
+        /// </summary>
+        public static string settings_global_sync_updated_toast {
+            get {
+                return ResourceManager.GetString("settings_global_sync_updated_toast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Catalog downloaded — {0} new emote(s)..
+        /// </summary>
+        public static string settings_global_sync_firstFetch_detail {
+            get {
+                return ResourceManager.GetString("settings_global_sync_firstFetch_detail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emotes downloaded — {0}..
+        /// </summary>
+        public static string settings_global_sync_firstFetch_toast {
+            get {
+                return ResourceManager.GetString("settings_global_sync_firstFetch_toast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn't reach the catalog server. Using cached catalog v{0}. Retries automatically on next launch — your emotes keep working..
+        /// </summary>
+        public static string settings_global_sync_failed_detail {
+            get {
+                return ResourceManager.GetString("settings_global_sync_failed_detail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn't download the emote catalog — check your connection..
+        /// </summary>
+        public static string settings_global_sync_firstFail_detail {
+            get {
+                return ResourceManager.GetString("settings_global_sync_firstFail_detail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emotes will be empty until a fetch succeeds..
+        /// </summary>
+        public static string settings_global_sync_firstFail_sub {
+            get {
+                return ResourceManager.GetString("settings_global_sync_firstFail_sub", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Catalog format is newer than this module supports..
+        /// </summary>
+        public static string settings_global_sync_schemaTooNew_detail {
+            get {
+                return ResourceManager.GetString("settings_global_sync_schemaTooNew_detail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update the Blish Emotes module to fetch the latest catalog. Running from cache (v{0})..
+        /// </summary>
+        public static string settings_global_sync_schemaTooNew_sub {
+            get {
+                return ResourceManager.GetString("settings_global_sync_schemaTooNew_sub", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update the Blish Emotes module to fetch the latest catalog..
+        /// </summary>
+        public static string settings_global_sync_schemaTooNew_noCache_sub {
+            get {
+                return ResourceManager.GetString("settings_global_sync_schemaTooNew_noCache_sub", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No catalog downloaded yet. Check now to fetch the emote catalog..
+        /// </summary>
+        public static string settings_global_sync_noCatalog_detail {
+            get {
+                return ResourceManager.GetString("settings_global_sync_noCatalog_detail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CATALOG OFFLINE — CACHED V{0}.
+        /// </summary>
+        public static string cornerIcon_catalogOffline {
+            get {
+                return ResourceManager.GetString("cornerIcon_catalogOffline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Getting your emotes… you can keep playing.
+        /// </summary>
+        public static string emoteList_gettingEmotes {
+            get {
+                return ResourceManager.GetString("emoteList_gettingEmotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No emotes yet.
+        /// </summary>
+        public static string emoteList_noEmotesYet {
+            get {
+                return ResourceManager.GetString("emoteList_noEmotesYet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn't download the emote catalog. Open Settings → Emote catalog to retry..
+        /// </summary>
+        public static string emoteList_noEmotesRetry {
+            get {
+                return ResourceManager.GetString("emoteList_noEmotesRetry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Settings.
+        /// </summary>
+        public static string emoteList_openSettings {
+            get {
+                return ResourceManager.GetString("emoteList_openSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Getting your emotes… you can keep playing.
+        /// </summary>
+        public static string radial_gettingEmotes {
+            get {
+                return ResourceManager.GetString("radial_gettingEmotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No emotes yet\nOpen Settings → Emote catalog.
+        /// </summary>
+        public static string radial_noEmotesYet {
+            get {
+                return ResourceManager.GetString("radial_noEmotesYet", resourceCulture);
+            }
+        }
     }
 }

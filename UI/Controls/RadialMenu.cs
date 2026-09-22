@@ -42,6 +42,30 @@ namespace felix.BlishEmotes.UI.Controls
         public List<Category> Categories { private get; set; }
         public bool IsEmoteSynchronized { private get; set; }
         public bool IsEmoteTargeted { private get; set; }
+
+        public string EmptyStateText
+        {
+            set
+            {
+                _noEmotesFallbackText = value ?? "No Emotes found!";
+                if (_noEmotesLabel != null)
+                {
+                    _noEmotesLabel.Text = _noEmotesFallbackText;
+                }
+            }
+        }
+
+        public Color EmptyStateColor
+        {
+            set
+            {
+                _noEmotesFallbackColor = value;
+                if (_noEmotesLabel != null)
+                {
+                    _noEmotesLabel.TextColor = value;
+                }
+            }
+        }
         private Texture2D _lockedTexture;
 
         private List<RadialContainer<Emote>> _radialEmotes = new List<RadialContainer<Emote>>();
@@ -61,6 +85,8 @@ namespace felix.BlishEmotes.UI.Controls
         private int _maxRadialDiameter = 0;
 
         private Label _noEmotesLabel;
+        private string _noEmotesFallbackText = "No Emotes found!";
+        private Color _noEmotesFallbackColor = Color.Red;
         private Label _selectedEmoteLabel;
         private Label _synchronizeToggleActiveLabel;
         private Label _targetToggleActiveLabel;
@@ -87,6 +113,8 @@ namespace felix.BlishEmotes.UI.Controls
                 Font = GameService.Content.DefaultFont32,
                 Text = "No Emotes found!",
                 TextColor = Color.Red,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
             };
 
             _selectedEmoteLabel = new Label()
@@ -140,6 +168,7 @@ namespace felix.BlishEmotes.UI.Controls
             if (Emotes.Count == 0)
             {
                 _noEmotesLabel.Show();
+                PaintEmptyStateRing(spriteBatch, bounds);
                 return;
             }
             else
@@ -283,6 +312,13 @@ namespace felix.BlishEmotes.UI.Controls
                 currentAngle = endAngle;
             }
             return newList;
+        }
+
+        private void PaintEmptyStateRing(SpriteBatch spriteBatch, Rectangle bounds)
+        {
+            var center = new Vector2(bounds.X + bounds.Width / 2f, bounds.Y + bounds.Height / 2f);
+            int ringRadius = 120;
+            spriteBatch.DrawCircle(center, ringRadius, 64, Color.Gray * 0.25f, 3f);
         }
 
         private void DrawDebugSectionSeparators<T>(SpriteBatch spriteBatch, int innerRadius, int outerRadius, RadialContainer<T> item) where T : RadialBase

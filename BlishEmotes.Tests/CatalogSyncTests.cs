@@ -341,6 +341,37 @@ namespace BlishEmotes.Tests
                 }
             });
 
+            TestRunner.Run("sync reports download progress for changed files", () =>
+            {
+                using (var server = new CatalogServer())
+                using (var fixture = new CatalogCacheTests.Fixture())
+                using (var client = new CatalogClient(server.BaseUrl))
+                {
+                    var cache = new CatalogCache(fixture.DataRoot);
+                    var previous = SeedCache(server, cache);
+                    cache.ClearPendingUpdate();
+
+                    var newCatalog = AddEmoteAndCategory("waltz", "/waltz", "ceremony");
+                    server.SetManifestEtag("\"v2\"");
+                    server.SetFile("manifest.json", newCatalog.ManifestJson);
+                    server.SetFile("emotes.json", newCatalog.EmotesJson);
+                    server.SetFile("categories.json", newCatalog.CategoriesJson);
+                    server.SetFile("textures/waltz.png", newCatalog.TextureBytes);
+
+                    var progressReports = new List<CatalogSyncProgress>();
+                    var progress = new Progress<CatalogSyncProgress>(p => progressReports.Add(p));
+
+                    var result = CatalogSync.RunAsync(client, cache, previous, progress).GetAwaiter().GetResult();
+
+                    TestRunner.Equal(CatalogSyncState.Updated, result.State);
+                    TestRunner.True(progressReports.Count > 0, "at least one progress report");
+                    TestRunner.Equal(0, progressReports.First().DownloadedFiles);
+                    TestRunner.True(progressReports.First().TotalFiles > 0, "total files reported");
+                    TestRunner.Equal(progressReports.Last().DownloadedFiles, progressReports.Count - 1);
+                    TestRunner.True(progressReports.Last().DownloadedFiles <= progressReports.Last().TotalFiles, "downloaded files does not exceed total");
+                }
+            });
+
             TestRunner.Run("failed sync writes no pending merge and keeps the old cache", () =>
             {
                 using (var server = new CatalogServer())

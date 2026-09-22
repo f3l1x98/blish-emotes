@@ -86,6 +86,16 @@ namespace felix.BlishEmotes.Services.Catalog
         SchemaTooNew,
     }
 
+    /// <summary>Progress report for a catalog sync that has to download files.</summary>
+    public class CatalogSyncProgress
+    {
+        public CatalogSyncState State { get; set; }
+        /// <summary>Files downloaded so far (only changed files are fetched).</summary>
+        public int DownloadedFiles { get; set; }
+        /// <summary>Total files referenced by the manifest.</summary>
+        public int TotalFiles { get; set; }
+    }
+
     /// <summary>Outcome of a catalog sync: state, remote version, and which emotes are new since the cache.</summary>
     public class CatalogSyncResult
     {

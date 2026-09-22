@@ -1,9 +1,10 @@
-﻿using Blish_HUD;
+using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Blish_HUD.Input;
 using Blish_HUD.Settings;
 using Blish_HUD.Settings.UI.Views;
+using felix.BlishEmotes.Services.Catalog;
 using felix.BlishEmotes.Strings;
 using Microsoft.Xna.Framework;
 using SharpDX.DirectWrite;
@@ -15,9 +16,38 @@ using System.Threading.Tasks;
 
 namespace felix.BlishEmotes.UI.Views
 {
+    /// <summary>Status and progress information passed to <see cref="GlobalSettingsView.UpdateCatalogStatus(CatalogStatus)"/>.</summary>
+    public class CatalogStatus
+    {
+        public CatalogSyncState State { get; set; }
+        public long? Version { get; set; }
+        public long? PreviousVersion { get; set; }
+        public int NewEmoteCount { get; set; }
+        public string NewEmoteNames { get; set; }
+        public string StatusLine { get; set; }
+        public string Feedback { get; set; }
+        public string FeedbackSubtext { get; set; }
+        public Color FeedbackColor { get; set; }
+        public bool ShowProgress { get; set; }
+        public int DownloadedFiles { get; set; }
+        public int TotalFiles { get; set; }
+        public bool CanCheck { get; set; }
+        public string CheckButtonText { get; set; }
+        public bool CheckOnStartup { get; set; }
+    }
+
     internal class GlobalSettingsView : View
     {
         private ModuleSettings _settings;
+
+        private FlowPanel _catalogPanel;
+        private Label _catalogGroupLabel;
+        private Label _catalogStatusLineLabel;
+        private StandardButton _catalogCheckButton;
+        private Checkbox _catalogCheckOnStartupCheckbox;
+        private Label _catalogFeedbackLabel;
+        private LoadingSpinner _catalogProgressSpinner;
+        private Label _catalogProgressLabel;
 
         private FlowPanel _globalPanel;
         private FlowPanel _radialPanel;
@@ -25,6 +55,8 @@ namespace felix.BlishEmotes.UI.Views
         private LoadingSpinner _emotesRadialSpinner;
         private StandardButton _checkNowButton;
         private Label _syncStatusLabel;
+
+        private CatalogStatus _pendingStatus;
 
         private const int _labelWidth = 200;
         private const int _controlWidth = 150;
@@ -44,6 +76,10 @@ namespace felix.BlishEmotes.UI.Views
 
         public void SetCheckNowEnabled(bool enabled)
         {
+            if (_catalogCheckButton != null)
+            {
+                _catalogCheckButton.Enabled = enabled;
+            }
             if (_checkNowButton != null)
             {
                 _checkNowButton.Enabled = enabled;
@@ -55,6 +91,56 @@ namespace felix.BlishEmotes.UI.Views
             if (_syncStatusLabel != null)
             {
                 _syncStatusLabel.Text = text;
+            }
+        }
+
+        public void UpdateCatalogStatus(CatalogStatus status)
+        {
+            _pendingStatus = status;
+
+            if (_catalogPanel == null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(status.StatusLine))
+            {
+                _catalogStatusLineLabel.Text = status.StatusLine;
+                _catalogStatusLineLabel.Show();
+            }
+            else
+            {
+                _catalogStatusLineLabel.Hide();
+            }
+
+            _catalogFeedbackLabel.Text = status.Feedback ?? string.Empty;
+            _catalogFeedbackLabel.TextColor = status.FeedbackColor;
+            _catalogFeedbackLabel.Visible = !string.IsNullOrEmpty(status.Feedback);
+
+            if (_catalogFeedbackLabel.AutoSizeHeight && !string.IsNullOrEmpty(status.FeedbackSubtext))
+            {
+                _catalogFeedbackLabel.Text = (status.Feedback ?? string.Empty) + Environment.NewLine + status.FeedbackSubtext;
+            }
+
+            _catalogCheckButton.Text = status.CheckButtonText ?? Common.settings_global_checkNow;
+            _catalogCheckButton.Enabled = status.CanCheck;
+
+            if (status.ShowProgress)
+            {
+                _catalogProgressSpinner.Show();
+                _catalogProgressLabel.Text = string.Format(Common.settings_global_sync_downloading, status.DownloadedFiles, status.TotalFiles);
+                _catalogProgressLabel.Show();
+            }
+            else
+            {
+                _catalogProgressSpinner.Hide();
+                _catalogProgressLabel.Hide();
+            }
+
+            // Avoid re-firing the setting change when we update from code.
+            if (_catalogCheckOnStartupCheckbox != null && _catalogCheckOnStartupCheckbox.Checked != status.CheckOnStartup)
+            {
+                _catalogCheckOnStartupCheckbox.Checked = status.CheckOnStartup;
             }
         }
 
@@ -88,22 +174,26 @@ namespace felix.BlishEmotes.UI.Views
 
         protected override void Build(Container buildPanel)
         {
+            // Construct catalog group at the top of the Global tab.
+            _catalogPanel = CreatePanel(buildPanel, new Point(0, 0), 900);
+            BuildCatalogGroup(_catalogPanel);
+
+            int topOffset = _catalogPanel.Bottom + 14;
+
             // Construct panel for _settings.GlobalSettings
-            _globalPanel = CreatePanel(buildPanel, new Point(0, 0), 450);
+            _globalPanel = CreatePanel(buildPanel, new Point(0, topOffset), 450);
             BuildGlobalPanel();
 
-
             // Construct panel for _settings.RadialMenuSettings
-            _radialPanel = CreatePanel(buildPanel, new Point(400, 0), 450);
+            _radialPanel = CreatePanel(buildPanel, new Point(400, topOffset), 450);
             BuildRadialPanel();
-
 
             // Construct panel for _settings.EmotesRadialSettings
             var emotesRadialPanelLabel = new Label()
             {
                 Parent = buildPanel,
                 Text = Common.settings_radial_emotesEnabled,
-                Location = new Point(0, 160),
+                Location = new Point(0, topOffset + 160),
                 Size = new Point(170, 40),
                 Font = GameService.Content.DefaultFont18,
             };
@@ -111,15 +201,111 @@ namespace felix.BlishEmotes.UI.Views
             _emotesRadialSpinner = new LoadingSpinner()
             {
                 Parent = buildPanel,
-                Location = new Point(170, 160),
+                Location = new Point(170, topOffset + 160),
                 Size = new Point(40, 40),
                 Visible = true,
             };
-            _emotesRadialPanel = CreatePanel(buildPanel, new Point(0, 200), 0);
+            _emotesRadialPanel = CreatePanel(buildPanel, new Point(0, topOffset + 200), 0);
             _emotesRadialPanel.HeightSizingMode = SizingMode.Fill;
             _emotesRadialPanel.WidthSizingMode = SizingMode.Fill;
             _emotesRadialPanel.FlowDirection = ControlFlowDirection.TopToBottom;
             BuildEmotesRadialEnabledPanel();
+
+            if (_pendingStatus != null)
+            {
+                UpdateCatalogStatus(_pendingStatus);
+            }
+        }
+
+        private void BuildCatalogGroup(Container parent)
+        {
+            var titleRow = CreateRowPanel(parent);
+            _catalogGroupLabel = new Label()
+            {
+                Parent = titleRow,
+                Text = Common.settings_global_catalog_groupTitle + "  ·  " + Common.settings_global_catalog_groupSubtitle,
+                Size = new Point(880, _height),
+                Font = GameService.Content.DefaultFont18,
+                TextColor = Color.White,
+            };
+
+            var statusRow = CreateRowPanel(parent);
+            var statusLabel = new Label()
+            {
+                Parent = statusRow,
+                Text = Common.settings_global_catalog_status,
+                Size = new Point(_labelWidth, _height),
+            };
+            _catalogStatusLineLabel = new Label()
+            {
+                Parent = statusRow,
+                Text = string.Empty,
+                Size = new Point(_labelWidth + _controlWidth, _height),
+                AutoSizeHeight = true,
+                Visible = false,
+            };
+
+            var checkRow = CreateRowPanel(parent);
+            var checkLabel = new Label()
+            {
+                Parent = checkRow,
+                Text = Common.settings_global_checkNow,
+                Size = new Point(_labelWidth, _height),
+            };
+            _catalogCheckButton = new StandardButton()
+            {
+                Parent = checkRow,
+                Text = Common.settings_global_checkNow,
+                Size = new Point(_controlWidth, _height),
+            };
+            _catalogCheckButton.Click += delegate
+            {
+                CheckNowClicked?.Invoke(this, EventArgs.Empty);
+            };
+
+            var startupRow = CreateRowPanel(parent);
+            var startupLabel = new Label()
+            {
+                Parent = startupRow,
+                Text = Common.settings_global_catalog_checkOnStartup,
+                Size = new Point(_labelWidth, _height),
+            };
+            _catalogCheckOnStartupCheckbox = new Checkbox()
+            {
+                Parent = startupRow,
+                Checked = this._settings.GlobalCheckCatalogOnStartup.Value,
+                Size = new Point(_controlWidth, _height),
+            };
+            _catalogCheckOnStartupCheckbox.CheckedChanged += delegate
+            {
+                this._settings.GlobalCheckCatalogOnStartup.Value = _catalogCheckOnStartupCheckbox.Checked;
+            };
+
+            _catalogFeedbackLabel = new Label()
+            {
+                Parent = parent,
+                Text = string.Empty,
+                Size = new Point(880, _height),
+                AutoSizeHeight = true,
+                Visible = false,
+                TextColor = Color.Gray,
+            };
+
+            var progressRow = CreateRowPanel(parent);
+            _catalogProgressSpinner = new LoadingSpinner()
+            {
+                Parent = progressRow,
+                Size = new Point(20, 20),
+                Visible = false,
+            };
+            _catalogProgressLabel = new Label()
+            {
+                Parent = progressRow,
+                Text = string.Empty,
+                Size = new Point(860, _height),
+                AutoSizeHeight = true,
+                TextColor = Color.Gray,
+            };
         }
 
         private void BuildGlobalPanel()
@@ -240,7 +426,7 @@ namespace felix.BlishEmotes.UI.Views
                 this._settings.GlobalUseCategories.Value = _useCategoriesCheckbox.Checked;
             };
 
-            // Catalog check-now control
+            // Legacy catalog check-now control (kept until the rest of the UI is rebuilt)
             var _checkNowRow = CreateRowPanel(_globalPanel);
             _checkNowButton = new StandardButton()
             {
@@ -248,6 +434,7 @@ namespace felix.BlishEmotes.UI.Views
                 Text = Common.settings_global_checkNow,
                 Size = new Point(_controlWidth, _height),
                 Location = new Point(0, 0),
+                Visible = false,
             };
             _checkNowButton.Click += delegate
             {
@@ -260,6 +447,7 @@ namespace felix.BlishEmotes.UI.Views
                 Size = new Point(_labelWidth + _controlWidth, _height),
                 Location = new Point(_controlWidth + _padding, 0),
                 AutoSizeHeight = true,
+                Visible = false,
             };
         }
 
@@ -427,6 +615,7 @@ namespace felix.BlishEmotes.UI.Views
 
         protected override void Unload()
         {
+            this._catalogPanel?.Dispose();
             this._globalPanel?.Dispose();
             this._radialPanel?.Dispose();
             this._emotesRadialPanel?.Dispose();

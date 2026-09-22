@@ -30,6 +30,7 @@ namespace felix.BlishEmotes
         public SettingEntry<KeyBinding> GlobalKeyBindToggleTargeting { get; private set; }
         public SettingEntry<bool> GlobalUseCategories { get; private set; }
         public SettingEntry<bool> GlobalUseRadialMenu { get; private set; }
+        public SettingEntry<bool> GlobalCheckCatalogOnStartup { get; private set; }
 
         private void DefineGlobalSettings(SettingCollection settings)
         {
@@ -39,6 +40,7 @@ namespace felix.BlishEmotes
             this.GlobalKeyBindToggleEmoteList = this.GlobalSettings.DefineSetting(nameof(this.GlobalKeyBindToggleEmoteList), new KeyBinding(), () => Common.settings_global_keybindToggleEmoteList);
             this.GlobalUseCategories = this.GlobalSettings.DefineSetting(nameof(this.GlobalUseCategories), false, () => Common.settings_global_useCategories);
             this.GlobalUseRadialMenu = this.GlobalSettings.DefineSetting(nameof(this.GlobalUseRadialMenu), false, () => Common.settings_global_useRadialMenu);
+            this.GlobalCheckCatalogOnStartup = this.GlobalSettings.DefineSetting(nameof(this.GlobalCheckCatalogOnStartup), true, () => Common.settings_global_catalog_checkOnStartup);
             this.GlobalKeyBindToggleSynchronize = this.GlobalSettings.DefineSetting(nameof(this.GlobalKeyBindToggleSynchronize), new KeyBinding(), () => Common.settings_global_keybindToggleSynchronize);
             this.GlobalKeyBindToggleTargeting = this.GlobalSettings.DefineSetting(nameof(this.GlobalKeyBindToggleTargeting), new KeyBinding(), () => Common.settings_global_keybindToggleTargeting);
         }

@@ -22,7 +22,7 @@ namespace felix.BlishEmotes.Services
         /// raw.githubusercontent.com, branch-qualified. The feature branch is used during
         /// development so the catalog can be fetched before it lands on master; the ship ticket
         /// flips this to master for the 2.0.0 release.
-        /// TODO(10-ship-2.0.0): serve from "master".
+        /// TODO(10-ship-2-0-0): serve from "master".
         /// </summary>
         private const string CatalogUrl = "https://raw.githubusercontent.com/f3l1x98/blish-emotes/feature/remote-emotes-catalog/catalog/";
 
@@ -37,6 +37,12 @@ namespace felix.BlishEmotes.Services
 
         /// <summary>The outcome of the most recent sync, including transient <see cref="CatalogSyncState.Downloading"/> state.</summary>
         public CatalogSyncResult LastSyncResult { get; private set; } = new CatalogSyncResult { State = CatalogSyncState.UpToDate };
+
+        /// <summary>True when a usable cache directory exists on disk.</summary>
+        public bool HasCache()
+        {
+            return _cache.HasCache();
+        }
 
         /// <summary>The cached catalog, or null when there is no usable cache (fresh install / corrupted).</summary>
         public CatalogData LoadCachedCatalogOrNull()
@@ -53,7 +59,7 @@ namespace felix.BlishEmotes.Services
             }
             catch (Exception e)
             {
-                Logger.Warn("Failed to load cached catalog - falling back to embedded emote data.");
+                Logger.Warn("Failed to load cached catalog - no usable local catalog.");
                 Logger.Warn(e.Message);
                 return null;
             }
@@ -73,13 +79,26 @@ namespace felix.BlishEmotes.Services
                 Version = previousCache?.Manifest?.Version,
             };
 
+            var progress = new Progress<CatalogSyncProgress>();
+            progress.ProgressChanged += (sender, p) =>
+            {
+                CurrentProgress = p;
+                ProgressChanged?.Invoke(this, p);
+            };
+
             using (var client = new CatalogClient(CatalogUrl))
             {
-                LastSyncResult = await CatalogSync.RunAsync(client, _cache, previousCache).ConfigureAwait(false);
+                LastSyncResult = await CatalogSync.RunAsync(client, _cache, previousCache, progress).ConfigureAwait(false);
                 LogResult(LastSyncResult);
                 return LastSyncResult;
             }
         }
+
+        /// <summary>The most recent download progress report, or null when no sync is active.</summary>
+        public CatalogSyncProgress CurrentProgress { get; private set; }
+
+        /// <summary>Fired whenever a file is downloaded during a sync.</summary>
+        public event EventHandler<CatalogSyncProgress> ProgressChanged;
 
         /// <summary>Cache path of an emote's texture (<c>catalog/textures/&lt;id&gt;.png</c>).</summary>
         public string GetTextureFilePath(string emoteId)

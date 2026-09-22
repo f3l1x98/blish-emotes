@@ -1,4 +1,4 @@
-﻿using Blish_HUD;
+using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.GameIntegration;
 using Blish_HUD.Graphics.UI;
@@ -61,6 +61,8 @@ namespace BlishEmotesList
         #endregion
 
         private readonly System.Threading.SemaphoreSlim _syncLock = new System.Threading.SemaphoreSlim(1, 1);
+        private DateTime _lastCatalogCheck = DateTime.MinValue;
+        private long? _syncStartVersion;
 
 
         [ImportingConstructor]
@@ -180,23 +182,23 @@ namespace BlishEmotesList
             _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.CategorySettingsIcon), () => new CategorySettingsView(CategoriesManager, EmotesManager), Common.settings_ui_categories_tab));
             // Emote Hotkey settings
             _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.HotkeySettingsIcon), () => new EmoteHotkeySettingsView(this.Settings), Common.settings_ui_emoteHotkeys_tab));
+
+            CatalogManager.ProgressChanged += OnCatalogProgressChanged;
         }
 
         protected override async Task LoadAsync()
         {
             try
             {
-                // Load categories
+                // Load categories (these are user-owned, so they load even before a catalog exists).
                 CategoriesManager.Load();
-                // Load emotes: cached catalog if we have one (offline-capable), embedded data otherwise
+
+                // Load emotes from the cache if we have one. A fresh install has no cache and no
+                // embedded fallback — the module stays visible-but-empty until the first fetch.
                 var cachedCatalog = CatalogManager.LoadCachedCatalogOrNull();
                 if (cachedCatalog != null)
                 {
                     EmotesManager.LoadFromCatalog(cachedCatalog);
-                    // Reconcile the persisted categories with the cached catalog: the one-time V2
-                    // migration (stamp name-matched categories), and — when a fetched update was
-                    // applied to the cache since the last launch — the merge that places new
-                    // emotes into linked categories and auto-creates untombstoned ones.
                     var pendingUpdate = CatalogManager.ReadPendingUpdateOrNull();
                     CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, EmotesManager.GetAll());
                     if (pendingUpdate != null)
@@ -204,10 +206,7 @@ namespace BlishEmotesList
                         CatalogManager.ClearPendingUpdate();
                     }
                 }
-                else
-                {
-                    EmotesManager.LoadEmbedded();
-                }
+
                 // Update emotes with data from api
                 await UpdateEmotesFromApi();
                 // Update category Emotes
@@ -216,9 +215,13 @@ namespace BlishEmotesList
                 this.Settings.InitEmotesSettings(EmotesManager.GetAll());
                 InitUI();
 
-                // Ticket 03: non-blocking cheap conditional sync. Updates are written to the cache
-                // and take effect at the next launch; live apply is ticket 05.
-                _ = RefreshCatalogAsync();
+                // Initialise the settings UI to the current (empty/offline) state.
+                UpdateCatalogUx();
+
+                if (this.Settings.GlobalCheckCatalogOnStartup.Value)
+                {
+                    _ = RefreshCatalogAsync();
+                }
             }
             catch (Exception e)
             {
@@ -227,13 +230,34 @@ namespace BlishEmotesList
             }
         }
 
+        private void OnCatalogProgressChanged(object sender, CatalogSyncProgress progress)
+        {
+            GameService.Graphics.QueueMainThreadRender(device =>
+            {
+                _cornerIcon.LoadingMessage = Common.settings_global_sync_downloading.Substring(0, Common.settings_global_sync_downloading.IndexOf("…") + 1);
+                _globalSettingsView?.UpdateCatalogStatus(BuildCatalogStatus(CatalogManager.LastSyncResult, _syncStartVersion, progress));
+                UpdateRadialEmptyState();
+            });
+        }
+
         private async Task RefreshCatalogAsync()
         {
+            if (!await _syncLock.WaitAsync(0).ConfigureAwait(false))
+            {
+                // A manual Check now is already running.
+                return;
+            }
             try
             {
-                await _syncLock.WaitAsync().ConfigureAwait(false);
                 Logger.Debug("Refreshing emote catalog in the background");
+                _syncStartVersion = CatalogManager.LastSyncResult.Version;
                 var result = await CatalogManager.SyncAsync().ConfigureAwait(false);
+                GameService.Graphics.QueueMainThreadRender(device =>
+                {
+                    _cornerIcon.LoadingMessage = null;
+                    _lastCatalogCheck = DateTime.UtcNow;
+                    UpdateCatalogUx();
+                });
                 if (result.State == CatalogSyncState.FirstFetch || result.State == CatalogSyncState.Updated)
                 {
                     QueueFirstRunMigration();
@@ -243,6 +267,12 @@ namespace BlishEmotesList
             {
                 Logger.Error("Catalog refresh failed unexpectedly!");
                 Logger.Error(e.ToString());
+                GameService.Graphics.QueueMainThreadRender(device =>
+                {
+                    _cornerIcon.LoadingMessage = null;
+                    _lastCatalogCheck = DateTime.UtcNow;
+                    UpdateCatalogUx();
+                });
             }
             finally
             {
@@ -257,10 +287,14 @@ namespace BlishEmotesList
                 return;
             }
 
-            _globalSettingsView.SetCheckNowEnabled(false);
-            _globalSettingsView.SetSyncStatus(Common.settings_global_sync_checking);
-
             await _syncLock.WaitAsync().ConfigureAwait(false);
+            _syncStartVersion = CatalogManager.LastSyncResult.Version;
+            GameService.Graphics.QueueMainThreadRender(device =>
+            {
+                _globalSettingsView.UpdateCatalogStatus(BuildCatalogStatus(new CatalogSyncResult { State = CatalogSyncState.Downloading, Version = _syncStartVersion }, _syncStartVersion, CatalogManager.CurrentProgress));
+                _cornerIcon.LoadingMessage = Common.settings_global_sync_downloading.Substring(0, Common.settings_global_sync_downloading.IndexOf("…") + 1);
+            });
+
             CatalogSyncResult result;
             try
             {
@@ -283,21 +317,22 @@ namespace BlishEmotesList
             {
                 try
                 {
+                    _cornerIcon.LoadingMessage = null;
+                    _lastCatalogCheck = DateTime.UtcNow;
                     if (result.State == CatalogSyncState.Updated || result.State == CatalogSyncState.FirstFetch)
                     {
                         ApplyCatalogLive();
+                        ShowCatalogToast(result);
                     }
-                    UpdateCheckNowStatus(result);
+                    UpdateCatalogUx();
                 }
                 catch (Exception e)
                 {
                     Logger.Error("Live catalog apply failed unexpectedly!");
                     Logger.Error(e.ToString());
-                    _globalSettingsView.SetSyncStatus(string.Format(Common.settings_global_sync_failed, e.Message));
                 }
                 finally
                 {
-                    _globalSettingsView.SetCheckNowEnabled(true);
                     _syncLock.Release();
                 }
             });
@@ -351,27 +386,181 @@ namespace BlishEmotesList
             }
         }
 
-        private void UpdateCheckNowStatus(CatalogSyncResult result)
+        private CatalogStatus BuildCatalogStatus(CatalogSyncResult result, long? previousVersion, CatalogSyncProgress progress = null)
         {
+            bool hasCache = CatalogManager.HasCache();
+            bool isDownloading = result.State == CatalogSyncState.Downloading;
+            var status = new CatalogStatus
+            {
+                State = result.State,
+                Version = result.Version,
+                PreviousVersion = previousVersion,
+                NewEmoteCount = result.NewEmoteIds?.Count ?? 0,
+                NewEmoteNames = GetNewEmoteNames(result.NewEmoteIds),
+                CheckOnStartup = this.Settings.GlobalCheckCatalogOnStartup.Value,
+                CanCheck = !isDownloading,
+                CheckButtonText = (!hasCache && result.State == CatalogSyncState.Failed) ? Common.settings_global_catalog_retryNow : Common.settings_global_checkNow,
+            };
+
+            if (isDownloading)
+            {
+                status.StatusLine = hasCache
+                    ? string.Format(Common.settings_global_sync_downloading, progress?.DownloadedFiles ?? 0, progress?.TotalFiles ?? 0)
+                    : "downloading… (first run)";
+                status.Feedback = Common.settings_global_sync_downloading;
+                status.FeedbackSubtext = hasCache ? null : Common.settings_global_sync_downloading_sub;
+                status.FeedbackColor = Color.Gray;
+                status.ShowProgress = true;
+                if (progress != null)
+                {
+                    status.DownloadedFiles = progress.DownloadedFiles;
+                    status.TotalFiles = progress.TotalFiles;
+                }
+                return status;
+            }
+
+            status.ShowProgress = false;
+
             switch (result.State)
             {
                 case CatalogSyncState.UpToDate:
-                    _globalSettingsView.SetSyncStatus(Common.settings_global_sync_upToDate);
+                    if (hasCache)
+                    {
+                        status.StatusLine = string.Format(Common.settings_global_sync_statusLine, result.Version, FormatLastChecked());
+                        status.Feedback = string.Format(Common.settings_global_sync_upToDate_detail, result.Version);
+                        status.FeedbackColor = Color.Gray;
+                    }
+                    else
+                    {
+                        status.StatusLine = "no catalog yet";
+                        status.Feedback = Common.settings_global_sync_noCatalog_detail;
+                        status.FeedbackColor = Color.Gray;
+                    }
                     break;
                 case CatalogSyncState.Updated:
-                case CatalogSyncState.FirstFetch:
-                    _globalSettingsView.SetSyncStatus(string.Format(Common.settings_global_sync_updated, result.NewEmoteIds.Count));
+                    status.StatusLine = string.Format(Common.settings_global_sync_statusLine, result.Version, FormatLastChecked());
+                    status.Feedback = string.Format(Common.settings_global_sync_updated_detail, previousVersion, result.Version, result.NewEmoteIds.Count, status.NewEmoteNames);
+                    status.FeedbackColor = Color.Green;
                     break;
-                case CatalogSyncState.SchemaTooNew:
-                    _globalSettingsView.SetSyncStatus(Common.settings_global_sync_schemaTooNew);
+                case CatalogSyncState.FirstFetch:
+                    status.StatusLine = string.Format(Common.settings_global_sync_statusLine, result.Version, FormatLastChecked());
+                    status.Feedback = string.Format(Common.settings_global_sync_firstFetch_detail, result.NewEmoteIds.Count);
+                    status.FeedbackColor = Color.Green;
                     break;
                 case CatalogSyncState.Failed:
-                    _globalSettingsView.SetSyncStatus(string.Format(Common.settings_global_sync_failed, result.ErrorMessage));
+                    if (hasCache)
+                    {
+                        status.StatusLine = $"v{result.Version} · cached · last check failed";
+                        status.Feedback = string.Format(Common.settings_global_sync_failed_detail, result.Version);
+                        status.FeedbackColor = Color.Red;
+                    }
+                    else
+                    {
+                        status.StatusLine = "no catalog yet";
+                        status.Feedback = Common.settings_global_sync_firstFail_detail;
+                        status.FeedbackSubtext = Common.settings_global_sync_firstFail_sub;
+                        status.FeedbackColor = Color.Red;
+                    }
                     break;
-                default:
-                    _globalSettingsView.SetSyncStatus(string.Empty);
+                case CatalogSyncState.SchemaTooNew:
+                    if (hasCache)
+                    {
+                        status.StatusLine = $"v{result.Version} · cached · catalog too new";
+                        status.Feedback = Common.settings_global_sync_schemaTooNew_detail;
+                        status.FeedbackSubtext = string.Format(Common.settings_global_sync_schemaTooNew_sub, result.Version);
+                        status.FeedbackColor = Color.Orange;
+                    }
+                    else
+                    {
+                        status.StatusLine = "no catalog yet";
+                        status.Feedback = Common.settings_global_sync_schemaTooNew_detail;
+                        status.FeedbackSubtext = Common.settings_global_sync_schemaTooNew_noCache_sub;
+                        status.FeedbackColor = Color.Orange;
+                    }
                     break;
             }
+
+            return status;
+        }
+
+        private void UpdateCatalogUx()
+        {
+            var result = CatalogManager.LastSyncResult;
+            var status = BuildCatalogStatus(result, _syncStartVersion);
+            _globalSettingsView?.UpdateCatalogStatus(status);
+            UpdateRadialEmptyState();
+            DrawEmoteListContextMenu();
+        }
+
+        private void UpdateRadialEmptyState()
+        {
+            if (_radialMenu == null)
+            {
+                return;
+            }
+
+            if (EmotesManager.GetAll().Count == 0)
+            {
+                var state = CatalogManager.LastSyncResult.State;
+                bool hasCache = CatalogManager.HasCache();
+                if (state == CatalogSyncState.Downloading && !hasCache)
+                {
+                    _radialMenu.EmptyStateText = Common.radial_gettingEmotes;
+                    _radialMenu.EmptyStateColor = Color.Gray;
+                }
+                else if (!hasCache && state == CatalogSyncState.Failed)
+                {
+                    _radialMenu.EmptyStateText = Common.radial_noEmotesYet;
+                    _radialMenu.EmptyStateColor = Color.Orange;
+                }
+                else
+                {
+                    _radialMenu.EmptyStateText = "No Emotes found!";
+                    _radialMenu.EmptyStateColor = Color.Red;
+                }
+            }
+        }
+
+        private string FormatLastChecked()
+        {
+            if (_lastCatalogCheck == DateTime.MinValue)
+            {
+                return "never";
+            }
+            var elapsed = DateTime.UtcNow - _lastCatalogCheck;
+            if (elapsed.TotalSeconds < 60)
+            {
+                return "just now";
+            }
+            if (elapsed.TotalMinutes < 60)
+            {
+                return $"{(int)elapsed.TotalMinutes}m ago";
+            }
+            return $"{(int)elapsed.TotalHours}h ago";
+        }
+
+        private string GetNewEmoteNames(List<string> ids)
+        {
+            if (ids == null || ids.Count == 0)
+            {
+                return string.Empty;
+            }
+            var labels = ids.Select(id => EmotesManager.GetAll().FirstOrDefault(e => e.Id == id)?.Label ?? id).ToList();
+            return string.Join(", ", labels);
+        }
+
+        private void ShowCatalogToast(CatalogSyncResult result)
+        {
+            if (result.NewEmoteIds == null || result.NewEmoteIds.Count == 0)
+            {
+                return;
+            }
+
+            string names = GetNewEmoteNames(result.NewEmoteIds);
+            string message = result.State == CatalogSyncState.FirstFetch
+                ? string.Format(Common.settings_global_sync_firstFetch_toast, names)
+                : string.Format(Common.settings_global_sync_updated_toast, names);
+            ScreenNotification.ShowNotification(message, ScreenNotification.NotificationType.Green);
         }
 
         /// <summary>
@@ -460,6 +649,7 @@ namespace BlishEmotesList
                 Categories = CategoriesManager.GetAll(),
             };
             _radialMenu.EmoteSelected += OnEmoteSelected;
+            UpdateRadialEmptyState();
         }
 
         private void OnEmoteSelected(object sender, Emote emote)
@@ -482,6 +672,7 @@ namespace BlishEmotesList
                 _radialMenu.IsEmoteSynchronized = EmotesManager.IsEmoteSynchronized;
                 _radialMenu.IsEmoteTargeted = EmotesManager.IsEmoteTargeted;
             }
+            UpdateRadialEmptyState();
         }
 
         private void DrawEmoteListContextMenu()
@@ -489,34 +680,47 @@ namespace BlishEmotesList
             _emoteListMenuStrip?.Dispose();
 
             _emoteListMenuStrip = new ContextMenuStrip();
-            var menuItems = this.Settings.GlobalUseCategories.Value ? GetCategoryMenuItems() : GetEmotesMenuItems(EmotesManager.GetAll());
-            _emoteListMenuStrip.AddMenuItems(menuItems);
-        }
-
-        private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
-        {
-            // Update emotes with data from api
-            await UpdateEmotesFromApi();
-        }
-
-        private void ShowEmoteList(bool atCornerIcon = true)
-        {
-            if (atCornerIcon)
+            var allEmotes = EmotesManager.GetAll();
+            if (allEmotes.Count == 0)
             {
-                _emoteListMenuStrip?.Show(_cornerIcon);
-            }
-            else if (GameService.Input.Mouse.CursorIsVisible)
-            {
-                _emoteListMenuStrip?.Show(GameService.Input.Mouse.Position);
+                BuildEmptyEmoteListMenu(_emoteListMenuStrip);
             }
             else
             {
-                Logger.Debug("Emote list display conditions failed");
+                var menuItems = this.Settings.GlobalUseCategories.Value ? GetCategoryMenuItems() : GetEmotesMenuItems(allEmotes);
+                _emoteListMenuStrip.AddMenuItems(menuItems);
+            }
+        }
+
+        private void BuildEmptyEmoteListMenu(ContextMenuStrip menu)
+        {
+            var state = CatalogManager.LastSyncResult.State;
+            bool hasCache = CatalogManager.HasCache();
+            if (state == CatalogSyncState.Downloading && !hasCache)
+            {
+                menu.AddMenuItem(new ContextMenuStripItem(Common.emoteList_gettingEmotes) { Enabled = false });
+            }
+            else if (!hasCache && state == CatalogSyncState.Failed)
+            {
+                menu.AddMenuItem(new ContextMenuStripItem(Common.emoteList_noEmotesYet) { Enabled = false });
+                menu.AddMenuItem(new ContextMenuStripItem(Common.emoteList_noEmotesRetry) { Enabled = false });
+                var openSettings = new ContextMenuStripItem(Common.emoteList_openSettings);
+                openSettings.Click += delegate { _settingsWindow.Show(); };
+                menu.AddMenuItem(openSettings);
+            }
+            else
+            {
+                menu.AddMenuItem(new ContextMenuStripItem(Common.emoteList_noEmotesYet) { Enabled = false });
             }
         }
 
         private void AddEmoteModifierStatus(ref List<ContextMenuStripItem> items)
         {
+            var lastResult = CatalogManager.LastSyncResult;
+            if (lastResult.State == CatalogSyncState.Failed && CatalogManager.HasCache() && lastResult.Version.HasValue)
+            {
+                items.Insert(0, new ContextMenuStripItem($"[ {string.Format(Common.cornerIcon_catalogOffline, lastResult.Version.Value).ToUpper()} ]"));
+            }
             // If IsEmoteSynchronized insert at top
             if (EmotesManager.IsEmoteSynchronized)
             {
@@ -648,6 +852,28 @@ namespace BlishEmotesList
                 returnVal.UnlockedEmotesIds = new List<string>();
             }
             return returnVal;
+        }
+
+        private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<Gw2Sharp.WebApi.V2.Models.TokenPermission>> e)
+        {
+            // Update emotes with data from api
+            await UpdateEmotesFromApi();
+        }
+
+        private void ShowEmoteList(bool atCornerIcon = true)
+        {
+            if (atCornerIcon)
+            {
+                _emoteListMenuStrip?.Show(_cornerIcon);
+            }
+            else if (GameService.Input.Mouse.CursorIsVisible)
+            {
+                _emoteListMenuStrip?.Show(GameService.Input.Mouse.Position);
+            }
+            else
+            {
+                Logger.Debug("Emote list display conditions failed");
+            }
         }
 
         /// <inheritdoc />

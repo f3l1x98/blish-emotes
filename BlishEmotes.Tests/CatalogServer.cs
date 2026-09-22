@@ -62,6 +62,13 @@ namespace BlishEmotes.Tests
             return count;
         }
 
+        internal int TotalManifestFiles()
+        {
+            string manifestPath = Path.Combine(_catalogDir, "manifest.json");
+            var manifest = JsonConvert.DeserializeObject<felix.BlishEmotes.Services.Catalog.CatalogManifest>(File.ReadAllText(manifestPath));
+            return manifest.Files.Count;
+        }
+
         internal int TotalFileRequestCount()
         {
             int total = 0;

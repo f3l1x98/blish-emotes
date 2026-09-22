@@ -21,7 +21,7 @@ namespace felix.BlishEmotes.Services.Catalog
         /// Runs the sync and returns a detailed outcome. <paramref name="previousCache"/> is the
         /// catalog currently loaded by the module; <c>null</c> means this is a fresh install.
         /// </summary>
-        public static async Task<CatalogSyncResult> RunAsync(CatalogClient client, CatalogCache cache, CatalogData previousCache)
+        public static async Task<CatalogSyncResult> RunAsync(CatalogClient client, CatalogCache cache, CatalogData previousCache, IProgress<CatalogSyncProgress> progress = null)
         {
             string etag = previousCache == null ? null : cache.LoadETag();
             bool hadCache = previousCache != null;
@@ -51,13 +51,17 @@ namespace felix.BlishEmotes.Services.Catalog
                 }
 
                 List<string> changedPaths = DiffAgainstCache(cache, remoteManifest);
+                int totalFiles = remoteManifest.Files.Count;
+                progress?.Report(new CatalogSyncProgress { State = CatalogSyncState.Downloading, DownloadedFiles = 0, TotalFiles = totalFiles });
 
                 var fetchedFiles = new Dictionary<string, byte[]>();
-                foreach (string path in changedPaths)
+                for (int i = 0; i < changedPaths.Count; i++)
                 {
+                    string path = changedPaths[i];
                     string expectedHash = remoteManifest.Files[path];
                     byte[] bytes = await client.GetFileAsync(path, expectedHash).ConfigureAwait(false);
                     fetchedFiles[path] = bytes;
+                    progress?.Report(new CatalogSyncProgress { State = CatalogSyncState.Downloading, DownloadedFiles = i + 1, TotalFiles = totalFiles });
                 }
 
                 var allFiles = new Dictionary<string, byte[]>(fetchedFiles);

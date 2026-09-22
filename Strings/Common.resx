@@ -216,4 +216,86 @@
   <data name="settings_global_sync_schemaTooNew" xml:space="preserve">
     <value>Catalog requires a newer module version.</value>
   </data>
+  <data name="settings_global_catalog_groupTitle" xml:space="preserve">
+    <value>Emote catalog</value>
+  </data>
+  <data name="settings_global_catalog_groupSubtitle" xml:space="preserve">
+    <value>fetched from GitHub</value>
+  </data>
+  <data name="settings_global_catalog_status" xml:space="preserve">
+    <value>Catalog status</value>
+  </data>
+  <data name="settings_global_catalog_checkOnStartup" xml:space="preserve">
+    <value>Check on startup</value>
+  </data>
+  <data name="settings_global_catalog_retryNow" xml:space="preserve">
+    <value>Retry now</value>
+  </data>
+  <data name="settings_global_sync_statusLine" xml:space="preserve">
+    <value>v{0} · last checked: {1}</value>
+  </data>
+  <data name="settings_global_sync_downloading" xml:space="preserve">
+    <value>Downloading emote catalog… {0} / {1} files</value>
+  </data>
+  <data name="settings_global_sync_downloading_sub" xml:space="preserve">
+    <value>First run — your emotes appear as soon as this finishes. You can keep playing.</value>
+  </data>
+  <data name="settings_global_sync_upToDate_detail" xml:space="preserve">
+    <value>You're up to date — catalog v{0}.</value>
+  </data>
+  <data name="settings_global_sync_updated_detail" xml:space="preserve">
+    <value>Catalog updated {0} → {1} — {2} new emote(s): {3}.</value>
+  </data>
+  <data name="settings_global_sync_updated_toast" xml:space="preserve">
+    <value>Emotes updated — {0}</value>
+  </data>
+  <data name="settings_global_sync_firstFetch_detail" xml:space="preserve">
+    <value>Catalog downloaded — {0} new emote(s).</value>
+  </data>
+  <data name="settings_global_sync_firstFetch_toast" xml:space="preserve">
+    <value>Emotes downloaded — {0}</value>
+  </data>
+  <data name="settings_global_sync_failed_detail" xml:space="preserve">
+    <value>Couldn't reach the catalog server. Using cached catalog v{0}. Retries automatically on next launch — your emotes keep working.</value>
+  </data>
+  <data name="settings_global_sync_firstFail_detail" xml:space="preserve">
+    <value>Couldn't download the emote catalog — check your connection.</value>
+  </data>
+  <data name="settings_global_sync_firstFail_sub" xml:space="preserve">
+    <value>Emotes will be empty until a fetch succeeds.</value>
+  </data>
+  <data name="settings_global_sync_schemaTooNew_detail" xml:space="preserve">
+    <value>Catalog format is newer than this module supports.</value>
+  </data>
+  <data name="settings_global_sync_schemaTooNew_sub" xml:space="preserve">
+    <value>Update the Blish Emotes module to fetch the latest catalog. Running from cache (v{0}).</value>
+  </data>
+  <data name="settings_global_sync_schemaTooNew_noCache_sub" xml:space="preserve">
+    <value>Update the Blish Emotes module to fetch the latest catalog.</value>
+  </data>
+  <data name="settings_global_sync_noCatalog_detail" xml:space="preserve">
+    <value>No catalog downloaded yet. Check now to fetch the emote catalog.</value>
+  </data>
+  <data name="cornerIcon_catalogOffline" xml:space="preserve">
+    <value>CATALOG OFFLINE — CACHED V{0}</value>
+  </data>
+  <data name="emoteList_gettingEmotes" xml:space="preserve">
+    <value>Getting your emotes… you can keep playing</value>
+  </data>
+  <data name="emoteList_noEmotesYet" xml:space="preserve">
+    <value>No emotes yet</value>
+  </data>
+  <data name="emoteList_noEmotesRetry" xml:space="preserve">
+    <value>Couldn't download the emote catalog. Open Settings → Emote catalog to retry.</value>
+  </data>
+  <data name="emoteList_openSettings" xml:space="preserve">
+    <value>Open Settings</value>
+  </data>
+  <data name="radial_gettingEmotes" xml:space="preserve">
+    <value>Getting your emotes… you can keep playing</value>
+  </data>
+  <data name="radial_noEmotesYet" xml:space="preserve">
+    <value>No emotes yet
+Open Settings → Emote catalog</value>
+  </data>
 </root>
