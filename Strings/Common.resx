@@ -198,4 +198,22 @@
   <data name="settings_ui_title" xml:space="preserve">
     <value>Emotes Settings</value>
   </data>
+  <data name="settings_global_checkNow" xml:space="preserve">
+    <value>Check now</value>
+  </data>
+  <data name="settings_global_sync_checking" xml:space="preserve">
+    <value>Checking...</value>
+  </data>
+  <data name="settings_global_sync_upToDate" xml:space="preserve">
+    <value>Catalog is up to date.</value>
+  </data>
+  <data name="settings_global_sync_updated" xml:space="preserve">
+    <value>Catalog updated ({0} new emote(s)).</value>
+  </data>
+  <data name="settings_global_sync_failed" xml:space="preserve">
+    <value>Catalog check failed: {0}</value>
+  </data>
+  <data name="settings_global_sync_schemaTooNew" xml:space="preserve">
+    <value>Catalog requires a newer module version.</value>
+  </data>
 </root>

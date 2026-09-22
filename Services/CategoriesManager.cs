@@ -329,7 +329,9 @@ namespace felix.BlishEmotes
         /// this applies its result to the live state, persists once, and refreshes the UI.
         /// Must run on the game thread.
         /// </summary>
-        public CatalogMergeResult ApplyCatalog(CatalogData catalog, PendingCatalogUpdate pendingUpdate, CultureInfo locale, List<Emote> emotes)
+        /// <param name="fireCategoriesUpdated">When false the event is not fired, allowing the caller
+        /// to swap other dependent state (the emote collection) before notifying consumers.</param>
+        public CatalogMergeResult ApplyCatalog(CatalogData catalog, PendingCatalogUpdate pendingUpdate, CultureInfo locale, List<Emote> emotes, bool fireCategoriesUpdated = true)
         {
             // Snapshot the live state; the merge works on the persisted shape only.
             var document = new UserCategoriesDocument
@@ -345,7 +347,20 @@ namespace felix.BlishEmotes
                 return result;
             }
 
-            ApplyDocument(document);
+            // Build a complete new category dictionary from the merged document, then swap it in
+            // place. Any failure before this point leaves the previous <c>categories</c> untouched.
+            var newCategories = new Dictionary<Guid, Category>();
+            foreach (var persisted in document.Categories)
+            {
+                var category = FromPersisted(persisted);
+                newCategories.Add(category.Id, category);
+                if (category.IsFavourite)
+                {
+                    FavouriteCategoryId = category.Id;
+                }
+            }
+            categories = newCategories;
+
             PersistenceManager.MarkMerged(document.MergedCatalogVersion ?? catalog.Manifest.Version);
             PersistenceManager.SaveCategories(categories.Values.ToList());
             ResolveEmoteIds(emotes);
@@ -354,33 +369,18 @@ namespace felix.BlishEmotes
                 + $"created {result.CreatedCategoryNames.Count} ({string.Join(", ", result.CreatedCategoryNames)}), "
                 + $"placed {result.PlacedEmoteCount} emotes"
                 + (result.SkippedNameConflicts.Count > 0 ? $", skipped name conflicts: {string.Join(", ", result.SkippedNameConflicts)}" : ""));
-            CategoriesUpdated?.Invoke(this, GetAll());
+            if (fireCategoriesUpdated)
+            {
+                CategoriesUpdated?.Invoke(this, GetAll());
+            }
             return result;
         }
 
-        private void ApplyDocument(UserCategoriesDocument document)
+        /// <summary>Fires the <see cref="CategoriesUpdated"/> event with the current category list.
+        /// Used by live catalog applies after the caller has finished swapping dependent state.</summary>
+        public void NotifyCategoriesUpdated()
         {
-            var documentById = document.Categories.ToDictionary(category => category.Id);
-            foreach (var live in categories.Values)
-            {
-                PersistedCategory persisted;
-                if (!documentById.TryGetValue(live.Id, out persisted))
-                {
-                    continue; // the merge never removes categories
-                }
-                live.Name = persisted.Name;
-                live.CatalogId = persisted.CatalogId;
-                live.EmoteIds = persisted.EmoteIds;
-            }
-            // Categories the merge created append at the end of the user's order.
-            foreach (var persisted in document.Categories)
-            {
-                if (!categories.ContainsKey(persisted.Id))
-                {
-                    var created = FromPersisted(persisted);
-                    categories.Add(created.Id, created);
-                }
-            }
+            CategoriesUpdated?.Invoke(this, GetAll());
         }
 
         public void Unload()

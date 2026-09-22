@@ -302,5 +302,59 @@ namespace felix.BlishEmotes.Strings {
                 return ResourceManager.GetString("settings_ui_title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check now.
+        /// </summary>
+        public static string settings_global_checkNow {
+            get {
+                return ResourceManager.GetString("settings_global_checkNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking....
+        /// </summary>
+        public static string settings_global_sync_checking {
+            get {
+                return ResourceManager.GetString("settings_global_sync_checking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Catalog is up to date..
+        /// </summary>
+        public static string settings_global_sync_upToDate {
+            get {
+                return ResourceManager.GetString("settings_global_sync_upToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Catalog updated ({0} new emote(s))..
+        /// </summary>
+        public static string settings_global_sync_updated {
+            get {
+                return ResourceManager.GetString("settings_global_sync_updated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Catalog check failed: {0}.
+        /// </summary>
+        public static string settings_global_sync_failed {
+            get {
+                return ResourceManager.GetString("settings_global_sync_failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Catalog requires a newer module version..
+        /// </summary>
+        public static string settings_global_sync_schemaTooNew {
+            get {
+                return ResourceManager.GetString("settings_global_sync_schemaTooNew", resourceCulture);
+            }
+        }
     }
 }

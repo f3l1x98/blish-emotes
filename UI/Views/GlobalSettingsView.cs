@@ -23,11 +23,15 @@ namespace felix.BlishEmotes.UI.Views
         private FlowPanel _radialPanel;
         private FlowPanel _emotesRadialPanel;
         private LoadingSpinner _emotesRadialSpinner;
+        private StandardButton _checkNowButton;
+        private Label _syncStatusLabel;
 
         private const int _labelWidth = 200;
         private const int _controlWidth = 150;
         private const int _height = 20;
         private const int _padding = 5;
+
+        public event EventHandler CheckNowClicked;
 
         public GlobalSettingsView(ModuleSettings settings) : base()
         {
@@ -36,6 +40,22 @@ namespace felix.BlishEmotes.UI.Views
             _settings.OnEmotesLoaded += delegate {
                 BuildEmotesRadialEnabledPanel();
             };
+        }
+
+        public void SetCheckNowEnabled(bool enabled)
+        {
+            if (_checkNowButton != null)
+            {
+                _checkNowButton.Enabled = enabled;
+            }
+        }
+
+        public void SetSyncStatus(string text)
+        {
+            if (_syncStatusLabel != null)
+            {
+                _syncStatusLabel.Text = text;
+            }
         }
 
         private FlowPanel CreatePanel(Container parent, Point location, int width)
@@ -219,6 +239,28 @@ namespace felix.BlishEmotes.UI.Views
             _useCategoriesCheckbox.CheckedChanged += delegate {
                 this._settings.GlobalUseCategories.Value = _useCategoriesCheckbox.Checked;
             };
+
+            // Catalog check-now control
+            var _checkNowRow = CreateRowPanel(_globalPanel);
+            _checkNowButton = new StandardButton()
+            {
+                Parent = _checkNowRow,
+                Text = Common.settings_global_checkNow,
+                Size = new Point(_controlWidth, _height),
+                Location = new Point(0, 0),
+            };
+            _checkNowButton.Click += delegate
+            {
+                CheckNowClicked?.Invoke(this, EventArgs.Empty);
+            };
+            _syncStatusLabel = new Label()
+            {
+                Parent = _checkNowRow,
+                Text = string.Empty,
+                Size = new Point(_labelWidth + _controlWidth, _height),
+                Location = new Point(_controlWidth + _padding, 0),
+                AutoSizeHeight = true,
+            };
         }
 
         private void BuildRadialPanel()
@@ -389,6 +431,8 @@ namespace felix.BlishEmotes.UI.Views
             this._radialPanel?.Dispose();
             this._emotesRadialPanel?.Dispose();
             this._emotesRadialSpinner?.Dispose();
+            this._checkNowButton?.Dispose();
+            this._syncStatusLabel?.Dispose();
         }
     }
 }

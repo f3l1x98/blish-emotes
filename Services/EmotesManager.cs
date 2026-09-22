@@ -31,6 +31,10 @@ namespace felix.BlishEmotes
         // Cache mapping ids to objects
         private Dictionary<string, Emote> emotes;
 
+        // Replaced emote textures are held until module unload; immediate disposal would crash
+        // open settings views or the radial menu which share the same Texture2D references.
+        private List<Texture2D> _textureGraveyard = new List<Texture2D>();
+
         // Current overlay locale, kept in sync via UserLocaleChanged
         private CultureInfo _currentCulture;
 
@@ -121,6 +125,7 @@ namespace felix.BlishEmotes
         /// <summary>
         /// Applies a fetched catalog live: build the new emote set from the cache, carry over the
         /// lock state, then swap it in. Must run on the game thread (textures need the GraphicsDevice).
+        /// Replaced textures are sent to the graveyard and disposed only at module unload.
         /// </summary>
         public void ApplyCatalog(CatalogData catalog)
         {
@@ -133,7 +138,32 @@ namespace felix.BlishEmotes
                     emote.Locked = true;
                 }
             }
-            UpdateAll(built.Values.ToList());
+            GraveyardAndUpdateAll(built.Values.ToList());
+        }
+
+        /// <summary>Builds the emote list from a catalog without swapping the live set.</summary>
+        internal List<Emote> BuildCatalogEmotes(CatalogData catalog)
+        {
+            return BuildEmotes(catalog).Values.ToList();
+        }
+
+        /// <summary>
+        /// Swaps the live emote set for <paramref name="newEmotes"/>, moving replaced textures to
+        /// the graveyard so they stay alive while settings views or the radial may still reference
+        /// them. Shared textures that are still in use by the new set (e.g. the missing-texture
+        /// fallback) are not moved.
+        /// </summary>
+        internal void GraveyardAndUpdateAll(List<Emote> newEmotes)
+        {
+            var newTextures = new HashSet<Texture2D>(newEmotes.Select(emote => emote.Texture));
+            foreach (var emote in emotes.Values)
+            {
+                if (emote.Texture != null && !newTextures.Contains(emote.Texture))
+                {
+                    _textureGraveyard.Add(emote.Texture);
+                }
+            }
+            UpdateAll(newEmotes);
         }
 
         private Dictionary<string, Emote> BuildEmotes(CatalogData catalog)
@@ -203,6 +233,11 @@ namespace felix.BlishEmotes
             {
                 emote.Texture?.Dispose();
             }
+            foreach (var texture in _textureGraveyard)
+            {
+                texture.Dispose();
+            }
+            _textureGraveyard.Clear();
         }
 
         public void SendEmoteCommand(Emote emote)

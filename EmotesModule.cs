@@ -23,6 +23,7 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BlishEmotesList
@@ -52,11 +53,14 @@ namespace BlishEmotesList
         private ContextMenuStrip _emoteListMenuStrip;
         private TabbedWindow2 _settingsWindow;
         private RadialMenu _radialMenu;
+        private GlobalSettingsView _globalSettingsView;
         #endregion
 
         #region Settings
         public ModuleSettings Settings;
         #endregion
+
+        private readonly System.Threading.SemaphoreSlim _syncLock = new System.Threading.SemaphoreSlim(1, 1);
 
 
         [ImportingConstructor]
@@ -169,7 +173,9 @@ namespace BlishEmotesList
             };
 
             // Settings
-            _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.GlobalSettingsIcon), () => new GlobalSettingsView(this.Settings), Common.settings_ui_global_tab));
+            _globalSettingsView = new GlobalSettingsView(this.Settings);
+            _globalSettingsView.CheckNowClicked += async (sender, e) => await CheckNowAsync();
+            _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.GlobalSettingsIcon), () => _globalSettingsView, Common.settings_ui_global_tab));
             // Category setting
             _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.CategorySettingsIcon), () => new CategorySettingsView(CategoriesManager, EmotesManager), Common.settings_ui_categories_tab));
             // Emote Hotkey settings
@@ -225,6 +231,7 @@ namespace BlishEmotesList
         {
             try
             {
+                await _syncLock.WaitAsync().ConfigureAwait(false);
                 Logger.Debug("Refreshing emote catalog in the background");
                 var result = await CatalogManager.SyncAsync().ConfigureAwait(false);
                 if (result.State == CatalogSyncState.FirstFetch || result.State == CatalogSyncState.Updated)
@@ -236,6 +243,134 @@ namespace BlishEmotesList
             {
                 Logger.Error("Catalog refresh failed unexpectedly!");
                 Logger.Error(e.ToString());
+            }
+            finally
+            {
+                _syncLock.Release();
+            }
+        }
+
+        private async Task CheckNowAsync()
+        {
+            if (_globalSettingsView == null)
+            {
+                return;
+            }
+
+            _globalSettingsView.SetCheckNowEnabled(false);
+            _globalSettingsView.SetSyncStatus(Common.settings_global_sync_checking);
+
+            await _syncLock.WaitAsync().ConfigureAwait(false);
+            CatalogSyncResult result;
+            try
+            {
+                Logger.Debug("Manual catalog check started");
+                result = await CatalogManager.SyncAsync().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Manual catalog check failed unexpectedly!");
+                Logger.Error(e.ToString());
+                result = new CatalogSyncResult
+                {
+                    State = CatalogSyncState.Failed,
+                    ErrorMessage = e.Message,
+                };
+            }
+
+            // The sync ran in the background; apply and UI feedback must happen on the game thread.
+            GameService.Graphics.QueueMainThreadRender(device =>
+            {
+                try
+                {
+                    if (result.State == CatalogSyncState.Updated || result.State == CatalogSyncState.FirstFetch)
+                    {
+                        ApplyCatalogLive();
+                    }
+                    UpdateCheckNowStatus(result);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error("Live catalog apply failed unexpectedly!");
+                    Logger.Error(e.ToString());
+                    _globalSettingsView.SetSyncStatus(string.Format(Common.settings_global_sync_failed, e.Message));
+                }
+                finally
+                {
+                    _globalSettingsView.SetCheckNowEnabled(true);
+                    _syncLock.Release();
+                }
+            });
+        }
+
+        private void ApplyCatalogLive()
+        {
+            var cachedCatalog = CatalogManager.LoadCachedCatalogOrNull();
+            if (cachedCatalog == null)
+            {
+                return;
+            }
+
+            var pendingUpdate = CatalogManager.ReadPendingUpdateOrNull();
+            var newEmotes = EmotesManager.BuildCatalogEmotes(cachedCatalog);
+            try
+            {
+                var result = CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, newEmotes, fireCategoriesUpdated: false);
+
+                // A first-run migration stamps categories but does not place new emotes. Apply the
+                // same pending update a second time against the now-migrated state to place them.
+                if (result.Outcome == CatalogMergeOutcome.Migrated && pendingUpdate != null)
+                {
+                    result = CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, newEmotes, fireCategoriesUpdated: false);
+                }
+
+                if (result.Outcome != CatalogMergeOutcome.Noop && pendingUpdate != null && result.Outcome != CatalogMergeOutcome.Migrated)
+                {
+                    CatalogManager.ClearPendingUpdate();
+                }
+
+                // Swap the emote collection only after the category merge succeeded.
+                EmotesManager.GraveyardAndUpdateAll(newEmotes);
+                CategoriesManager.NotifyCategoriesUpdated();
+                this.Settings.InitEmotesSettings(EmotesManager.GetAll());
+
+                // Refresh lock states for newly arrived emotes within seconds.
+                _ = UpdateEmotesFromApi();
+
+                Logger.Info("Live catalog apply completed.");
+            }
+            catch (Exception)
+            {
+                // The category merge failed before swapping anything live, or the emote swap
+                // failed. New textures were never exposed to the UI, so dispose them immediately.
+                foreach (var emote in newEmotes)
+                {
+                    emote.Texture?.Dispose();
+                }
+                throw;
+            }
+        }
+
+        private void UpdateCheckNowStatus(CatalogSyncResult result)
+        {
+            switch (result.State)
+            {
+                case CatalogSyncState.UpToDate:
+                    _globalSettingsView.SetSyncStatus(Common.settings_global_sync_upToDate);
+                    break;
+                case CatalogSyncState.Updated:
+                case CatalogSyncState.FirstFetch:
+                    _globalSettingsView.SetSyncStatus(string.Format(Common.settings_global_sync_updated, result.NewEmoteIds.Count));
+                    break;
+                case CatalogSyncState.SchemaTooNew:
+                    _globalSettingsView.SetSyncStatus(Common.settings_global_sync_schemaTooNew);
+                    break;
+                case CatalogSyncState.Failed:
+                    _globalSettingsView.SetSyncStatus(string.Format(Common.settings_global_sync_failed, result.ErrorMessage));
+                    break;
+                default:
+                    _globalSettingsView.SetSyncStatus(string.Empty);
+                    break;
             }
         }
 
@@ -260,16 +395,16 @@ namespace BlishEmotesList
                 {
                     if (PersistenceManager.MergedCatalogVersion == null)
                     {
-                        CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, EmotesManager.GetAll());
-                        // The record was superseded by the migration's baseline (the migration
-                        // never places emotes), so it must not survive as a stale update.
-                        if (pendingUpdate != null)
+                        var migrationResult = CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, EmotesManager.GetAll());
+                        // The migration only stamps categories; keep the pending update so a
+                        // live apply (or the next launch) can place new emotes.
+                        if (pendingUpdate != null && migrationResult.Outcome != CatalogMergeOutcome.Migrated)
                         {
                             CatalogManager.ClearPendingUpdate();
                         }
                     }
                     // Already migrated: the update stays recorded and is applied at the next
-                    // launch, per the ticket-03 apply semantics.
+                    // launch or by a manual Check now.
                 }
                 catch (Exception e)
                 {

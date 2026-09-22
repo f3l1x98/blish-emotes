@@ -22,10 +22,18 @@ namespace felix.BlishEmotes.UI.Presenters
             this.View.UpdateCategory += View_UpdateCategoryClicked;
             this.View.DeleteCategory += View_DeleteCategoryClicked;
             this.View.ReorderCategories += View_ReorderCategories;
+            this.Model.Item1.CategoriesUpdated += CategoriesManager_CategoriesUpdated;
             this.View.Categories = this.Model.Item1.GetAll();
             this.View.Emotes = this.Model.Item2.GetAll();
 
             return base.Load(progress);
+        }
+
+        private void CategoriesManager_CategoriesUpdated(object sender, List<Category> e)
+        {
+            this.View.Categories = this.Model.Item1.GetAll();
+            this.View.Emotes = this.Model.Item2.GetAll();
+            this.View.Rebuild();
         }
 
         public bool IsEmoteInCategory(Guid categoryId, Emote emote)
@@ -90,6 +98,7 @@ namespace felix.BlishEmotes.UI.Presenters
             this.View.UpdateCategory -= View_UpdateCategoryClicked;
             this.View.DeleteCategory -= View_DeleteCategoryClicked;
             this.View.ReorderCategories -= View_ReorderCategories;
+            this.Model.Item1.CategoriesUpdated -= CategoriesManager_CategoriesUpdated;
         }
     }
 }
