@@ -42,7 +42,9 @@ namespace felix.BlishEmotes.Services.Catalog
     /// <list type="bullet">
     /// <item>Migration (state never reconciled, user has categories): each category whose name
     /// matches a catalog category's en name is stamped with that catalogId — "if you touched the
-    /// name, it's yours". Nothing is placed, nothing created, nothing pruned.</item>
+    /// name, it's yours". Catalog emotes that appear in no (non-Favourites) user category are then
+    /// placed into every linked category matching their placement tags, and linked categories are
+    /// auto-created only when a placed emote is tagged with them. Nothing is pruned.</item>
     /// <item>Seeding (state never reconciled, nothing but Favourites — fresh install or a
     /// corrupted file): every untombstoned catalog category is auto-created as a linked category
     /// and every emote placed per its tags.</item>
@@ -66,8 +68,9 @@ namespace felix.BlishEmotes.Services.Catalog
             {
                 if (document.Categories.Any(category => !category.IsFavourite))
                 {
-                    return Migrate(document, catalog);
+                    return Migrate(document, catalog, locale);
                 }
+                // Seed if only the favourite category exists as this one cannot be changed by user anyway
                 return Seed(document, catalog, locale);
             }
 
@@ -84,7 +87,13 @@ namespace felix.BlishEmotes.Services.Catalog
             return new CatalogMergeResult { Outcome = CatalogMergeOutcome.Noop };
         }
 
-        private static CatalogMergeResult Migrate(UserCategoriesDocument document, CatalogData catalog)
+        /// <summary>
+        /// Migrates the current user categories to the catalog. Name-matched categories are stamped
+        /// with their catalogId; emotes that are new to *this user* (absent from every non-Favourites
+        /// category) are placed into every linked category matching their placement tags, and linked
+        /// categories are auto-created only when a placed emote is tagged with them.
+        /// </summary>
+        private static CatalogMergeResult Migrate(UserCategoriesDocument document, CatalogData catalog, CultureInfo locale)
         {
             var result = new CatalogMergeResult { Outcome = CatalogMergeOutcome.Migrated };
             foreach (var catalogCategory in catalog.Categories ?? new List<CatalogCategory>())
@@ -106,8 +115,38 @@ namespace felix.BlishEmotes.Services.Catalog
                     result.MigratedCategoryNames.Add(match.Name);
                 }
                 // No match: the user renamed or deleted the old default — "if you touched the
-                // name, it's yours"; deleted defaults are simply absent and stay that way.
+                // name, it's yours"; deleted defaults stay absent unless a new-to-user emote is
+                // tagged with them, in which case they return carrying only that new content.
             }
+
+            // Build a synthetic pending update from the only baseline that exists for an upgrader:
+            // their own categories.json. Emotes present in any non-Favourites category are "known";
+            // everything else is new to this user and is placed now. Favourites is intentionally
+            // excluded from the check so a favourites-only emote still lands in its home category.
+            // Note: "not in any category" cannot distinguish truly new emotes from emotes the user
+            // deliberately removed from all categories; those removed emotes get re-placed.
+            var knownEmoteIds = new HashSet<string>(
+                document.Categories
+                    .Where(category => !category.IsFavourite)
+                    .SelectMany(category => category.EmoteIds ?? new List<string>()));
+            var syntheticPending = new PendingCatalogUpdate
+            {
+                CatalogVersion = catalog.Manifest.Version,
+                NewEmoteIds = catalog.Emotes
+                    .Where(emote => !knownEmoteIds.Contains(emote.Id))
+                    .Select(emote => emote.Id)
+                    .ToList(),
+                NewCategoryIds = new List<string>(),
+            };
+
+            // Apply the placement in the same pass. The pending-merge record from the sync side is
+            // intentionally ignored: an upgrader's first sync is a first fetch and would mark the
+            // entire catalog as new, so migration derives "new" from user state instead.
+            var placement = Update(document, catalog, syntheticPending, locale);
+            result.CreatedCategoryNames.AddRange(placement.CreatedCategoryNames);
+            result.SkippedNameConflicts.AddRange(placement.SkippedNameConflicts);
+            result.PlacedEmoteCount += placement.PlacedEmoteCount;
+
             document.MergedCatalogVersion = catalog.Manifest.Version;
             return result;
         }

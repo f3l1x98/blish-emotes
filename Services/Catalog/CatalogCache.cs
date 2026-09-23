@@ -75,6 +75,22 @@ namespace felix.BlishEmotes.Services.Catalog
             }
         }
 
+        /// <summary>Tries to load and validate the cached catalog. Returns <c>null</c> when missing, malformed or invalid.</summary>
+        public CatalogData TryLoad()
+        {
+            if (!HasCache())
+            {
+                return null;
+            }
+            try
+            {
+                return Load();
+            } catch (CatalogException e)
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Writes a fetched catalog into the cache: stage all files, validate the staged copy, then
         /// swap it in. On any failure the existing cache (if any) is left untouched.

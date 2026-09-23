@@ -26,5 +26,5 @@ Implemented live catalog apply for the manual Check now control.
 - `ModuleSettings.InitEmotesSettings(...)` rebuilds the per-emote keybind and radial-toggle maps (with existing handler de-duplication) so repeated applies never stack `Activated` handlers; `OnEmotesLoaded` refreshes the hotkey and radial settings views.
 - `CategorySettingsPresenter` subscribes to `CategoriesUpdated` so the category settings view refreshes when a live apply mutates categories underneath it.
 - After swapping, one fire-and-forget `UpdateEmotesFromApi()` pass updates lock states for new emotes within seconds.
-- First-run migration intentionally stamps categories but keeps the pending update, allowing the subsequent live apply (or next launch) to place the new emotes in one go.
+- First-run migration places new-to-user catalog content in the same pass, so a single merge call handles both stamping and placement. The pending-merge record is cleared on every non-noop apply (migration, seed, or update), ensuring no orphaned record lingers on disk.
 - `Strings/Common.resx` / `Common.Designer.cs` gained `settings_global_checkNow`, `settings_global_sync_checking`, `settings_global_sync_upToDate`, `settings_global_sync_updated`, `settings_global_sync_failed`, and `settings_global_sync_schemaTooNew`.

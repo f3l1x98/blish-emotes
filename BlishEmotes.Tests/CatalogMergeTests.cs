@@ -11,9 +11,10 @@ namespace BlishEmotes.Tests
 {
     /// <summary>
     /// The catalog merge into user-persisted categories: the one-time V2 migration (stamp by en
-    /// name match — "if you touched the name, it's yours"), seeding of an empty state, and the
-    /// update merge (place new emotes into every linked category matching their tags, auto-create
-    /// untombstoned categories the user doesn't have, prune nothing, idempotent).
+    /// name match — "if you touched the name, it's yours" — then place emotes that are new to this
+    /// user), seeding of an empty state, and the update merge (place new emotes into every linked
+    /// category matching their tags, auto-create untombstoned categories the user doesn't have,
+    /// prune nothing, idempotent).
     /// </summary>
     public static class CatalogMergeTests
     {
@@ -23,7 +24,7 @@ namespace BlishEmotes.Tests
         {
             Console.WriteLine("CatalogMerge");
 
-            TestRunner.Run("1.3.8 upgrader migrates: name matches stamped, touched names stay user-owned", () =>
+            TestRunner.Run("1.3.8 upgrader migrates: name matches stamped, touched names stay user-owned, new content is placed", () =>
             {
                 var catalog = RealCatalog();
                 // A customized 1.3.8 state: Favourites, renamed "Greetings!" (was Greeting),
@@ -57,12 +58,24 @@ namespace BlishEmotes.Tests
                 TestRunner.True(ByName(document, "My Emotes").CatalogId == null);
                 TestRunner.True(ByName(document, "Dance Moves").CatalogId == null);
                 TestRunner.True(ByName(document, "Favourites").CatalogId == null);
-                // The migration never touches membership and never resurrects a deleted default.
-                TestRunner.Equal(8, document.Categories.Count);
+                // Renamed/deleted defaults return carrying only the new content tagged with them.
+                TestRunner.Equal(10, document.Categories.Count);
+                var greeting = ByName(document, "Greeting");
+                TestRunner.Equal("greeting", greeting.CatalogId);
+                TestRunner.True(greeting.EmoteIds.Contains("beckon"));
+                TestRunner.True(greeting.EmoteIds.Contains("bow"));
+                TestRunner.True(greeting.EmoteIds.Contains("salute"));
+                TestRunner.False(greeting.EmoteIds.Contains("wave"), "already-known emote is not re-placed");
+                var dance = ByName(document, "Dance");
+                TestRunner.Equal("dance", dance.CatalogId);
+                TestRunner.True(dance.EmoteIds.Count > 0);
                 TestRunner.True(ByName(document, "Favourites").EmoteIds.SequenceEqual(new[] { "wave" }));
-                TestRunner.True(ByName(document, "Reaction").EmoteIds.SequenceEqual(new[] { "cry", "facepalm" }));
-                TestRunner.Equal(0, result.PlacedEmoteCount);
-                TestRunner.Empty(result.CreatedCategoryNames);
+                TestRunner.True(ByName(document, "Greetings!").EmoteIds.SequenceEqual(new[] { "wave" }));
+                // Outcome reports created categories and placed emotes.
+                TestRunner.Equal(2, result.CreatedCategoryNames.Count);
+                TestRunner.True(result.CreatedCategoryNames.Contains("Greeting"));
+                TestRunner.True(result.CreatedCategoryNames.Contains("Dance"));
+                TestRunner.Equal(61, result.PlacedEmoteCount);
             });
 
             TestRunner.Run("migration matches on the en name, not a localized one", () =>
@@ -88,6 +101,141 @@ namespace BlishEmotes.Tests
 
                 var second = CatalogMerge.Apply(document, catalog, null, Locale);
                 TestRunner.Equal(CatalogMergeOutcome.Noop, second.Outcome);
+            });
+
+            TestRunner.Run("renamed default + new tagged emote auto-creates linked category with only the new emotes", () =>
+            {
+                var catalog = BuildCatalog(1,
+                    categoryDefs: new[] { CatDef("greeting"), CatDef("fun") },
+                    emotes: new[] { EmoteDef("wave", "greeting"), EmoteDef("cheer", "fun"), EmoteDef("hail", "greeting") });
+                // "Greetings!" is a renamed default; "Fun" is untouched.
+                var document = new UserCategoriesDocument
+                {
+                    Categories = new List<PersistedCategory>
+                    {
+                        Cat("Favourites", favourite: true),
+                        Cat("Greetings!", emoteIds: new[] { "wave" }),
+                        Cat("Fun", emoteIds: new[] { "cheer" }),
+                    },
+                };
+
+                var result = CatalogMerge.Apply(document, catalog, null, Locale);
+
+                TestRunner.Equal(CatalogMergeOutcome.Migrated, result.Outcome);
+                TestRunner.Equal("fun", ByName(document, "Fun").CatalogId);
+                TestRunner.True(ByName(document, "Greetings!").CatalogId == null);
+                // The renamed default's catalog category returns carrying only the new emote.
+                var greeting = ByName(document, "Greeting");
+                TestRunner.Equal("greeting", greeting.CatalogId);
+                TestRunner.True(greeting.EmoteIds.SequenceEqual(new[] { "hail" }));
+                // Existing known emotes stay where the user put them.
+                TestRunner.True(ByName(document, "Greetings!").EmoteIds.SequenceEqual(new[] { "wave" }));
+                TestRunner.True(ByName(document, "Fun").EmoteIds.SequenceEqual(new[] { "cheer" }));
+                TestRunner.Equal(1, result.CreatedCategoryNames.Count);
+                TestRunner.True(result.CreatedCategoryNames.Contains("Greeting"));
+                TestRunner.Equal(1, result.PlacedEmoteCount);
+            });
+
+            TestRunner.Run("deleted default with no new tagged content stays absent", () =>
+            {
+                var catalog = BuildCatalog(1,
+                    categoryDefs: new[] { CatDef("fun"), CatDef("dance") },
+                    emotes: new[] { EmoteDef("cheer", "fun"), EmoteDef("boogie", "dance") });
+                // The user deleted the Dance default and moved its emote elsewhere.
+                var document = new UserCategoriesDocument
+                {
+                    Categories = new List<PersistedCategory>
+                    {
+                        Cat("Favourites", favourite: true),
+                        Cat("Fun", emoteIds: new[] { "cheer" }),
+                        Cat("My Emotes", emoteIds: new[] { "boogie" }),
+                    },
+                };
+
+                var result = CatalogMerge.Apply(document, catalog, null, Locale);
+
+                TestRunner.Equal(CatalogMergeOutcome.Migrated, result.Outcome);
+                TestRunner.True(document.Categories.All(c => c.CatalogId != "dance"), "deleted default must not be resurrected without new content");
+                TestRunner.Empty(result.CreatedCategoryNames);
+                TestRunner.Equal(0, result.PlacedEmoteCount);
+                // Moved emote stays exactly where the user put it.
+                TestRunner.True(ByName(document, "My Emotes").EmoteIds.SequenceEqual(new[] { "boogie" }));
+            });
+
+            TestRunner.Run("favourites-only emote still lands in its tagged category", () =>
+            {
+                var catalog = BuildCatalog(1,
+                    categoryDefs: new[] { CatDef("greeting"), CatDef("fun") },
+                    emotes: new[] { EmoteDef("wave", "greeting"), EmoteDef("beckon", "greeting") });
+                // wave lives only in Favourites; it must still be placed in Greeting. An empty
+                // non-Favourites category keeps us on the migration path (not seeding).
+                var document = new UserCategoriesDocument
+                {
+                    Categories = new List<PersistedCategory>
+                    {
+                        Cat("Favourites", favourite: true, emoteIds: new[] { "wave" }),
+                        Cat("Fun"),
+                    },
+                };
+
+                var result = CatalogMerge.Apply(document, catalog, null, Locale);
+
+                TestRunner.Equal(CatalogMergeOutcome.Migrated, result.Outcome);
+                var greeting = ByName(document, "Greeting");
+                TestRunner.Equal("greeting", greeting.CatalogId);
+                TestRunner.True(greeting.EmoteIds.Contains("wave"));
+                TestRunner.True(greeting.EmoteIds.Contains("beckon"));
+                TestRunner.Equal(2, result.PlacedEmoteCount);
+            });
+
+            TestRunner.Run("removed emote is re-placed into its tagged category", () =>
+            {
+                var catalog = BuildCatalog(1,
+                    categoryDefs: new[] { CatDef("greeting") },
+                    emotes: new[] { EmoteDef("wave", "greeting"), EmoteDef("beckon", "greeting") });
+                // beckon was removed from all non-Favourites categories; it is re-placed.
+                var document = new UserCategoriesDocument
+                {
+                    Categories = new List<PersistedCategory>
+                    {
+                        Cat("Favourites", favourite: true, emoteIds: new[] { "beckon" }),
+                        Cat("Greeting", emoteIds: new[] { "wave" }),
+                    },
+                };
+
+                var result = CatalogMerge.Apply(document, catalog, null, Locale);
+
+                TestRunner.Equal(CatalogMergeOutcome.Migrated, result.Outcome);
+                TestRunner.True(ByName(document, "Greeting").EmoteIds.SequenceEqual(new[] { "wave", "beckon" }));
+                TestRunner.Equal(1, result.PlacedEmoteCount);
+            });
+
+            TestRunner.Run("migration ignores missing, stale and garbage pending-merge records", () =>
+            {
+                var catalog = BuildCatalog(1,
+                    categoryDefs: new[] { CatDef("greeting") },
+                    emotes: new[] { EmoteDef("wave", "greeting"), EmoteDef("beckon", "greeting") });
+                var document = new UserCategoriesDocument
+                {
+                    Categories = new List<PersistedCategory>
+                    {
+                        Cat("Favourites", favourite: true, emoteIds: new[] { "wave" }),
+                        Cat("Greeting", emoteIds: new[] { "wave" }),
+                    },
+                };
+
+                var withNull = CatalogMerge.Apply(Clone(document), catalog, null, Locale);
+                var withGarbage = CatalogMerge.Apply(Clone(document), catalog, new PendingCatalogUpdate
+                {
+                    CatalogVersion = 99,
+                    NewEmoteIds = new List<string> { "garbage" },
+                    NewCategoryIds = new List<string> { "garbage" },
+                }, Locale);
+
+                TestRunner.Equal(CatalogMergeOutcome.Migrated, withNull.Outcome);
+                TestRunner.Equal(CatalogMergeOutcome.Migrated, withGarbage.Outcome);
+                TestRunner.Equal(1, withNull.PlacedEmoteCount);
+                TestRunner.Equal(1, withGarbage.PlacedEmoteCount);
             });
 
             TestRunner.Run("empty state (only Favourites) is seeded with every catalog default", () =>

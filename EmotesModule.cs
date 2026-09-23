@@ -60,9 +60,14 @@ namespace BlishEmotesList
         public ModuleSettings Settings;
         #endregion
 
-        private readonly System.Threading.SemaphoreSlim _syncLock = new System.Threading.SemaphoreSlim(1, 1);
+        // Semaphore for SyncCatalogAsync. Necessary because the onStartup check runs in a different Thread than the
+        // manual triggered one (prevent both running at the same time)
+        private readonly SemaphoreSlim _syncLock = new SemaphoreSlim(1, 1);
         private DateTime _lastCatalogCheck = DateTime.MinValue;
         private long? _syncStartVersion;
+
+        private static readonly string CornerIconSyncMessage =
+            Common.settings_global_sync_downloading.Substring(0, Common.settings_global_sync_downloading.IndexOf("…", StringComparison.Ordinal) + 1);
 
 
         [ImportingConstructor]
@@ -176,7 +181,7 @@ namespace BlishEmotesList
 
             // Settings
             _globalSettingsView = new GlobalSettingsView(this.Settings);
-            _globalSettingsView.CheckNowClicked += async (sender, e) => await CheckNowAsync();
+            _globalSettingsView.CheckNowClicked += async (sender, e) => await SyncCatalogAsync(manual: true);
             _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.GlobalSettingsIcon), () => _globalSettingsView, Common.settings_ui_global_tab));
             // Category setting
             _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.CategorySettingsIcon), () => new CategorySettingsView(CategoriesManager, EmotesManager), Common.settings_ui_categories_tab));
@@ -200,8 +205,8 @@ namespace BlishEmotesList
                 {
                     EmotesManager.LoadFromCatalog(cachedCatalog);
                     var pendingUpdate = CatalogManager.ReadPendingUpdateOrNull();
-                    CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, EmotesManager.GetAll());
-                    if (pendingUpdate != null)
+                    var mergeResult = CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, EmotesManager.GetAll());
+                    if (mergeResult.Outcome != CatalogMergeOutcome.Noop && pendingUpdate != null)
                     {
                         CatalogManager.ClearPendingUpdate();
                     }
@@ -220,7 +225,7 @@ namespace BlishEmotesList
 
                 if (this.Settings.GlobalCheckCatalogOnStartup.Value)
                 {
-                    _ = RefreshCatalogAsync();
+                    _ = SyncCatalogAsync(manual: false);
                 }
             }
             catch (Exception e)
@@ -234,106 +239,78 @@ namespace BlishEmotesList
         {
             GameService.Graphics.QueueMainThreadRender(device =>
             {
-                _cornerIcon.LoadingMessage = Common.settings_global_sync_downloading.Substring(0, Common.settings_global_sync_downloading.IndexOf("…") + 1);
+                SetCornerIconLoading(CornerIconSyncMessage);
                 _globalSettingsView?.UpdateCatalogStatus(BuildCatalogStatus(CatalogManager.LastSyncResult, _syncStartVersion, progress));
+                // TODO this gets called every time (every time a file has been downloaded) even though it only checks if the state has changed
+                //  -> Only call if status has changed
                 UpdateRadialEmptyState();
             });
         }
 
-        private async Task RefreshCatalogAsync()
+        /// <summary>
+        /// Runs catalog sync, if not already running, while notifying the UI about changes.
+        /// </summary>
+        private async Task SyncCatalogAsync(bool manual)
         {
             if (!await _syncLock.WaitAsync(0).ConfigureAwait(false))
             {
-                // A manual Check now is already running.
                 return;
             }
+
+            CatalogSyncResult result;
             try
             {
-                Logger.Debug("Refreshing emote catalog in the background");
                 _syncStartVersion = CatalogManager.LastSyncResult.Version;
-                var result = await CatalogManager.SyncAsync().ConfigureAwait(false);
+                Logger.Debug(manual ? "Manual catalog check started" : "Refreshing emote catalog in the background");
+
+                // Update UI to indicate downloading
+                // TODO: Is this even necessary? After all the UI is updated as soon as a progress has been emitted (OnCatalogProgressChanged)
                 GameService.Graphics.QueueMainThreadRender(device =>
                 {
-                    _cornerIcon.LoadingMessage = null;
-                    _lastCatalogCheck = DateTime.UtcNow;
-                    UpdateCatalogUx();
+                    _globalSettingsView?.UpdateCatalogStatus(BuildCatalogStatus(
+                        new CatalogSyncResult { State = CatalogSyncState.Downloading, Version = _syncStartVersion },
+                        _syncStartVersion, CatalogManager.CurrentProgress));
+                    SetCornerIconLoading(CornerIconSyncMessage);
                 });
-                if (result.State == CatalogSyncState.FirstFetch || result.State == CatalogSyncState.Updated)
-                {
-                    QueueFirstRunMigration();
-                }
+
+                result = await CatalogManager.SyncAsync().ConfigureAwait(false);
             }
             catch (Exception e)
             {
-                Logger.Error("Catalog refresh failed unexpectedly!");
+                Logger.Error("Catalog sync failed unexpectedly!");
                 Logger.Error(e.ToString());
-                GameService.Graphics.QueueMainThreadRender(device =>
+                // A throw before CatalogSync's own catch leaves LastSyncResult at Downloading;
+                // synthesize a Failed result so the status below cannot get stuck on it.
+                result = new CatalogSyncResult
                 {
-                    _cornerIcon.LoadingMessage = null;
-                    _lastCatalogCheck = DateTime.UtcNow;
-                    UpdateCatalogUx();
-                });
+                    State = CatalogSyncState.Failed,
+                    Version = _syncStartVersion,
+                    ErrorMessage = e.Message,
+                };
             }
             finally
             {
                 _syncLock.Release();
             }
-        }
 
-        private async Task CheckNowAsync()
-        {
-            if (_globalSettingsView == null)
-            {
-                return;
-            }
-
-            await _syncLock.WaitAsync().ConfigureAwait(false);
-            _syncStartVersion = CatalogManager.LastSyncResult.Version;
-            GameService.Graphics.QueueMainThreadRender(device =>
-            {
-                _globalSettingsView.UpdateCatalogStatus(BuildCatalogStatus(new CatalogSyncResult { State = CatalogSyncState.Downloading, Version = _syncStartVersion }, _syncStartVersion, CatalogManager.CurrentProgress));
-                _cornerIcon.LoadingMessage = Common.settings_global_sync_downloading.Substring(0, Common.settings_global_sync_downloading.IndexOf("…") + 1);
-            });
-
-            CatalogSyncResult result;
-            try
-            {
-                Logger.Debug("Manual catalog check started");
-                result = await CatalogManager.SyncAsync().ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                Logger.Error("Manual catalog check failed unexpectedly!");
-                Logger.Error(e.ToString());
-                result = new CatalogSyncResult
-                {
-                    State = CatalogSyncState.Failed,
-                    ErrorMessage = e.Message,
-                };
-            }
-
-            // The sync ran in the background; apply and UI feedback must happen on the game thread.
+            // Update UI with result of sync
             GameService.Graphics.QueueMainThreadRender(device =>
             {
                 try
                 {
-                    _cornerIcon.LoadingMessage = null;
+                    SetCornerIconLoading(null);
                     _lastCatalogCheck = DateTime.UtcNow;
                     if (result.State == CatalogSyncState.Updated || result.State == CatalogSyncState.FirstFetch)
                     {
                         ApplyCatalogLive();
                         ShowCatalogToast(result);
                     }
-                    UpdateCatalogUx();
+                    UpdateCatalogUx(result);
                 }
                 catch (Exception e)
                 {
                     Logger.Error("Live catalog apply failed unexpectedly!");
                     Logger.Error(e.ToString());
-                }
-                finally
-                {
-                    _syncLock.Release();
                 }
             });
         }
@@ -352,14 +329,7 @@ namespace BlishEmotesList
             {
                 var result = CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, newEmotes, fireCategoriesUpdated: false);
 
-                // A first-run migration stamps categories but does not place new emotes. Apply the
-                // same pending update a second time against the now-migrated state to place them.
-                if (result.Outcome == CatalogMergeOutcome.Migrated && pendingUpdate != null)
-                {
-                    result = CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, newEmotes, fireCategoriesUpdated: false);
-                }
-
-                if (result.Outcome != CatalogMergeOutcome.Noop && pendingUpdate != null && result.Outcome != CatalogMergeOutcome.Migrated)
+                if (result.Outcome != CatalogMergeOutcome.Noop && pendingUpdate != null)
                 {
                     CatalogManager.ClearPendingUpdate();
                 }
@@ -386,6 +356,7 @@ namespace BlishEmotesList
             }
         }
 
+        // TODO: This looks like it should be refactored or at least moved somewhere else
         private CatalogStatus BuildCatalogStatus(CatalogSyncResult result, long? previousVersion, CatalogSyncProgress progress = null)
         {
             bool hasCache = CatalogManager.HasCache();
@@ -483,12 +454,23 @@ namespace BlishEmotesList
             return status;
         }
 
-        private void UpdateCatalogUx()
+        private void SetCornerIconLoading(string message)
         {
-            var result = CatalogManager.LastSyncResult;
-            var status = BuildCatalogStatus(result, _syncStartVersion);
+            // The corner icon is disposed while GlobalHideCornerIcon is set.
+            if (_cornerIcon != null)
+            {
+                _cornerIcon.LoadingMessage = message;
+            }
+        }
+
+        private void UpdateCatalogUx(CatalogSyncResult result = null)
+        {
+            var status = BuildCatalogStatus(result ?? CatalogManager.LastSyncResult, _syncStartVersion);
             _globalSettingsView?.UpdateCatalogStatus(status);
             UpdateRadialEmptyState();
+            // TODO: This is unnecessary during the first call inside LoadAsync
+            //  (already called inside InitUI shortly before and there is most certainly nothing new yet)
+            //  -> HOWEVER prob required during other calls to this method
             DrawEmoteListContextMenu();
         }
 
@@ -561,46 +543,6 @@ namespace BlishEmotesList
                 ? string.Format(Common.settings_global_sync_firstFetch_toast, names)
                 : string.Format(Common.settings_global_sync_updated_toast, names);
             ScreenNotification.ShowNotification(message, ScreenNotification.NotificationType.Green);
-        }
-
-        /// <summary>
-        /// A user upgrading from 1.x migrates on the first 2.0 run — the moment a catalog first
-        /// becomes available (a fetch just succeeded). Stamping catalogIds onto name-matched
-        /// categories changes nothing rendered, so it is safe to apply immediately; the fetched
-        /// emotes and any new categories themselves take effect on the next launch (live apply is
-        /// ticket 05). No-op when the state is already migrated.
-        /// </summary>
-        private void QueueFirstRunMigration()
-        {
-            var cachedCatalog = CatalogManager.LoadCachedCatalogOrNull();
-            if (cachedCatalog == null)
-            {
-                return;
-            }
-            var pendingUpdate = CatalogManager.ReadPendingUpdateOrNull();
-            GameService.Graphics.QueueMainThreadRender(device =>
-            {
-                try
-                {
-                    if (PersistenceManager.MergedCatalogVersion == null)
-                    {
-                        var migrationResult = CategoriesManager.ApplyCatalog(cachedCatalog, pendingUpdate, EmotesManager.CurrentLocale, EmotesManager.GetAll());
-                        // The migration only stamps categories; keep the pending update so a
-                        // live apply (or the next launch) can place new emotes.
-                        if (pendingUpdate != null && migrationResult.Outcome != CatalogMergeOutcome.Migrated)
-                        {
-                            CatalogManager.ClearPendingUpdate();
-                        }
-                    }
-                    // Already migrated: the update stays recorded and is applied at the next
-                    // launch or by a manual Check now.
-                }
-                catch (Exception e)
-                {
-                    Logger.Error("Catalog migration failed - retrying at the next launch.");
-                    Logger.Error(e.ToString());
-                }
-            });
         }
 
         public override IView GetSettingsView()

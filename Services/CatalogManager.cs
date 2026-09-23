@@ -68,11 +68,12 @@ namespace felix.BlishEmotes.Services
         /// <summary>
         /// Cheap conditional sync: one conditional GET on the manifest, hash-diff against the cache,
         /// re-pull only changed files, stage and validate before swapping. Returns a detailed outcome
-        /// for the UX; applied catalog updates take effect at the next module launch.
+        /// for the UX; the caller applies a swapped catalog live on the game thread.
         /// </summary>
         public async Task<CatalogSyncResult> SyncAsync()
         {
             CatalogData previousCache = LoadCachedCatalogOrNull();
+            // TODO: it is called LastSyncRESULT so shouldnt it only have the results?
             LastSyncResult = new CatalogSyncResult
             {
                 State = CatalogSyncState.Downloading,
@@ -88,7 +89,7 @@ namespace felix.BlishEmotes.Services
 
             using (var client = new CatalogClient(CatalogUrl))
             {
-                LastSyncResult = await CatalogSync.RunAsync(client, _cache, previousCache, progress).ConfigureAwait(false);
+                LastSyncResult = await CatalogSync.RunAsync(client, _cache, progress).ConfigureAwait(false);
                 LogResult(LastSyncResult);
                 return LastSyncResult;
             }

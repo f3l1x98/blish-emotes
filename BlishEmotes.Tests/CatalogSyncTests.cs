@@ -51,7 +51,7 @@ namespace BlishEmotes.Tests
                     using (var client = new CatalogClient(server.BaseUrl))
                     {
                         server.ResetRequestCounts();
-                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var result = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
 
                         TestRunner.Equal(CatalogSyncState.UpToDate, result.State);
                         TestRunner.Equal(1, server.RequestCount("manifest.json"));
@@ -79,7 +79,7 @@ namespace BlishEmotes.Tests
 
                     using (var client = new CatalogClient(server.BaseUrl))
                     {
-                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var result = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
 
                         TestRunner.Equal(CatalogSyncState.Updated, result.State);
                         TestRunner.Equal(2, result.Version);
@@ -111,7 +111,7 @@ namespace BlishEmotes.Tests
 
                     using (var client = new CatalogClient(server.BaseUrl))
                     {
-                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var result = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
                         TestRunner.Equal(CatalogSyncState.SchemaTooNew, result.State);
                         TestRunner.Equal(2, result.Version);
 
@@ -121,7 +121,7 @@ namespace BlishEmotes.Tests
 
                         // A second sync must re-fetch, not skip with a 304.
                         server.ResetRequestCounts();
-                        var retry = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var retry = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
                         TestRunner.Equal(CatalogSyncState.SchemaTooNew, retry.State);
                         TestRunner.Equal(1, server.RequestCount("manifest.json"));
                     }
@@ -165,7 +165,7 @@ namespace BlishEmotes.Tests
 
                     using (var client = new CatalogClient(server.BaseUrl))
                     {
-                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var result = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
                         TestRunner.Equal(CatalogSyncState.Failed, result.State);
                         TestRunner.NotNull(result.ErrorMessage);
 
@@ -179,7 +179,7 @@ namespace BlishEmotes.Tests
                         server.SetFile("manifest.json", BuildManifest(3, "textures/barbecue.png", newTexture));
                         server.ResetRequestCounts();
 
-                        var retry = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var retry = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
                         TestRunner.Equal(CatalogSyncState.Updated, retry.State);
                         TestRunner.Equal(3, retry.Version);
                         TestRunner.Equal(1, server.RequestCount("manifest.json"));
@@ -200,7 +200,7 @@ namespace BlishEmotes.Tests
                     server.Stop();
                     using (var client = new CatalogClient(server.BaseUrl))
                     {
-                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var result = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
                         TestRunner.Equal(CatalogSyncState.Failed, result.State);
                         TestRunner.NotNull(result.ErrorMessage);
                     }
@@ -229,7 +229,7 @@ namespace BlishEmotes.Tests
 
                     using (var client = new CatalogClient(server.BaseUrl))
                     {
-                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var result = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
                         TestRunner.Equal(CatalogSyncState.Updated, result.State);
                         TestRunner.Equal(brokenTexture.Length,
                             File.ReadAllBytes(cache.GetTextureFilePath("barbecue")).Length);
@@ -254,7 +254,7 @@ namespace BlishEmotes.Tests
 
                     using (var client = new CatalogClient(server.BaseUrl))
                     {
-                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var result = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
 
                         TestRunner.Equal(CatalogSyncState.Updated, result.State);
                         TestRunner.Equal(2, result.Version);
@@ -308,7 +308,7 @@ namespace BlishEmotes.Tests
 
                     using (var client = new CatalogClient(server.BaseUrl))
                     {
-                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var result = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
 
                         TestRunner.Equal(CatalogSyncState.Updated, result.State);
                         TestRunner.Equal(1, result.NewCategoryIds.Count);
@@ -334,7 +334,7 @@ namespace BlishEmotes.Tests
 
                     using (var client = new CatalogClient(server.BaseUrl))
                     {
-                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var result = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
                         TestRunner.Equal(CatalogSyncState.UpToDate, result.State);
                         TestRunner.True(cache.ReadPendingUpdateOrNull() == null);
                     }
@@ -361,7 +361,7 @@ namespace BlishEmotes.Tests
                     var progressReports = new List<CatalogSyncProgress>();
                     var progress = new Progress<CatalogSyncProgress>(p => progressReports.Add(p));
 
-                    var result = CatalogSync.RunAsync(client, cache, previous, progress).GetAwaiter().GetResult();
+                    var result = CatalogSync.RunAsync(client, cache, progress).GetAwaiter().GetResult();
 
                     TestRunner.Equal(CatalogSyncState.Updated, result.State);
                     TestRunner.True(progressReports.Count > 0, "at least one progress report");
@@ -391,7 +391,7 @@ namespace BlishEmotes.Tests
 
                     using (var client = new CatalogClient(server.BaseUrl))
                     {
-                        var result = CatalogSync.RunAsync(client, cache, previous).GetAwaiter().GetResult();
+                        var result = CatalogSync.RunAsync(client, cache, null).GetAwaiter().GetResult();
                         TestRunner.Equal(CatalogSyncState.Failed, result.State);
 
                         // Old cache, ETag and no pending record (the record is written only after

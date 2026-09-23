@@ -18,14 +18,16 @@ namespace felix.BlishEmotes.Services.Catalog
     public static class CatalogSync
     {
         /// <summary>
-        /// Runs the sync and returns a detailed outcome. <paramref name="previousCache"/> is the
-        /// catalog currently loaded by the module; <c>null</c> means this is a fresh install.
+        /// Runs the sync and returns a detailed outcome.
         /// </summary>
-        public static async Task<CatalogSyncResult> RunAsync(CatalogClient client, CatalogCache cache, CatalogData previousCache, IProgress<CatalogSyncProgress> progress = null)
+        // TODO: I think passing previousCache is useless as it is always `cache.Load()` or null
+        public static async Task<CatalogSyncResult> RunAsync(CatalogClient client, CatalogCache cache, IProgress<CatalogSyncProgress> progress = null)
         {
-            string etag = previousCache == null ? null : cache.LoadETag();
-            bool hadCache = previousCache != null;
-            long? previousVersion = previousCache?.Manifest?.Version;
+            // If previousCache is null -> Fresh install
+            CatalogData currentCache = cache.TryLoad();
+            string etag = currentCache == null ? null : cache.LoadETag();
+            bool hadCache = currentCache != null;
+            long? previousVersion = currentCache?.Manifest?.Version;
 
             try
             {
@@ -50,6 +52,8 @@ namespace felix.BlishEmotes.Services.Catalog
                     throw new CatalogException("manifest has no file map");
                 }
 
+                // TODO: I think I could just use currentCache.Manifest and compare the hashes stored in there
+                //  Only con: would not discover if files have been tempered with
                 List<string> changedPaths = DiffAgainstCache(cache, remoteManifest);
                 int totalFiles = remoteManifest.Files.Count;
                 progress?.Report(new CatalogSyncProgress { State = CatalogSyncState.Downloading, DownloadedFiles = 0, TotalFiles = totalFiles });
@@ -92,11 +96,12 @@ namespace felix.BlishEmotes.Services.Catalog
                     Files = allFiles,
                 };
 
-                var newEmoteIds = NewEmoteIds(previousCache, data);
-                var newCategoryIds = NewCategoryIds(previousCache, data);
+                var newEmoteIds = NewEmoteIds(currentCache, data);
+                var newCategoryIds = NewCategoryIds(currentCache, data);
 
                 // Record what this update changed before swapping the cache: the merge consumes
-                // the record when the update is applied (next launch, until live apply lands).
+                // the record when the update is applied (live by the caller, or at next launch
+                // if that apply never runs).
                 // Written first on purpose — if the swap fails afterwards the orphaned record is
                 // neutralized by the version check in the merge and cleared on the next apply.
                 cache.StorePendingUpdate(new PendingCatalogUpdate
