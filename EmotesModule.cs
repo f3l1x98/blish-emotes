@@ -226,41 +226,37 @@ namespace BlishEmotesList
             }
         }
 
+        // Both handlers run on the game thread: CatalogManager raises its events through the
+        // overlay's synchronization context, so UI state may be touched directly.
         private void OnCatalogProgressChanged(object sender, CatalogSyncProgress progress)
         {
-            GameService.Graphics.QueueMainThreadRender(device =>
-            {
-                SetCornerIconLoading(CornerIconSyncMessage);
-                // TODO this gets called every time (every time a file has been downloaded) even though it only checks if the state has changed
-                //  -> Only call if status has changed
-                UpdateRadialEmptyState();
-            });
+            SetCornerIconLoading(CornerIconSyncMessage);
+            // TODO this gets called every time (every time a file has been downloaded) even though it only checks if the state has changed
+            //  -> Only call if status has changed
+            UpdateRadialEmptyState();
         }
 
         /// <summary>
-        /// Runs catalog sync, if not already running, while notifying the UI about changes.
+        /// Applies a finished sync: an updated catalog is applied live (no restart needed), the
+        /// corner icon loading state is cleared, and the empty-state/context-menu UX is refreshed.
         /// </summary>
         private void OnSyncResultUpdated(object sender, CatalogSyncResult result)
         {
-            // Update UI with result of sync
-            GameService.Graphics.QueueMainThreadRender(device =>
+            try
             {
-                try
+                SetCornerIconLoading(null);
+                if (result.State == CatalogSyncState.Updated || result.State == CatalogSyncState.FirstFetch)
                 {
-                    SetCornerIconLoading(null);
-                    if (result.State == CatalogSyncState.Updated || result.State == CatalogSyncState.FirstFetch)
-                    {
-                        ApplyCatalogLive();
-                        ShowCatalogToast(result);
-                    }
-                    UpdateCatalogUx();
+                    ApplyCatalogLive();
+                    ShowCatalogToast(result);
                 }
-                catch (Exception e)
-                {
-                    Logger.Error("Live catalog apply failed unexpectedly!");
-                    Logger.Error(e.ToString());
-                }
-            });
+                UpdateCatalogUx();
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Live catalog apply failed unexpectedly!");
+                Logger.Error(e.ToString());
+            }
         }
 
         private void ApplyCatalogLive()
@@ -295,10 +291,14 @@ namespace BlishEmotesList
             catch (Exception)
             {
                 // The category merge failed before swapping anything live, or the emote swap
-                // failed. New textures were never exposed to the UI, so dispose them immediately.
+                // failed. Dispose only textures that were never exposed to the UI: unchanged
+                // entries are reused live instances whose textures are still rendered.
                 foreach (var emote in catalogEmotes)
                 {
-                    emote.Texture?.Dispose();
+                    if (!EmotesManager.IsLiveEmote(emote))
+                    {
+                        emote.Texture?.Dispose();
+                    }
                 }
                 throw;
             }

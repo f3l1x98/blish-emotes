@@ -1,8 +1,8 @@
-﻿using Blish_HUD;
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using felix.BlishEmotes.Services.Catalog;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Globalization;
 
 namespace felix.BlishEmotes
 {
@@ -37,6 +37,48 @@ namespace felix.BlishEmotes
             _Label = Names != null
                 ? CatalogNames.Resolve(Names, locale, Id)
                 : CatalogNames.TitleCaseId(Id);
+        }
+
+        public bool EqualsCatalogEmote(CatalogEmote catalogEmote)
+        {
+            return this.Id == catalogEmote.Id
+                   && this.Command == catalogEmote.Command
+                   && ListEquals(this.AlternativeCommands, catalogEmote.AlternativeCommands)
+                   && ListEquals(this.Categories, catalogEmote.Categories)
+                   && NamesEquals(this.Names, catalogEmote.Names);
+        }
+
+        private static bool ListEquals(List<string> a, List<string> b)
+        {
+            if (ReferenceEquals(a, b))
+            {
+                return true;
+            }
+            if (a == null || b == null || a.Count != b.Count)
+            {
+                return false;
+            }
+            return a.SequenceEqual(b);
+        }
+
+        private static bool NamesEquals(Dictionary<string, string> a, Dictionary<string, string> b)
+        {
+            if (ReferenceEquals(a, b))
+            {
+                return true;
+            }
+            if (a == null || b == null || a.Count != b.Count)
+            {
+                return false;
+            }
+            foreach (var pair in a)
+            {
+                if (!b.TryGetValue(pair.Key, out string value) || pair.Value != value)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

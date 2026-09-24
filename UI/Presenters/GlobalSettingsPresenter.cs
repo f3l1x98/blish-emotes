@@ -37,6 +37,8 @@ namespace felix.BlishEmotes.UI.Presenters
             return base.Load(progress);
         }
 
+        // Both handlers run on the game thread (CatalogManager raises its events through the
+        // overlay's synchronization context), so the view may be updated directly.
         private void CatalogManager_LastSyncResultUpdated(object sender, CatalogSyncResult e)
         {
             this.View.UpdateCatalogStatus(BuildCatalogStatus(e));

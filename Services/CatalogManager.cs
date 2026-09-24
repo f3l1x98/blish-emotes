@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Modules.Managers;
@@ -43,11 +44,19 @@ namespace felix.BlishEmotes.Services
         /// <summary>Fired whenever a file is downloaded during a sync.</summary>
         public event EventHandler<CatalogSyncProgress> ProgressChanged;
 
+        // The overlay's synchronization context, captured on the game thread at construction.
+        // All sync events are raised through it so subscribers may touch Blish UI state directly;
+        // Post lands between frames on the game thread (unlike QueueMainThreadRender, which runs
+        // inside the render pass and is meant for GraphicsDevice work). Null when constructed
+        // without a context (unit tests) — events then fire inline on the syncing thread.
+        private readonly SynchronizationContext _uiContext;
+
         public CatalogManager(DirectoriesManager directoriesManager)
         {
             IReadOnlyList<string> registeredDirectories = directoriesManager.RegisteredDirectories;
             string dataDirectory = directoriesManager.GetFullDirectoryPath(registeredDirectories[0]);
             _cache = new CatalogCache(dataDirectory);
+            _uiContext = SynchronizationContext.Current;
         }
 
         /// <summary>True when a usable cache directory exists on disk.</summary>
@@ -82,6 +91,8 @@ namespace felix.BlishEmotes.Services
         /// re-pull only changed files, stage and validate before swapping. Returns a detailed outcome
         /// for the UX; the caller applies a swapped catalog live on the game thread.
         /// Guarded against multiple callers. Subsequent callers receive the same running Task.
+        /// <see cref="LastSyncResultUpdated"/> and <see cref="ProgressChanged"/> are raised on the
+        /// game thread (see <see cref="_uiContext"/>), so subscribers may update UI directly.
         /// </summary>
         public Task<CatalogSyncResult> SyncAsync()
         {
@@ -118,14 +129,11 @@ namespace felix.BlishEmotes.Services
                     Version = previousCache?.Manifest?.Version,
                     PreviousVersion = previousCache?.Manifest?.Version,
                 };
-                LastSyncResultUpdated?.Invoke(this, LastSyncResult);
+                RaiseLastSyncResultUpdated(LastSyncResult);
 
-                var progress = new Progress<CatalogSyncProgress>();
-                progress.ProgressChanged += (sender, p) =>
-                {
-                    CurrentProgress = p;
-                    ProgressChanged?.Invoke(this, p);
-                };
+                // Deliberately not Progress<T>: it captures whatever context the *caller* happens
+                // to run on; the relay marshals through the manager's own captured context instead.
+                var progress = new SyncProgressRelay(this);
 
                 using (var client = new CatalogClient(CatalogUrl))
                 {
@@ -149,10 +157,53 @@ namespace felix.BlishEmotes.Services
             finally
             {
                 LastCatalogCheck = DateTime.UtcNow;
-                LastSyncResultUpdated?.Invoke(this, LastSyncResult);
                 LogResult(LastSyncResult);
+                RaiseLastSyncResultUpdated(LastSyncResult);
             }
             return LastSyncResult;
+        }
+
+        private void RaiseLastSyncResultUpdated(CatalogSyncResult result)
+        {
+            RaiseOnGameThread(() => LastSyncResultUpdated?.Invoke(this, result));
+        }
+
+        private void RaiseProgressChanged(CatalogSyncProgress progress)
+        {
+            RaiseOnGameThread(() =>
+            {
+                CurrentProgress = progress;
+                ProgressChanged?.Invoke(this, progress);
+            });
+        }
+
+        private void RaiseOnGameThread(Action raise)
+        {
+            if (_uiContext != SynchronizationContext.Current)
+            {
+                _uiContext.Post(_ => raise(), null);
+            }
+            else
+            {
+                raise();
+            }
+        }
+
+        /// <summary>Relays <see cref="CatalogSync"/>'s progress reports into
+        /// <see cref="RaiseProgressChanged"/>, which marshals them to the game thread.</summary>
+        private class SyncProgressRelay : IProgress<CatalogSyncProgress>
+        {
+            private readonly CatalogManager _owner;
+
+            public SyncProgressRelay(CatalogManager owner)
+            {
+                _owner = owner;
+            }
+
+            public void Report(CatalogSyncProgress value)
+            {
+                _owner.RaiseProgressChanged(value);
+            }
         }
 
         /// <summary>Cache path of an emote's texture (<c>catalog/textures/{id}.png</c>).</summary>
