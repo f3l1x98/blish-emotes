@@ -1,14 +1,14 @@
-﻿using Blish_HUD;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using Blish_HUD;
 using felix.BlishEmotes.Exceptions;
 using felix.BlishEmotes.Services;
 using felix.BlishEmotes.Services.Catalog;
 using felix.BlishEmotes.Services.Persistence;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
 
 namespace felix.BlishEmotes
 {
@@ -315,6 +315,9 @@ namespace felix.BlishEmotes
             }
         }
 
+        /// <summary>
+        /// Sets <c>category.Emotes</c> based on <c>category.EmoteIds</c> and passed emotes list for all categories.
+        /// </summary>
         public void ResolveEmoteIds(List<Emote> emotes)
         {
             foreach (var category in categories.Values)

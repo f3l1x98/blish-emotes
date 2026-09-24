@@ -1,11 +1,11 @@
-using felix.BlishEmotes.Exceptions;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using felix.BlishEmotes.Exceptions;
+using Newtonsoft.Json;
 
 namespace felix.BlishEmotes.Services.Catalog
 {
@@ -20,7 +20,6 @@ namespace felix.BlishEmotes.Services.Catalog
         /// <summary>
         /// Runs the sync and returns a detailed outcome.
         /// </summary>
-        // TODO: I think passing previousCache is useless as it is always `cache.Load()` or null
         public static async Task<CatalogSyncResult> RunAsync(CatalogClient client, CatalogCache cache, IProgress<CatalogSyncProgress> progress = null)
         {
             // If previousCache is null -> Fresh install
@@ -34,7 +33,7 @@ namespace felix.BlishEmotes.Services.Catalog
                 var manifestResult = await client.GetManifestAsync(etag).ConfigureAwait(false);
                 if (manifestResult.NotModified)
                 {
-                    return Result(CatalogSyncState.UpToDate, previousVersion, new List<string>(), new List<string>());
+                    return Result(CatalogSyncState.UpToDate, previousVersion, previousVersion, new List<string>(), new List<string>());
                 }
 
                 var remoteManifest = Deserialize<CatalogManifest>(manifestResult.ManifestJson);
@@ -44,7 +43,7 @@ namespace felix.BlishEmotes.Services.Catalog
                 {
                     // Deliberately do not store the ETag: a future check must re-fetch the
                     // too-new manifest so the UX can keep reporting schema-too-new.
-                    return Result(CatalogSyncState.SchemaTooNew, remoteVersion, new List<string>(), new List<string>());
+                    return Result(CatalogSyncState.SchemaTooNew, remoteVersion, previousVersion, new List<string>(), new List<string>());
                 }
 
                 if (remoteManifest == null || remoteManifest.Files == null)
@@ -53,7 +52,7 @@ namespace felix.BlishEmotes.Services.Catalog
                 }
 
                 // TODO: I think I could just use currentCache.Manifest and compare the hashes stored in there
-                //  Only con: would not discover if files have been tempered with
+                //  Only con: would not discover if files have been tempered with...
                 List<string> changedPaths = DiffAgainstCache(cache, remoteManifest);
                 int totalFiles = remoteManifest.Files.Count;
                 progress?.Report(new CatalogSyncProgress { State = CatalogSyncState.Downloading, DownloadedFiles = 0, TotalFiles = totalFiles });
@@ -115,7 +114,7 @@ namespace felix.BlishEmotes.Services.Catalog
                 cache.StoreETag(manifestResult.ETag);
 
                 var state = hadCache ? CatalogSyncState.Updated : CatalogSyncState.FirstFetch;
-                return Result(state, remoteVersion, newEmoteIds, newCategoryIds);
+                return Result(state, remoteVersion, previousVersion, newEmoteIds, newCategoryIds);
             }
             catch (Exception e)
             {
@@ -124,6 +123,7 @@ namespace felix.BlishEmotes.Services.Catalog
                 {
                     State = CatalogSyncState.Failed,
                     Version = previousVersion,
+                    PreviousVersion = previousVersion,
                     NewEmoteIds = new List<string>(),
                     NewCategoryIds = new List<string>(),
                     ErrorMessage = message,
@@ -131,12 +131,13 @@ namespace felix.BlishEmotes.Services.Catalog
             }
         }
 
-        private static CatalogSyncResult Result(CatalogSyncState state, long? version, List<string> newEmoteIds, List<string> newCategoryIds)
+        private static CatalogSyncResult Result(CatalogSyncState state, long? version, long? previousVersion, List<string> newEmoteIds, List<string> newCategoryIds)
         {
             return new CatalogSyncResult
             {
                 State = state,
                 Version = version,
+                PreviousVersion = previousVersion,
                 NewEmoteIds = newEmoteIds ?? new List<string>(),
                 NewCategoryIds = newCategoryIds ?? new List<string>(),
             };

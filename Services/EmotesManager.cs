@@ -1,13 +1,13 @@
-﻿using Blish_HUD;
-using Blish_HUD.Modules.Managers;
-using felix.BlishEmotes.Services;
-using felix.BlishEmotes.Services.Catalog;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using Blish_HUD;
+using Blish_HUD.Modules.Managers;
+using felix.BlishEmotes.Services;
+using felix.BlishEmotes.Services.Catalog;
+using Microsoft.Xna.Framework.Graphics;
 using Gw2SharpLocale = Gw2Sharp.WebApi.Locale;
 
 namespace felix.BlishEmotes
@@ -87,25 +87,6 @@ namespace felix.BlishEmotes
             UpdateAll(BuildEmotes(catalog).Values.ToList());
         }
 
-        /// <summary>
-        /// Applies a fetched catalog live: build the new emote set from the cache, carry over the
-        /// lock state, then swap it in. Must run on the game thread (textures need the GraphicsDevice).
-        /// Replaced textures are sent to the graveyard and disposed only at module unload.
-        /// </summary>
-        public void ApplyCatalog(CatalogData catalog)
-        {
-            var previousEmotes = new Dictionary<string, Emote>(emotes);
-            var built = BuildEmotes(catalog);
-            foreach (var emote in built.Values)
-            {
-                if (previousEmotes.TryGetValue(emote.Id, out Emote previous) && previous.Locked)
-                {
-                    emote.Locked = true;
-                }
-            }
-            GraveyardAndUpdateAll(built.Values.ToList());
-        }
-
         /// <summary>Builds the emote list from a catalog without swapping the live set.</summary>
         internal List<Emote> BuildCatalogEmotes(CatalogData catalog)
         {
@@ -120,10 +101,12 @@ namespace felix.BlishEmotes
         /// </summary>
         internal void GraveyardAndUpdateAll(List<Emote> newEmotes)
         {
-            var newTextures = new HashSet<Texture2D>(newEmotes.Select(emote => emote.Texture));
+            var newEmoteIds = new HashSet<string>(newEmotes.Select(emote => emote.Id));
             foreach (var emote in emotes.Values)
             {
-                if (emote.Texture != null && !newTextures.Contains(emote.Texture))
+                // Texture will be placed into graveyard if no newEmote with same id has been found.
+                // (simpler than Texture equality check and Textures dont get updated anyway, and if they do restart will fix it)
+                if (emote.Texture != null && !newEmoteIds.Contains(emote.Id))
                 {
                     _textureGraveyard.Add(emote.Texture);
                 }
@@ -183,6 +166,19 @@ namespace felix.BlishEmotes
         public List<Emote> GetAll()
         {
             return new List<Emote>(emotes.Values);
+        }
+
+        public List<string> GetEmoteNamesByIds(List<string> ids)
+        {
+            if (ids == null || ids.Count == 0)
+            {
+                return new List<string>();
+            }
+            return ids.Select(id =>
+            {
+                emotes.TryGetValue(id, out var emote);
+                return emote?.Label ?? id;
+            }).ToList();
         }
 
         public List<Emote> GetRadial()

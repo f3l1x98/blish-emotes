@@ -1,9 +1,9 @@
-using Blish_HUD;
-using Blish_HUD.Modules.Managers;
-using felix.BlishEmotes.Services.Catalog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Blish_HUD;
+using Blish_HUD.Modules.Managers;
+using felix.BlishEmotes.Services.Catalog;
 
 namespace felix.BlishEmotes.Services
 {
@@ -28,15 +28,27 @@ namespace felix.BlishEmotes.Services
 
         private readonly CatalogCache _cache;
 
+        /// <summary>The outcome of the most recent sync, including transient <see cref="CatalogSyncState.Downloading"/> state.</summary>
+        public CatalogSyncResult LastSyncResult { get; private set; } = new CatalogSyncResult { State = CatalogSyncState.UpToDate };
+        public event EventHandler<CatalogSyncResult> LastSyncResultUpdated;
+        public DateTime LastCatalogCheck { get; private set; } = DateTime.MinValue;
+        /// <summary> Lock object for preventing multiple syncs. </summary>
+        private readonly object _syncLock = new object();
+        /// <summary> Currently running sync Task. Null if no task running. </summary>
+        private Task<CatalogSyncResult> _syncTask;
+
+        /// <summary>The most recent download progress report, or null when no sync is active.</summary>
+        public CatalogSyncProgress CurrentProgress { get; private set; }
+
+        /// <summary>Fired whenever a file is downloaded during a sync.</summary>
+        public event EventHandler<CatalogSyncProgress> ProgressChanged;
+
         public CatalogManager(DirectoriesManager directoriesManager)
         {
             IReadOnlyList<string> registeredDirectories = directoriesManager.RegisteredDirectories;
             string dataDirectory = directoriesManager.GetFullDirectoryPath(registeredDirectories[0]);
             _cache = new CatalogCache(dataDirectory);
         }
-
-        /// <summary>The outcome of the most recent sync, including transient <see cref="CatalogSyncState.Downloading"/> state.</summary>
-        public CatalogSyncResult LastSyncResult { get; private set; } = new CatalogSyncResult { State = CatalogSyncState.UpToDate };
 
         /// <summary>True when a usable cache directory exists on disk.</summary>
         public bool HasCache()
@@ -69,39 +81,81 @@ namespace felix.BlishEmotes.Services
         /// Cheap conditional sync: one conditional GET on the manifest, hash-diff against the cache,
         /// re-pull only changed files, stage and validate before swapping. Returns a detailed outcome
         /// for the UX; the caller applies a swapped catalog live on the game thread.
+        /// Guarded against multiple callers. Subsequent callers receive the same running Task.
         /// </summary>
-        public async Task<CatalogSyncResult> SyncAsync()
+        public Task<CatalogSyncResult> SyncAsync()
         {
-            CatalogData previousCache = LoadCachedCatalogOrNull();
-            // TODO: it is called LastSyncRESULT so shouldnt it only have the results?
-            LastSyncResult = new CatalogSyncResult
+            lock (_syncLock)
             {
-                State = CatalogSyncState.Downloading,
-                Version = previousCache?.Manifest?.Version,
-            };
+                if (_syncTask != null)
+                {
+                    return _syncTask;
+                }
 
-            var progress = new Progress<CatalogSyncProgress>();
-            progress.ProgressChanged += (sender, p) =>
-            {
-                CurrentProgress = p;
-                ProgressChanged?.Invoke(this, p);
-            };
+                _syncTask = GuardedSyncAsync();
 
-            using (var client = new CatalogClient(CatalogUrl))
-            {
-                LastSyncResult = await CatalogSync.RunAsync(client, _cache, progress).ConfigureAwait(false);
-                LogResult(LastSyncResult);
-                return LastSyncResult;
+                _syncTask.ContinueWith(_ =>
+                {
+                    lock (_syncLock)
+                    {
+                        _syncTask = null;
+                    }
+                });
+                return _syncTask;
             }
         }
+        
+        private async Task<CatalogSyncResult> GuardedSyncAsync()
+        {
+            try
+            {
+                Logger.Debug("Refreshing emote catalog in the background");
+                CatalogData previousCache = LoadCachedCatalogOrNull();
+                // TODO: it is called LastSyncRESULT so shouldnt it only have the results?
+                LastSyncResult = new CatalogSyncResult
+                {
+                    State = CatalogSyncState.Downloading,
+                    Version = previousCache?.Manifest?.Version,
+                    PreviousVersion = previousCache?.Manifest?.Version,
+                };
+                LastSyncResultUpdated?.Invoke(this, LastSyncResult);
 
-        /// <summary>The most recent download progress report, or null when no sync is active.</summary>
-        public CatalogSyncProgress CurrentProgress { get; private set; }
+                var progress = new Progress<CatalogSyncProgress>();
+                progress.ProgressChanged += (sender, p) =>
+                {
+                    CurrentProgress = p;
+                    ProgressChanged?.Invoke(this, p);
+                };
 
-        /// <summary>Fired whenever a file is downloaded during a sync.</summary>
-        public event EventHandler<CatalogSyncProgress> ProgressChanged;
+                using (var client = new CatalogClient(CatalogUrl))
+                {
+                    LastSyncResult = await CatalogSync.RunAsync(client, _cache, progress).ConfigureAwait(false);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Catalog sync failed unexpectedly!");
+                Logger.Error(e.ToString());
+                // A throw before CatalogSync's own catch leaves LastSyncResult at Downloading;
+                // synthesize a Failed result so the status below cannot get stuck on it.
+                LastSyncResult = new CatalogSyncResult
+                {
+                    State = CatalogSyncState.Failed,
+                    Version = LastSyncResult.Version,
+                    PreviousVersion = LastSyncResult.Version,
+                    ErrorMessage = e.Message,
+                };
+            }
+            finally
+            {
+                LastCatalogCheck = DateTime.UtcNow;
+                LastSyncResultUpdated?.Invoke(this, LastSyncResult);
+                LogResult(LastSyncResult);
+            }
+            return LastSyncResult;
+        }
 
-        /// <summary>Cache path of an emote's texture (<c>catalog/textures/&lt;id&gt;.png</c>).</summary>
+        /// <summary>Cache path of an emote's texture (<c>catalog/textures/{id}.png</c>).</summary>
         public string GetTextureFilePath(string emoteId)
         {
             return _cache.GetTextureFilePath(emoteId);

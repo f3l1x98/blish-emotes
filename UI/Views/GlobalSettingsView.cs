@@ -1,18 +1,15 @@
-using Blish_HUD;
-using Blish_HUD.Controls;
-using Blish_HUD.Graphics.UI;
-using Blish_HUD.Input;
-using Blish_HUD.Settings;
-using Blish_HUD.Settings.UI.Views;
-using felix.BlishEmotes.Services.Catalog;
-using felix.BlishEmotes.Strings;
-using Microsoft.Xna.Framework;
-using SharpDX.DirectWrite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+using Blish_HUD;
+using Blish_HUD.Controls;
+using Blish_HUD.Graphics.UI;
+using Blish_HUD.Settings;
+using felix.BlishEmotes.Services;
+using felix.BlishEmotes.Services.Catalog;
+using felix.BlishEmotes.Strings;
+using felix.BlishEmotes.UI.Presenters;
+using Microsoft.Xna.Framework;
 
 namespace felix.BlishEmotes.UI.Views
 {
@@ -20,9 +17,6 @@ namespace felix.BlishEmotes.UI.Views
     public class CatalogStatus
     {
         public CatalogSyncState State { get; set; }
-        public long? Version { get; set; }
-        public long? PreviousVersion { get; set; }
-        public int NewEmoteCount { get; set; }
         public string NewEmoteNames { get; set; }
         public string StatusLine { get; set; }
         public string Feedback { get; set; }
@@ -31,12 +25,9 @@ namespace felix.BlishEmotes.UI.Views
         public bool ShowProgress { get; set; }
         public int DownloadedFiles { get; set; }
         public int TotalFiles { get; set; }
-        public bool CanCheck { get; set; }
-        public string CheckButtonText { get; set; }
-        public bool CheckOnStartup { get; set; }
     }
 
-    internal class GlobalSettingsView : View
+    class GlobalSettingsView : View
     {
         private ModuleSettings _settings;
 
@@ -65,8 +56,9 @@ namespace felix.BlishEmotes.UI.Views
 
         public event EventHandler CheckNowClicked;
 
-        public GlobalSettingsView(ModuleSettings settings) : base()
+        public GlobalSettingsView(ModuleSettings settings, CatalogManager catalogManager, EmotesManager emotesManager) : base()
         {
+            this.WithPresenter(new GlobalSettingsPresenter(this, (catalogManager, emotesManager)));
             this._settings = settings;
 
             _settings.OnEmotesLoaded += delegate {
@@ -74,24 +66,16 @@ namespace felix.BlishEmotes.UI.Views
             };
         }
 
-        public void SetCheckNowEnabled(bool enabled)
+        public void UpdateCatalogProgress(CatalogSyncProgress progress)
         {
-            if (_catalogCheckButton != null)
+            if (_pendingStatus == null || progress == null)
             {
-                _catalogCheckButton.Enabled = enabled;
+                return;
             }
-            if (_checkNowButton != null)
-            {
-                _checkNowButton.Enabled = enabled;
-            }
-        }
-
-        public void SetSyncStatus(string text)
-        {
-            if (_syncStatusLabel != null)
-            {
-                _syncStatusLabel.Text = text;
-            }
+            _pendingStatus.StatusLine = string.Format(Common.settings_global_sync_downloading, progress.DownloadedFiles, progress.TotalFiles);
+            _pendingStatus.DownloadedFiles = progress.DownloadedFiles;
+            _pendingStatus.TotalFiles = progress.TotalFiles;
+            UpdateCatalogStatus(_pendingStatus);
         }
 
         public void UpdateCatalogStatus(CatalogStatus status)
@@ -122,8 +106,8 @@ namespace felix.BlishEmotes.UI.Views
                 _catalogFeedbackLabel.Text = (status.Feedback ?? string.Empty) + Environment.NewLine + status.FeedbackSubtext;
             }
 
-            _catalogCheckButton.Text = status.CheckButtonText ?? Common.settings_global_checkNow;
-            _catalogCheckButton.Enabled = status.CanCheck;
+            _catalogCheckButton.Text = status.State == CatalogSyncState.Failed ? Common.settings_global_catalog_retryNow : Common.settings_global_checkNow;
+            _catalogCheckButton.Enabled = status.State != CatalogSyncState.Downloading;
 
             if (status.ShowProgress)
             {
@@ -138,9 +122,10 @@ namespace felix.BlishEmotes.UI.Views
             }
 
             // Avoid re-firing the setting change when we update from code.
-            if (_catalogCheckOnStartupCheckbox != null && _catalogCheckOnStartupCheckbox.Checked != status.CheckOnStartup)
+            bool settingsCheckOnStartup = this._settings.GlobalCheckCatalogOnStartup.Value;
+            if (_catalogCheckOnStartupCheckbox != null && _catalogCheckOnStartupCheckbox.Checked != settingsCheckOnStartup)
             {
-                _catalogCheckOnStartupCheckbox.Checked = status.CheckOnStartup;
+                _catalogCheckOnStartupCheckbox.Checked = settingsCheckOnStartup;
             }
         }
 

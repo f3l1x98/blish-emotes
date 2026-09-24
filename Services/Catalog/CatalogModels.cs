@@ -1,5 +1,5 @@
-using Newtonsoft.Json;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace felix.BlishEmotes.Services.Catalog
 {
@@ -102,6 +102,8 @@ namespace felix.BlishEmotes.Services.Catalog
         public CatalogSyncState State { get; set; }
         /// <summary>Remote catalog version when known; otherwise the cached version.</summary>
         public long? Version { get; set; }
+        /// <summary>Previous version when known</summary>
+        public long? PreviousVersion { get; set; }
         /// <summary>Ids of emotes present in the fetched catalog but not in the previous cache.</summary>
         public List<string> NewEmoteIds { get; set; } = new List<string>();
         /// <summary>Ids of catalog categories present in the fetched catalog but not in the previous cache.</summary>

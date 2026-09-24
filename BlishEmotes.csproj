@@ -190,6 +190,7 @@
     <Compile Include="UI\Presenters\CategorySettingsPresenter.cs" />
     <Compile Include="UI\Presenters\DummySettingsPresenter.cs" />
     <Compile Include="UI\Presenters\EmoteHotkeySettingsPresenter.cs" />
+    <Compile Include="UI\Presenters\GlobalSettingsPresenter.cs" />
     <Compile Include="UI\Views\CategorySettingsView.cs" />
     <Compile Include="UI\Views\DummySettingsView.cs" />
     <Compile Include="UI\Views\EmoteHotkeySettingsView.cs" />

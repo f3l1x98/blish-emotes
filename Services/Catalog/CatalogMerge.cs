@@ -1,8 +1,8 @@
-using felix.BlishEmotes.Services.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using felix.BlishEmotes.Services.Persistence;
 
 namespace felix.BlishEmotes.Services.Catalog
 {
@@ -147,7 +147,6 @@ namespace felix.BlishEmotes.Services.Catalog
             result.SkippedNameConflicts.AddRange(placement.SkippedNameConflicts);
             result.PlacedEmoteCount += placement.PlacedEmoteCount;
 
-            document.MergedCatalogVersion = catalog.Manifest.Version;
             return result;
         }
 
