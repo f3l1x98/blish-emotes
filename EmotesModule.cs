@@ -57,9 +57,6 @@ namespace BlishEmotesList
         public ModuleSettings Settings;
         #endregion
 
-        private static readonly string CornerIconSyncMessage =
-            Common.settings_global_sync_downloading.Substring(0, Common.settings_global_sync_downloading.IndexOf("…", StringComparison.Ordinal) + 1);
-
 
         [ImportingConstructor]
         public EmotesModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters)
@@ -230,7 +227,7 @@ namespace BlishEmotesList
         // overlay's synchronization context, so UI state may be touched directly.
         private void OnCatalogProgressChanged(object sender, CatalogSyncProgress progress)
         {
-            SetCornerIconLoading(CornerIconSyncMessage);
+            SetCornerIconLoading(Common.settings_catalog_sync_downloading);
             // TODO this gets called every time (every time a file has been downloaded) even though it only checks if the state has changed
             //  -> Only call if status has changed
             UpdateRadialEmptyState();
@@ -351,11 +348,6 @@ namespace BlishEmotesList
             }
         }
 
-        private string GetNewEmoteNames(List<string> ids)
-        {
-            return string.Join(", ", EmotesManager.GetEmoteNamesByIds(ids));
-        }
-
         private void ShowCatalogToast(CatalogSyncResult result)
         {
             if (result.NewEmoteIds == null || result.NewEmoteIds.Count == 0)
@@ -363,11 +355,8 @@ namespace BlishEmotesList
                 return;
             }
 
-            string names = GetNewEmoteNames(result.NewEmoteIds);
-            string message = result.State == CatalogSyncState.FirstFetch
-                ? string.Format(Common.settings_global_sync_firstFetch_toast, names)
-                : string.Format(Common.settings_global_sync_updated_toast, names);
-            ScreenNotification.ShowNotification(message, ScreenNotification.NotificationType.Green);
+            string message = string.Format(Common.settings_catalog_sync_toast, result.NewCategoryIds.Count, result.NewEmoteIds.Count);
+            ScreenNotification.ShowNotification(message, ScreenNotification.NotificationType.Green, null, 20);
         }
 
         public override IView GetSettingsView()

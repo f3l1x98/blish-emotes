@@ -66,18 +66,6 @@ namespace felix.BlishEmotes.UI.Views
             };
         }
 
-        public void UpdateCatalogProgress(CatalogSyncProgress progress)
-        {
-            if (_pendingStatus == null || progress == null)
-            {
-                return;
-            }
-            _pendingStatus.StatusLine = string.Format(Common.settings_global_sync_downloading, progress.DownloadedFiles, progress.TotalFiles);
-            _pendingStatus.DownloadedFiles = progress.DownloadedFiles;
-            _pendingStatus.TotalFiles = progress.TotalFiles;
-            UpdateCatalogStatus(_pendingStatus);
-        }
-
         public void UpdateCatalogStatus(CatalogStatus status)
         {
             _pendingStatus = status;
@@ -112,7 +100,7 @@ namespace felix.BlishEmotes.UI.Views
             if (status.ShowProgress)
             {
                 _catalogProgressSpinner.Show();
-                _catalogProgressLabel.Text = string.Format(Common.settings_global_sync_downloading, status.DownloadedFiles, status.TotalFiles);
+                _catalogProgressLabel.Text = string.Format(Common.settings_catalog_sync_downloading_detail, status.DownloadedFiles, status.TotalFiles);
                 _catalogProgressLabel.Show();
             }
             else

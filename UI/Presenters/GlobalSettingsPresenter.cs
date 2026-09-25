@@ -44,9 +44,20 @@ namespace felix.BlishEmotes.UI.Presenters
             this.View.UpdateCatalogStatus(BuildCatalogStatus(e));
         }
 
-        private void CatalogManager_ProgressChanged(object sender, CatalogSyncProgress e)
+        private void CatalogManager_ProgressChanged(object sender, CatalogSyncProgress progress)
         {
-            this.View.UpdateCatalogProgress(e);
+            bool hasCache = this._catalogManager.HasCache();
+            this.View.UpdateCatalogStatus(new CatalogStatus()
+            {
+                State = CatalogSyncState.Downloading,
+                StatusLine = Common.settings_catalog_sync_downloading_statusLine,
+                Feedback = string.Format(Common.settings_catalog_sync_downloading_detail, progress.DownloadedFiles, progress.TotalFiles),
+                FeedbackSubtext = hasCache ? null : Common.settings_catalog_sync_downloading_sub,
+                FeedbackColor = Color.Gray,
+                DownloadedFiles = progress.DownloadedFiles,
+                TotalFiles = progress.TotalFiles,
+                ShowProgress = true,
+            });
         }
 
         private async void View_CheckNowClicked(object sender, EventArgs e)
@@ -57,7 +68,6 @@ namespace felix.BlishEmotes.UI.Presenters
         private CatalogStatus BuildCatalogStatus(CatalogSyncResult result)
         {
             bool hasCache = this._catalogManager.HasCache();
-            bool isDownloading = result.State == CatalogSyncState.Downloading;
             var status = new CatalogStatus
             {
                 State = result.State,
@@ -65,72 +75,66 @@ namespace felix.BlishEmotes.UI.Presenters
                 ShowProgress = false,
             };
 
-            if (isDownloading)
-            {
-                status.StatusLine = string.Format(Common.settings_global_sync_downloading, "-", "-");
-                status.Feedback = Common.settings_global_sync_downloading;
-                status.FeedbackSubtext = hasCache ? null : Common.settings_global_sync_downloading_sub;
-                status.FeedbackColor = Color.Gray;
-                status.ShowProgress = true;
-                return status;
-            }
-
             switch (result.State)
             {
+                case CatalogSyncState.Downloading:
+                    status.StatusLine = Common.settings_catalog_sync_downloading_statusLine;
+                    status.Feedback = string.Format(Common.settings_catalog_sync_downloading_detail, "-", "-");
+                    status.FeedbackSubtext = hasCache ? null : Common.settings_catalog_sync_downloading_sub;
+                    status.FeedbackColor = Color.Gray;
+                    status.ShowProgress = true;
+                    break;
                 case CatalogSyncState.UpToDate:
                     if (hasCache)
                     {
-                        status.StatusLine = string.Format(Common.settings_global_sync_statusLine, result.Version, FormatLastChecked());
-                        status.Feedback = string.Format(Common.settings_global_sync_upToDate_detail, result.Version);
-                        status.FeedbackColor = Color.Gray;
+                        status.StatusLine = string.Format(Common.settings_catalog_sync_statusLine, result.Version, FormatLastChecked());
+                        status.Feedback = string.Format(Common.settings_catalog_sync_upToDate_detail, result.Version);
                     }
                     else
                     {
-                        status.StatusLine = "no catalog yet";
-                        status.Feedback = Common.settings_global_sync_noCatalog_detail;
-                        status.FeedbackColor = Color.Gray;
+                        status.StatusLine = Common.settings_catalog_sync_noCatalog_statusLine;
+                        status.Feedback = Common.settings_catalog_sync_noCatalog_detail;
                     }
+                    status.FeedbackColor = Color.Gray;
                     break;
                 case CatalogSyncState.Updated:
-                    status.StatusLine = string.Format(Common.settings_global_sync_statusLine, result.Version, FormatLastChecked());
-                    status.Feedback = string.Format(Common.settings_global_sync_updated_detail, result.PreviousVersion, result.Version, result.NewEmoteIds.Count, status.NewEmoteNames);
+                    status.StatusLine = string.Format(Common.settings_catalog_sync_statusLine, result.Version, FormatLastChecked());
+                    status.Feedback = string.Format(Common.settings_catalog_sync_updated_detail, result.PreviousVersion, result.Version, result.NewEmoteIds.Count, status.NewEmoteNames);
                     status.FeedbackColor = Color.Green;
                     break;
                 case CatalogSyncState.FirstFetch:
-                    status.StatusLine = string.Format(Common.settings_global_sync_statusLine, result.Version, FormatLastChecked());
-                    status.Feedback = string.Format(Common.settings_global_sync_firstFetch_detail, result.NewEmoteIds.Count);
+                    status.StatusLine = string.Format(Common.settings_catalog_sync_statusLine, result.Version, FormatLastChecked());
+                    status.Feedback = string.Format(Common.settings_catalog_sync_firstFetch_detail, result.NewEmoteIds.Count);
                     status.FeedbackColor = Color.Green;
                     break;
                 case CatalogSyncState.Failed:
                     if (hasCache)
                     {
-                        status.StatusLine = $"v{result.Version} · cached · last check failed";
-                        status.Feedback = string.Format(Common.settings_global_sync_failed_detail, result.Version);
-                        status.FeedbackColor = Color.Red;
+                        status.StatusLine = string.Format(Common.settings_catalog_sync_failed_statusLine, result.Version);
+                        status.Feedback = string.Format(Common.settings_catalog_sync_failed_detail, result.Version);
                     }
                     else
                     {
-                        status.StatusLine = "no catalog yet";
-                        status.Feedback = Common.settings_global_sync_firstFail_detail;
-                        status.FeedbackSubtext = Common.settings_global_sync_firstFail_sub;
-                        status.FeedbackColor = Color.Red;
+                        status.StatusLine = Common.settings_catalog_sync_noCatalog_statusLine;
+                        status.Feedback = Common.settings_catalog_sync_firstFail_detail;
+                        status.FeedbackSubtext = Common.settings_catalog_sync_firstFail_sub;
                     }
+                    status.FeedbackColor = Color.Red;
                     break;
                 case CatalogSyncState.SchemaTooNew:
                     if (hasCache)
                     {
-                        status.StatusLine = $"v{result.Version} · cached · catalog too new";
-                        status.Feedback = Common.settings_global_sync_schemaTooNew_detail;
-                        status.FeedbackSubtext = string.Format(Common.settings_global_sync_schemaTooNew_sub, result.Version);
-                        status.FeedbackColor = Color.Orange;
+                        status.StatusLine = string.Format(Common.settings_catalog_sync_schemaTooNew_statusLine, result.Version);
+                        status.Feedback = Common.settings_catalog_sync_schemaTooNew_detail;
+                        status.FeedbackSubtext = string.Format(Common.settings_catalog_sync_schemaTooNew_sub, result.Version);
                     }
                     else
                     {
-                        status.StatusLine = "no catalog yet";
-                        status.Feedback = Common.settings_global_sync_schemaTooNew_detail;
-                        status.FeedbackSubtext = Common.settings_global_sync_schemaTooNew_noCache_sub;
-                        status.FeedbackColor = Color.Orange;
+                        status.StatusLine = Common.settings_catalog_sync_noCatalog_statusLine;
+                        status.Feedback = Common.settings_catalog_sync_schemaTooNew_detail;
+                        status.FeedbackSubtext = Common.settings_catalog_sync_schemaTooNew_sub_noCache;
                     }
+                    status.FeedbackColor = Color.Orange;
                     break;
             }
 
