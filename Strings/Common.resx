@@ -222,7 +222,7 @@
   <data name="settings_catalog_sync_statusLine" xml:space="preserve">
     <value>v{0} · last checked: {1}</value>
   </data>
-  <data name="settings_catalog_sync_downloading_detail" xml:space="preserve">
+  <data name="settings_catalog_sync_downloading_progress" xml:space="preserve">
     <value>Downloading emote catalog… {0} / {1} files</value>
   </data>
   <data name="settings_catalog_sync_downloading_sub" xml:space="preserve">
@@ -297,5 +297,8 @@ Open Settings → Emote catalog</value>
   </data>
   <data name="settings_catalog_sync_downloading" xml:space="preserve">
     <value>Downloading emote catalog</value>
+  </data>
+  <data name="settings_catalog_sync_downloading_detail" xml:space="preserve">
+    <value>Downloading new catalog version</value>
   </data>
 </root>

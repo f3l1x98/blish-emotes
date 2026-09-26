@@ -139,7 +139,6 @@ namespace felix.BlishEmotes
                     AlternativeCommands = entry.AlternativeCommands,
                     Names = entry.Names,
                     Categories = entry.Categories,
-                    // Keep the lock state the user/API assigned to this id across the swap.
                     Locked = existing?.Locked ?? false,
                 };
                 emote.Texture = LoadCatalogTexture(emote.Id);
@@ -192,13 +191,12 @@ namespace felix.BlishEmotes
 
         public void UpdateAll(List<Emote> newEmotes)
         {
-            // Swap in a new dictionary instead of clearing the live one: any reader that grabbed
-            // the old dictionary finishes on a consistent snapshot instead of racing Clear/Add.
             var newEmotesById = new Dictionary<string, Emote>(newEmotes.Count);
             foreach (var emote in newEmotes)
             {
                 newEmotesById.Add(emote.Id, emote);
             }
+            // Swap instead of modify inorder to prevent inconsistent state.
             emotes = newEmotesById;
 
             // Keep the texture-hash bookkeeping aligned with the live id set.

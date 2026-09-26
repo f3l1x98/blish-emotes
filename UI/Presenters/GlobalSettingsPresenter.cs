@@ -53,7 +53,7 @@ namespace felix.BlishEmotes.UI.Presenters
             {
                 State = CatalogSyncState.Downloading,
                 StatusLine = Common.settings_catalog_sync_downloading_statusLine,
-                Feedback = string.Format(Common.settings_catalog_sync_downloading_detail, progress.DownloadedFiles, progress.TotalFiles),
+                Feedback = Common.settings_catalog_sync_downloading_detail,
                 FeedbackSubtext = hasCache ? null : Common.settings_catalog_sync_downloading_sub,
                 FeedbackColor = Color.Gray,
                 DownloadedFiles = progress.DownloadedFiles,
@@ -88,8 +88,8 @@ namespace felix.BlishEmotes.UI.Presenters
             switch (result.State)
             {
                 case CatalogSyncState.Downloading:
-                    status.StatusLine = Common.settings_catalog_sync_downloading_statusLine;
-                    status.Feedback = string.Format(Common.settings_catalog_sync_downloading_detail, "-", "-");
+                    status.StatusLine = string.Format(Common.settings_catalog_sync_downloading_statusLine, result.Version ?? 0);
+                    status.Feedback = Common.settings_catalog_sync_downloading_detail;
                     status.FeedbackSubtext = hasCache ? null : Common.settings_catalog_sync_downloading_sub;
                     status.FeedbackColor = Color.Gray;
                     status.ShowProgress = true;
@@ -113,14 +113,14 @@ namespace felix.BlishEmotes.UI.Presenters
                     status.FeedbackColor = Color.Green;
                     break;
                 case CatalogSyncState.FirstFetch:
-                    status.StatusLine = string.Format(Common.settings_catalog_sync_statusLine, result.Version, FormatLastChecked());
+                    status.StatusLine = string.Format(Common.settings_catalog_sync_statusLine, result.Version ?? 0, FormatLastChecked());
                     status.Feedback = string.Format(Common.settings_catalog_sync_firstFetch_detail, result.NewEmoteIds.Count);
                     status.FeedbackColor = Color.Green;
                     break;
                 case CatalogSyncState.Failed:
                     if (hasCache)
                     {
-                        status.StatusLine = string.Format(Common.settings_catalog_sync_failed_statusLine, result.Version);
+                        status.StatusLine = string.Format(Common.settings_catalog_sync_failed_statusLine, result.Version ?? 0);
                         status.Feedback = string.Format(Common.settings_catalog_sync_failed_detail, result.Version);
                     }
                     else

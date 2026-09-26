@@ -255,9 +255,9 @@ namespace felix.BlishEmotes.Strings {
             }
         }
         
-        public static string settings_catalog_sync_downloading_detail {
+        public static string settings_catalog_sync_downloading_progress {
             get {
-                return ResourceManager.GetString("settings_catalog_sync_downloading_detail", resourceCulture);
+                return ResourceManager.GetString("settings_catalog_sync_downloading_progress", resourceCulture);
             }
         }
         
@@ -402,6 +402,12 @@ namespace felix.BlishEmotes.Strings {
         public static string settings_catalog_sync_downloading {
             get {
                 return ResourceManager.GetString("settings_catalog_sync_downloading", resourceCulture);
+            }
+        }
+        
+        public static string settings_catalog_sync_downloading_detail {
+            get {
+                return ResourceManager.GetString("settings_catalog_sync_downloading_detail", resourceCulture);
             }
         }
     }

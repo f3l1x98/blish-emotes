@@ -100,7 +100,7 @@ namespace felix.BlishEmotes.UI.Views
             if (status.ShowProgress)
             {
                 _catalogProgressSpinner.Show();
-                _catalogProgressLabel.Text = string.Format(Common.settings_catalog_sync_downloading_detail, status.DownloadedFiles, status.TotalFiles);
+                _catalogProgressLabel.Text = string.Format(Common.settings_catalog_sync_downloading_progress, status.DownloadedFiles, status.TotalFiles);
                 _catalogProgressLabel.Show();
             }
             else
@@ -268,7 +268,7 @@ namespace felix.BlishEmotes.UI.Views
             _catalogProgressSpinner = new LoadingSpinner()
             {
                 Parent = progressRow,
-                Size = new Point(20, 20),
+                Size = new Point(18, 18),
                 Visible = false,
             };
             _catalogProgressLabel = new Label()

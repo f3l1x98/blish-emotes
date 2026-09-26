@@ -1,14 +1,11 @@
-﻿using Blish_HUD;
-using Blish_HUD.Modules.Managers;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using Blish_HUD;
+using Blish_HUD.Modules.Managers;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace felix.BlishEmotes.Services
 {
@@ -83,20 +80,18 @@ namespace felix.BlishEmotes.Services
             }
         }
 
-        public void UpdateTexture(Textures textureRef, Texture2D newTexture)
-        {
-            UpdateTexture(textureRef.ToString(), newTexture);
-        }
-        public void UpdateTexture(string textureRef, Texture2D newTexture)
+        public void UpsertTexture(string textureRef, Texture2D newTexture)
         {
             AssertAlive();
-            if (!_textureCache.ContainsKey(textureRef))
+            if (_textureCache.ContainsKey(textureRef))
             {
-                Logger.Error($"Failed to update texture - No texture found for {textureRef}");
-                return;
+                _textureCache[textureRef]?.Dispose();
+                _textureCache[textureRef] = newTexture;
             }
-            _textureCache[textureRef]?.Dispose();
-            _textureCache[textureRef] = newTexture;
+            else
+            {
+                _textureCache.Add(textureRef, newTexture);
+            }
         }
 
         public Texture2D GetTexture(Textures textureRef)

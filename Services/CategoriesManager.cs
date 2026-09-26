@@ -195,11 +195,12 @@ namespace felix.BlishEmotes
                     // Update category and texture cache
                     category.TextureFileName = newTextureFileName;
                     var cacheKey = GetTexturesManagerKey(category);
-                    TexturesManager.UpdateTexture(cacheKey, category.Texture);
+                    TexturesManager.UpsertTexture(cacheKey, category.Texture);
                 }
                 else
                 {
                     Logger.Error($"Unable to update texture - {category.TextureFileName} not found!");
+                    category.TextureFileName = current.TextureFileName;
                 }
             }
 
@@ -327,12 +328,7 @@ namespace felix.BlishEmotes
         }
 
         /// <summary>
-        /// Reconciles the user's categories with a (cached) catalog — the one-time V2 migration
-        /// (stamp name-matched categories with their catalogId) and, when a fetched update was
-        /// applied to the cache since the last launch, the merge (place new emotes into linked
-        /// categories, auto-create untombstoned catalog categories the user doesn't have, prune
-        /// nothing). The decisions live in the Blish-free, unit-tested <see cref="CatalogMerge"/>;
-        /// this applies its result to the live state, persists once, and refreshes the UI.
+        /// Reconciles the user's categories with a (cached) catalog.
         /// Must run on the game thread.
         /// </summary>
         /// <param name="fireCategoriesUpdated">When false the event is not fired, allowing the caller
@@ -377,13 +373,11 @@ namespace felix.BlishEmotes
                 + (result.SkippedNameConflicts.Count > 0 ? $", skipped name conflicts: {string.Join(", ", result.SkippedNameConflicts)}" : ""));
             if (fireCategoriesUpdated)
             {
-                CategoriesUpdated?.Invoke(this, GetAll());
+                NotifyCategoriesUpdated();
             }
             return result;
         }
 
-        /// <summary>Fires the <see cref="CategoriesUpdated"/> event with the current category list.
-        /// Used by live catalog applies after the caller has finished swapping dependent state.</summary>
         public void NotifyCategoriesUpdated()
         {
             CategoriesUpdated?.Invoke(this, GetAll());
