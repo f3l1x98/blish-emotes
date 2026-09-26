@@ -301,4 +301,10 @@ Open Settings → Emote catalog</value>
   <data name="settings_catalog_sync_downloading_detail" xml:space="preserve">
     <value>Downloading new catalog version</value>
   </data>
+  <data name="settings_catalog_sync_offline_detail" xml:space="preserve">
+    <value>Using cache until next sync</value>
+  </data>
+  <data name="settings_catalog_sync_offline_statusLine" xml:space="preserve">
+    <value>v{0} · using cache</value>
+  </data>
 </root>

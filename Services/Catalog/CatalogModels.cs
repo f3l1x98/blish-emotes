@@ -76,6 +76,7 @@ namespace felix.BlishEmotes.Services.Catalog
     {
         FirstFetch,
         Downloading,
+        Offline,
         UpToDate,
         Updated,
         Failed,

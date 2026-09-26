@@ -410,5 +410,17 @@ namespace felix.BlishEmotes.Strings {
                 return ResourceManager.GetString("settings_catalog_sync_downloading_detail", resourceCulture);
             }
         }
+        
+        public static string settings_catalog_sync_offline_detail {
+            get {
+                return ResourceManager.GetString("settings_catalog_sync_offline_detail", resourceCulture);
+            }
+        }
+        
+        public static string settings_catalog_sync_offline_statusLine {
+            get {
+                return ResourceManager.GetString("settings_catalog_sync_offline_statusLine", resourceCulture);
+            }
+        }
     }
 }

@@ -198,6 +198,8 @@ namespace BlishEmotesList
                     {
                         CatalogManager.ClearPendingUpdate();
                     }
+
+                    CatalogManager.InitLastSyncedVersion(cachedCatalog);
                 }
 
                 // Update emotes with data from api

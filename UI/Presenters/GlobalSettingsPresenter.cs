@@ -87,6 +87,11 @@ namespace felix.BlishEmotes.UI.Presenters
 
             switch (result.State)
             {
+                case CatalogSyncState.Offline:
+                    status.StatusLine = string.Format(Common.settings_catalog_sync_offline_statusLine, result.Version ?? 0);
+                    status.Feedback = Common.settings_catalog_sync_offline_detail;
+                    status.FeedbackColor = Color.Gray;
+                    break;
                 case CatalogSyncState.Downloading:
                     status.StatusLine = string.Format(Common.settings_catalog_sync_downloading_statusLine, result.Version ?? 0);
                     status.Feedback = Common.settings_catalog_sync_downloading_detail;

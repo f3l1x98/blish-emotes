@@ -30,7 +30,7 @@ namespace felix.BlishEmotes.Services
         private readonly CatalogCache _cache;
 
         /// <summary>The outcome of the most recent sync, including transient <see cref="CatalogSyncState.Downloading"/> state.</summary>
-        public CatalogSyncResult LastSyncResult { get; private set; } = new CatalogSyncResult { State = CatalogSyncState.UpToDate };
+        public CatalogSyncResult LastSyncResult { get; private set; } = new CatalogSyncResult { State = CatalogSyncState.Offline, Version = 0 };
         public event EventHandler<CatalogSyncResult> LastSyncResultUpdated;
         public DateTime LastCatalogCheck { get; private set; } = DateTime.MinValue;
         /// <summary> Lock object for preventing multiple syncs. </summary>
@@ -57,6 +57,12 @@ namespace felix.BlishEmotes.Services
             string dataDirectory = directoriesManager.GetFullDirectoryPath(registeredDirectories[0]);
             _cache = new CatalogCache(dataDirectory);
             _uiContext = SynchronizationContext.Current;
+        }
+
+        public void InitLastSyncedVersion(CatalogData currentCatalog)
+        {
+            LastSyncResult = new CatalogSyncResult { State = CatalogSyncState.Offline, Version = currentCatalog.Manifest.Version };
+            RaiseLastSyncResultUpdated(LastSyncResult);
         }
 
         /// <summary>True when a usable cache directory exists on disk.</summary>
