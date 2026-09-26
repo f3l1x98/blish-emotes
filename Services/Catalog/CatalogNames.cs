@@ -4,15 +4,14 @@ using System.Globalization;
 namespace felix.BlishEmotes.Services.Catalog
 {
     /// <summary>
-    /// Resolves an emote's display name from the catalog's per-locale <c>names</c> map:
-    /// exact locale → <c>en</c> → title-cased id (the fallback chain settled by the
-    /// catalog-schema prototype).
+    /// Resolves the display name from the catalog's per-locale <c>names</c> map:
+    /// exact locale → <c>en</c> → title-cased fallback.
     /// </summary>
     public static class CatalogNames
     {
         public const string FallbackLocale = "en";
 
-        public static string Resolve(IDictionary<string, string> names, CultureInfo locale, string emoteId)
+        public static string Resolve(IDictionary<string, string> names, CultureInfo locale, string fallback)
         {
             if (names != null)
             {
@@ -28,10 +27,9 @@ namespace felix.BlishEmotes.Services.Catalog
                     return byFallback;
                 }
             }
-            return TitleCaseId(emoteId);
+            return TitleCaseId(fallback);
         }
 
-        /// <summary>Fallback label for an emote without a usable name: the id, title-cased (<c>thumbsdown</c> → <c>Thumbsdown</c>).</summary>
         public static string TitleCaseId(string emoteId)
         {
             if (string.IsNullOrEmpty(emoteId))

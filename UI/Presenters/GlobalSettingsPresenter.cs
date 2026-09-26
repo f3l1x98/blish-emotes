@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Blish_HUD;
 using Blish_HUD.Graphics.UI;
 using felix.BlishEmotes.Services;
 using felix.BlishEmotes.Services.Catalog;
@@ -12,6 +13,7 @@ namespace felix.BlishEmotes.UI.Presenters
 {
     class GlobalSettingsPresenter : Presenter<GlobalSettingsView, (CatalogManager, EmotesManager)>
     {
+        private static readonly Logger Logger = Logger.GetLogger<GlobalSettingsPresenter>();
         
         private CatalogManager _catalogManager;
         private EmotesManager _emotesManager;
@@ -62,7 +64,15 @@ namespace felix.BlishEmotes.UI.Presenters
 
         private async void View_CheckNowClicked(object sender, EventArgs e)
         {
-            await _catalogManager.SyncAsync();
+            try
+            {
+                await _catalogManager.SyncAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CheckNow failed - Something went horribly wrong");
+                Logger.Error(ex.ToString());
+            }
         }
 
         private CatalogStatus BuildCatalogStatus(CatalogSyncResult result)

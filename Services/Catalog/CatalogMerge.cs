@@ -34,25 +34,7 @@ namespace felix.BlishEmotes.Services.Catalog
     }
 
     /// <summary>
-    /// The catalog merge into the user-persisted categories (per the wayfinder decision "Catalog
-    /// merge into user-persisted categories"): the user's categories remain the only rendered
-    /// state; catalog categories are placement hints. Blish-free and side-effect-free so every
-    /// rule below is unit-tested:
-    ///
-    /// <list type="bullet">
-    /// <item>Migration (state never reconciled, user has categories): each category whose name
-    /// matches a catalog category's en name is stamped with that catalogId — "if you touched the
-    /// name, it's yours". Catalog emotes that appear in no (non-Favourites) user category are then
-    /// placed into every linked category matching their placement tags, and linked categories are
-    /// auto-created only when a placed emote is tagged with them. Nothing is pruned.</item>
-    /// <item>Seeding (state never reconciled, nothing but Favourites — fresh install or a
-    /// corrupted file): every untombstoned catalog category is auto-created as a linked category
-    /// and every emote placed per its tags.</item>
-    /// <item>Update (a fetched catalog update is applied): each new emote lands in every linked
-    /// category matching its placement tags — no untouched-vs-modified distinction; a catalog
-    /// category new in the update, or tagged by a new emote, is auto-created unless tombstoned;
-    /// tombstoned tags land uncategorized. Nothing is ever pruned.</item>
-    /// </list>
+    /// Merges the Catalog with the user persisted categories. User persisted categories trump catalog.
     /// Idempotent: re-running against the same state is a <see cref="CatalogMergeOutcome.Noop"/>.
     /// </summary>
     public static class CatalogMerge
@@ -70,7 +52,7 @@ namespace felix.BlishEmotes.Services.Catalog
                 {
                     return Migrate(document, catalog, locale);
                 }
-                // Seed if only the favourite category exists as this one cannot be changed by user anyway
+                // Seed if no categories exists, or only the favourites category (as this one cannot be changed by user)
                 return Seed(document, catalog, locale);
             }
 
@@ -90,8 +72,7 @@ namespace felix.BlishEmotes.Services.Catalog
         /// <summary>
         /// Migrates the current user categories to the catalog. Name-matched categories are stamped
         /// with their catalogId; emotes that are new to *this user* (absent from every non-Favourites
-        /// category) are placed into every linked category matching their placement tags, and linked
-        /// categories are auto-created only when a placed emote is tagged with them.
+        /// category) are placed into every linked category.
         /// </summary>
         private static CatalogMergeResult Migrate(UserCategoriesDocument document, CatalogData catalog, CultureInfo locale)
         {
@@ -114,17 +95,9 @@ namespace felix.BlishEmotes.Services.Catalog
                     match.CatalogId = catalogCategory.Id;
                     result.MigratedCategoryNames.Add(match.Name);
                 }
-                // No match: the user renamed or deleted the old default — "if you touched the
-                // name, it's yours"; deleted defaults stay absent unless a new-to-user emote is
-                // tagged with them, in which case they return carrying only that new content.
+                // No match: the user renamed or deleted the old default -> ignore
             }
 
-            // Build a synthetic pending update from the only baseline that exists for an upgrader:
-            // their own categories.json. Emotes present in any non-Favourites category are "known";
-            // everything else is new to this user and is placed now. Favourites is intentionally
-            // excluded from the check so a favourites-only emote still lands in its home category.
-            // Note: "not in any category" cannot distinguish truly new emotes from emotes the user
-            // deliberately removed from all categories; those removed emotes get re-placed.
             var knownEmoteIds = new HashSet<string>(
                 document.Categories
                     .Where(category => !category.IsFavourite)
@@ -139,9 +112,7 @@ namespace felix.BlishEmotes.Services.Catalog
                 NewCategoryIds = new List<string>(),
             };
 
-            // Apply the placement in the same pass. The pending-merge record from the sync side is
-            // intentionally ignored: an upgrader's first sync is a first fetch and would mark the
-            // entire catalog as new, so migration derives "new" from user state instead.
+            // Place emotes into categories using update
             var placement = Update(document, catalog, syntheticPending, locale);
             result.CreatedCategoryNames.AddRange(placement.CreatedCategoryNames);
             result.SkippedNameConflicts.AddRange(placement.SkippedNameConflicts);
@@ -167,46 +138,44 @@ namespace felix.BlishEmotes.Services.Catalog
         private static CatalogMergeResult Update(UserCategoriesDocument document, CatalogData catalog, PendingCatalogUpdate pending, CultureInfo locale)
         {
             var result = new CatalogMergeResult { Outcome = CatalogMergeOutcome.Updated };
-            var tombstones = new HashSet<string>(document.DeletedCatalogCategoryIds ?? new List<string>());
+            var userDeletedCategoryIds = new HashSet<string>(document.DeletedCatalogCategoryIds ?? new List<string>());
             var linkedCatalogIds = new HashSet<string>(
                 document.Categories.Where(category => category.CatalogId != null).Select(category => category.CatalogId));
 
-            // Auto-create linked categories for catalog categories the user doesn't have:
-            // every category new in this update, plus every placement tag of a new emote that no
-            // linked category matches. Tombstoned ones are never resurrected; the user's unique
-            // category names are respected (a conflict skips creation and the emotes land
-            // uncategorized). New categories append at the end of the user's order.
-            var tagsOfNewEmotes = new HashSet<string>();
+            // Collect categories of new emotes
+            var categoriesOfNewEmotes = new HashSet<string>();
             var emotesById = catalog.Emotes.ToDictionary(emote => emote.Id);
             foreach (string emoteId in pending.NewEmoteIds ?? new List<string>())
             {
-                CatalogEmote emote;
-                if (emotesById.TryGetValue(emoteId, out emote) && emote.Categories != null)
+                if (emotesById.TryGetValue(emoteId, out var emote) && emote.Categories != null)
                 {
-                    foreach (string tag in emote.Categories)
+                    foreach (string categoryId in emote.Categories)
                     {
-                        tagsOfNewEmotes.Add(tag);
+                        categoriesOfNewEmotes.Add(categoryId);
                     }
                 }
             }
             foreach (var catalogCategory in catalog.Categories ?? new List<CatalogCategory>())
             {
                 string catalogCategoryId = catalogCategory.Id;
-                if (linkedCatalogIds.Contains(catalogCategoryId) || tombstones.Contains(catalogCategoryId))
+                if (linkedCatalogIds.Contains(catalogCategoryId) || userDeletedCategoryIds.Contains(catalogCategoryId))
                 {
                     continue;
                 }
                 bool newInUpdate = pending.NewCategoryIds != null && pending.NewCategoryIds.Contains(catalogCategoryId);
-                if (!newInUpdate && !tagsOfNewEmotes.Contains(catalogCategoryId))
+                // Not yet linked with user category but also not used in new emotes -> skip (unused category)
+                if (!newInUpdate && !categoriesOfNewEmotes.Contains(catalogCategoryId))
                 {
                     continue;
                 }
                 string name = CatalogNames.Resolve(catalogCategory.Names, locale, catalogCategoryId);
+                // Not yet linked but there is a user category with same name -> skip (name conflict)
                 if (document.Categories.Any(category => string.Equals(category.Name, name, StringComparison.Ordinal)))
                 {
                     result.SkippedNameConflicts.Add(name);
                     continue;
                 }
+                // Create new user category
                 document.Categories.Add(new PersistedCategory
                 {
                     Id = Guid.NewGuid(),
@@ -220,30 +189,27 @@ namespace felix.BlishEmotes.Services.Catalog
 
             // Place each new emote into every linked category matching its placement tags.
             // Favourites is never linked, so it is never merged. Nothing is pruned.
-            var linkedByCatalogId = document.Categories
+            var linkedUserCategories = document.Categories
                 .Where(category => category.CatalogId != null)
-                .ToLookup(category => category.CatalogId);
+                .ToDictionary(category => category.CatalogId);
             foreach (string emoteId in pending.NewEmoteIds ?? new List<string>())
             {
-                CatalogEmote emote;
-                if (!emotesById.TryGetValue(emoteId, out emote) || emote.Categories == null)
+                if (!emotesById.TryGetValue(emoteId, out var emote) || emote.Categories == null)
                 {
                     continue;
                 }
-                foreach (string tag in emote.Categories)
+                foreach (string categoryId in emote.Categories)
                 {
-                    if (tombstones.Contains(tag))
+                    if (userDeletedCategoryIds.Contains(categoryId))
                     {
                         // Tombstoned: the emote lands uncategorized (flat list), placeable by hand.
                         continue;
                     }
-                    foreach (var target in linkedByCatalogId[tag])
+                    
+                    if (linkedUserCategories.TryGetValue(categoryId, out var target) && !target.EmoteIds.Contains(emoteId))
                     {
-                        if (!target.EmoteIds.Contains(emoteId))
-                        {
-                            target.EmoteIds.Add(emoteId);
-                            result.PlacedEmoteCount++;
-                        }
+                        target.EmoteIds.Add(emoteId);
+                        result.PlacedEmoteCount++;
                     }
                 }
             }

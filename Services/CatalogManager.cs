@@ -87,9 +87,7 @@ namespace felix.BlishEmotes.Services
         }
 
         /// <summary>
-        /// Cheap conditional sync: one conditional GET on the manifest, hash-diff against the cache,
-        /// re-pull only changed files, stage and validate before swapping. Returns a detailed outcome
-        /// for the UX; the caller applies a swapped catalog live on the game thread.
+        /// Syncs the catalog cache with the remote one. Returns a detailed outcome.
         /// Guarded against multiple callers. Subsequent callers receive the same running Task.
         /// <see cref="LastSyncResultUpdated"/> and <see cref="ProgressChanged"/> are raised on the
         /// game thread (see <see cref="_uiContext"/>), so subscribers may update UI directly.

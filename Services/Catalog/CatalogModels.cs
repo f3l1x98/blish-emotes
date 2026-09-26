@@ -62,11 +62,7 @@ namespace felix.BlishEmotes.Services.Catalog
 
     /// <summary>
     /// A catalog update recorded when a sync swaps a new catalog into the cache, and consumed by
-    /// the category merge when that update is applied (at the next launch, until live apply
-    /// lands): which catalog version it was and which emote/category ids were new relative to
-    /// the previous cache. Stored next to the cache; an orphaned record (its cache swap failed
-    /// after it was written) is neutralized by the version check in <see cref="CatalogMerge"/>
-    /// and cleared on the next apply.
+    /// the category merge when that update is applied.
     /// </summary>
     public class PendingCatalogUpdate
     {

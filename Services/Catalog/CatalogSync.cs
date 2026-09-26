@@ -10,9 +10,8 @@ using Newtonsoft.Json;
 namespace felix.BlishEmotes.Services.Catalog
 {
     /// <summary>
-    /// Blish-free orchestration of a cheap conditional catalog sync. Given a client and a cache it
-    /// performs one conditional manifest GET, hash-diff, re-pull of changed files, staged validation,
-    /// and cache swap. Failures leave the existing cache and ETag untouched and are reported as
+    /// Given a client and a cache it performs one conditional manifest GET, hash-diff, re-pull of changed files,
+    /// staged validation and cache swap. Failures leave the existing cache and ETag untouched and are reported as
     /// <see cref="CatalogSyncState.Failed"/>.
     /// </summary>
     public static class CatalogSync
