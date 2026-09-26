@@ -20,8 +20,6 @@ namespace felix.BlishEmotes
         /// <summary>Catalog placement tags (category ids); parsed now, consumed by the catalog merge later.</summary>
         [JsonProperty("categories")] public List<string> Categories { get; set; }
 
-        [JsonIgnore] public string TextureRef => $"{Id}.png";
-
         [JsonIgnore] private string _Label { get; set; } = "";
 
         [JsonIgnore] public override string Label

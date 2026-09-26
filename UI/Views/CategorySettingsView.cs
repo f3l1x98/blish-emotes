@@ -1,24 +1,19 @@
-﻿using Blish_HUD;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Windows.Forms;
+using Blish_HUD;
 using Blish_HUD.Controls;
-using Blish_HUD.Graphics.UI;
-using Blish_HUD.Input;
-using BlishEmotesList;
 using felix.BlishEmotes.Services;
 using felix.BlishEmotes.Strings;
 using felix.BlishEmotes.UI.Controls;
 using felix.BlishEmotes.UI.Presenters;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using ContextMenuStrip = Blish_HUD.Controls.ContextMenuStrip;
+using Label = Blish_HUD.Controls.Label;
+using Panel = Blish_HUD.Controls.Panel;
+using TextBox = Blish_HUD.Controls.TextBox;
+using View = Blish_HUD.Graphics.UI.View;
 
 namespace felix.BlishEmotes.UI.Views
 {
@@ -31,7 +26,6 @@ namespace felix.BlishEmotes.UI.Views
 
     class CategorySettingsView : View
     {
-        private IconSelection IconSelection;
         private Panel CategoryListPanel;
         private ReorderableMenu CategoryListMenu;
         private StandardButton AddCategoryButton;
@@ -74,19 +68,6 @@ namespace felix.BlishEmotes.UI.Views
 
         protected override void Build(Container buildPanel)
         {
-            IconSelection = new IconSelection(buildPanel, null)
-            {
-                Options = Emotes.Select((emote) => new SelectionOption(emote.Texture, $"emotes/{emote.TextureRef}")).ToList(),
-                Padding = new Thickness(5),
-            };
-            IconSelection.Selected += (sender, item) =>
-            {
-                if (_editingCategory == null) return;
-
-                _editingCategory.TextureFileName = item.TextureRef;
-                _editingCategory.Texture = item.Texture;
-                BuildEditPanel();
-            };
             // Init left panel
             var addBtnHeight = 30;
             CategoryListPanel = new Panel()
@@ -227,7 +208,6 @@ namespace felix.BlishEmotes.UI.Views
                 Texture = _editingCategory.Texture,
                 Location = new Point(10),
             };
-            IconSelection.AttachedToControl = icon;
             icon.LeftMouseButtonPressed += delegate
             {
                 Thread fileDialogThread = new Thread(new ThreadStart(OpenFileDialogThreadMethod));
@@ -322,14 +302,14 @@ namespace felix.BlishEmotes.UI.Views
 
         private void OpenFileDialogThreadMethod()
         {
-            using (System.Windows.Forms.OpenFileDialog fileDialog = new System.Windows.Forms.OpenFileDialog())
+            using (OpenFileDialog fileDialog = new OpenFileDialog())
             {
                 fileDialog.InitialDirectory = "c:\\";
                 var extensionsFilterString = String.Join(";", TexturesManager.TextureExtensionMasks);
                 fileDialog.Filter = $"Image files|{extensionsFilterString}";
                 fileDialog.RestoreDirectory = true;
 
-                if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                if (fileDialog.ShowDialog() == DialogResult.OK)
                 {
                     //Get the path of specified file
                     _editingCategory.TextureFileName = fileDialog.FileName;
@@ -344,7 +324,6 @@ namespace felix.BlishEmotes.UI.Views
 
         protected override void Unload()
         {
-            this.IconSelection?.Dispose();
             this.CategoryListPanel?.Dispose();
             this.AddCategoryButton?.Dispose();
             this.CategoryEditPanel?.Dispose();
