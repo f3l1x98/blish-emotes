@@ -149,6 +149,7 @@ namespace felix.BlishEmotes.UI.Views
         {
             // Construct catalog group at the top of the Global tab.
             _catalogPanel = CreatePanel(buildPanel, new Point(0, 0), 900);
+            _catalogPanel.Height = 160;
             BuildCatalogGroup(_catalogPanel);
 
             int topOffset = _catalogPanel.Bottom + 14;

@@ -357,8 +357,10 @@ namespace BlishEmotesList
                 return;
             }
 
-            string message = string.Format(Common.settings_catalog_sync_toast, result.NewCategoryIds.Count, result.NewEmoteIds.Count);
-            ScreenNotification.ShowNotification(message, ScreenNotification.NotificationType.Green, null, 20);
+            string message = result.State == CatalogSyncState.FirstFetch 
+                ? Common.settings_catalog_sync_toast_firstFetch 
+                : string.Format(Common.settings_catalog_sync_toast, result.NewEmoteIds.Count, result.NewCategoryIds.Count);
+            ScreenNotification.ShowNotification(message);
         }
 
         public override IView GetSettingsView()

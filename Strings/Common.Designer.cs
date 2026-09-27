@@ -422,5 +422,11 @@ namespace felix.BlishEmotes.Strings {
                 return ResourceManager.GetString("settings_catalog_sync_offline_statusLine", resourceCulture);
             }
         }
+        
+        public static string settings_catalog_sync_toast_firstFetch {
+            get {
+                return ResourceManager.GetString("settings_catalog_sync_toast_firstFetch", resourceCulture);
+            }
+        }
     }
 }

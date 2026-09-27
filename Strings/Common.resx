@@ -238,7 +238,7 @@
     <value>Catalog downloaded — {0} new emote(s).</value>
   </data>
   <data name="settings_catalog_sync_toast" xml:space="preserve">
-    <value>Success - new Categories/Emotes: {0}/{1}</value>
+    <value>Updated catalog - {0} new emotes and {1} new categories</value>
   </data>
   <data name="settings_catalog_sync_failed_detail" xml:space="preserve">
     <value>Couldn't reach the catalog server. Using cached catalog v{0}. Retries automatically on next launch — your emotes keep working.</value>
@@ -306,5 +306,8 @@ Open Settings → Emote catalog</value>
   </data>
   <data name="settings_catalog_sync_offline_statusLine" xml:space="preserve">
     <value>v{0} · using cache</value>
+  </data>
+  <data name="settings_catalog_sync_toast_firstFetch" xml:space="preserve">
+    <value>Initialized catalog</value>
   </data>
 </root>
