@@ -1,17 +1,15 @@
-﻿using Blish_HUD;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Controls.Intern;
 using felix.BlishEmotes.Strings;
-using felix.BlishEmotes.UI.Views;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using SemVer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Resources;
-using System.Threading.Tasks;
-using static Blish_HUD.ArcDps.ArcDpsEnums;
+using Thickness = Blish_HUD.Controls.Thickness;
 
 namespace felix.BlishEmotes.UI.Controls
 {
@@ -47,10 +45,9 @@ namespace felix.BlishEmotes.UI.Controls
         {
             set
             {
-                _noEmotesFallbackText = value ?? "No Emotes found!";
                 if (_noEmotesLabel != null)
                 {
-                    _noEmotesLabel.Text = _noEmotesFallbackText;
+                    _noEmotesLabel.Text = value ?? Common.radial_noEmotesFound;
                 }
             }
         }
@@ -59,7 +56,6 @@ namespace felix.BlishEmotes.UI.Controls
         {
             set
             {
-                _noEmotesFallbackColor = value;
                 if (_noEmotesLabel != null)
                 {
                     _noEmotesLabel.TextColor = value;
@@ -85,8 +81,6 @@ namespace felix.BlishEmotes.UI.Controls
         private int _maxRadialDiameter = 0;
 
         private Label _noEmotesLabel;
-        private string _noEmotesFallbackText = "No Emotes found!";
-        private Color _noEmotesFallbackColor = Color.Red;
         private Label _selectedEmoteLabel;
         private Label _synchronizeToggleActiveLabel;
         private Label _targetToggleActiveLabel;
@@ -101,7 +95,7 @@ namespace felix.BlishEmotes.UI.Controls
             this.Emotes = new List<Emote>();
             this._lockedTexture = LockedTexture;
             Visible = false;
-            Padding = Blish_HUD.Controls.Thickness.Zero;
+            Padding = Thickness.Zero;
             Shown += async (sender, e) => await HandleShown(sender, e);
             Hidden += async (sender, e) => await HandleHidden(sender, e);
 
@@ -109,12 +103,13 @@ namespace felix.BlishEmotes.UI.Controls
             {
                 Parent = this,
                 Location = new Point(0, 0),
-                Size = new Point(800, 500),
-                Font = GameService.Content.DefaultFont32,
-                Text = "No Emotes found!",
-                TextColor = Color.Red,
+                Size = new Point(250, 50),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Middle,
+                Font = GameService.Content.DefaultFont18,
+                Text = Common.radial_noEmotesFound,
+                TextColor = Color.Red,
+                BackgroundColor = Color.Black * 0.5f,
             };
 
             _selectedEmoteLabel = new Label()
@@ -168,12 +163,13 @@ namespace felix.BlishEmotes.UI.Controls
             if (Emotes.Count == 0)
             {
                 _noEmotesLabel.Show();
-                PaintEmptyStateRing(spriteBatch, bounds);
+                _selectedEmoteLabel.Hide();
                 return;
             }
             else
             {
                 _noEmotesLabel.Hide();
+                _selectedEmoteLabel.Show();
 
                 if (IsEmoteSynchronized)
                 {
@@ -314,13 +310,6 @@ namespace felix.BlishEmotes.UI.Controls
             return newList;
         }
 
-        private void PaintEmptyStateRing(SpriteBatch spriteBatch, Rectangle bounds)
-        {
-            var center = new Vector2(bounds.X + bounds.Width / 2f, bounds.Y + bounds.Height / 2f);
-            int ringRadius = 120;
-            spriteBatch.DrawCircle(center, ringRadius, 64, Color.Gray * 0.25f, 3f);
-        }
-
         private void DrawDebugSectionSeparators<T>(SpriteBatch spriteBatch, int innerRadius, int outerRadius, RadialContainer<T> item) where T : RadialBase
         {
             if (Helper.IsDebugEnabled())
@@ -362,7 +351,7 @@ namespace felix.BlishEmotes.UI.Controls
             else
             {
                 // Move cursor to center of screen
-                Blish_HUD.Controls.Intern.Mouse.SetPosition(GameService.Graphics.WindowWidth / 2, GameService.Graphics.WindowHeight / 2, true);
+                Mouse.SetPosition(GameService.Graphics.WindowWidth / 2, GameService.Graphics.WindowHeight / 2, true);
                 RadialSpawnPoint = new Point(GameService.Graphics.SpriteScreen.Width / 2, GameService.Graphics.SpriteScreen.Height / 2);
             }
 
@@ -371,6 +360,7 @@ namespace felix.BlishEmotes.UI.Controls
 
             // Set Location of selected emote label to roughly center of radial menu
             _selectedEmoteLabel.Location = new Point(RadialSpawnPoint.X - this.Location.X - _selectedEmoteLabel.Size.X / 2, RadialSpawnPoint.Y - this.Location.Y - _selectedEmoteLabel.Size.Y / 2 - 20);
+            _noEmotesLabel.Location = new Point(RadialSpawnPoint.X - this.Location.X - _noEmotesLabel.Size.X / 2, RadialSpawnPoint.Y - this.Location.Y - _noEmotesLabel.Size.Y / 2 - 20);
             _synchronizeToggleActiveLabel.Location = new Point(_selectedEmoteLabel.Location.X, _selectedEmoteLabel.Location.Y + _selectedEmoteLabel.Size.Y);
             _targetToggleActiveLabel.Location = new Point(_synchronizeToggleActiveLabel.Location.X, _synchronizeToggleActiveLabel.Location.Y + _synchronizeToggleActiveLabel.Size.Y);
         }

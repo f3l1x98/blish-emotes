@@ -277,11 +277,7 @@
     <value>Open Settings</value>
   </data>
   <data name="radial_gettingEmotes" xml:space="preserve">
-    <value>Getting your emotes… you can keep playing</value>
-  </data>
-  <data name="radial_noEmotesYet" xml:space="preserve">
-    <value>No emotes yet
-Open Settings → Emote catalog</value>
+    <value>Downloading emotes...</value>
   </data>
   <data name="settings_catalog_sync_downloading_statusLine" xml:space="preserve">
     <value>v{0} · update running</value>
@@ -309,5 +305,8 @@ Open Settings → Emote catalog</value>
   </data>
   <data name="settings_catalog_sync_toast_firstFetch" xml:space="preserve">
     <value>Initialized catalog</value>
+  </data>
+  <data name="radial_noEmotesFound" xml:space="preserve">
+    <value>No Emotes found!</value>
   </data>
 </root>

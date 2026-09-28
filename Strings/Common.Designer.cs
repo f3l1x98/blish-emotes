@@ -369,12 +369,6 @@ namespace felix.BlishEmotes.Strings {
             }
         }
         
-        public static string radial_noEmotesYet {
-            get {
-                return ResourceManager.GetString("radial_noEmotesYet", resourceCulture);
-            }
-        }
-        
         public static string settings_catalog_sync_downloading_statusLine {
             get {
                 return ResourceManager.GetString("settings_catalog_sync_downloading_statusLine", resourceCulture);
@@ -426,6 +420,12 @@ namespace felix.BlishEmotes.Strings {
         public static string settings_catalog_sync_toast_firstFetch {
             get {
                 return ResourceManager.GetString("settings_catalog_sync_toast_firstFetch", resourceCulture);
+            }
+        }
+        
+        public static string radial_noEmotesFound {
+            get {
+                return ResourceManager.GetString("radial_noEmotesFound", resourceCulture);
             }
         }
     }

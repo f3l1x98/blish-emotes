@@ -335,16 +335,11 @@ namespace BlishEmotesList
                 if (state == CatalogSyncState.Downloading && !hasCache)
                 {
                     _radialMenu.EmptyStateText = Common.radial_gettingEmotes;
-                    _radialMenu.EmptyStateColor = Color.Gray;
-                }
-                else if (!hasCache && state == CatalogSyncState.Failed)
-                {
-                    _radialMenu.EmptyStateText = Common.radial_noEmotesYet;
-                    _radialMenu.EmptyStateColor = Color.Orange;
+                    _radialMenu.EmptyStateColor = Color.White;
                 }
                 else
                 {
-                    _radialMenu.EmptyStateText = "No Emotes found!";
+                    _radialMenu.EmptyStateText = Common.radial_noEmotesFound;
                     _radialMenu.EmptyStateColor = Color.Red;
                 }
             }
