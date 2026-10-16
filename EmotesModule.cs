@@ -50,7 +50,6 @@ namespace BlishEmotesList
         private ContextMenuStrip _emoteListMenuStrip;
         private TabbedWindow2 _settingsWindow;
         private RadialMenu _radialMenu;
-        private GlobalSettingsView _globalSettingsView;
         #endregion
 
         #region Settings
@@ -168,8 +167,7 @@ namespace BlishEmotesList
             };
 
             // Settings
-            _globalSettingsView = new GlobalSettingsView(this.Settings, CatalogManager, EmotesManager);
-            _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.GlobalSettingsIcon), () => _globalSettingsView, Common.settings_ui_global_tab));
+            _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.GlobalSettingsIcon), () => new GlobalSettingsView(this.Settings, CatalogManager, EmotesManager), Common.settings_ui_global_tab));
             // Category setting
             _settingsWindow.Tabs.Add(new Tab(TexturesManager.GetTexture(Textures.CategorySettingsIcon), () => new CategorySettingsView(CategoriesManager, EmotesManager), Common.settings_ui_categories_tab));
             // Emote Hotkey settings
