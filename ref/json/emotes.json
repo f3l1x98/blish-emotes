@@ -36,6 +36,10 @@
     "command": "/cheer"
   },
   {
+    "id": "clap",
+    "command": "/clap"
+  },
+  {
     "id": "cower",
     "command": "/cower"
   },
@@ -64,6 +68,10 @@
     "command": "/facepalm"
   },
   {
+    "id": "fingerguns",
+    "command": "/fingerguns"
+  },
+  {
     "id": "geargrind",
     "command": "/geargrind"
   },
@@ -86,6 +94,10 @@
   {
     "id": "laugh",
     "command": "/laugh"
+  },
+  {
+    "id": "lean",
+    "command": "/lean"
   },
   {
     "id": "magicjuggle",
