@@ -428,5 +428,23 @@ namespace felix.BlishEmotes.Strings {
                 return ResourceManager.GetString("masterpiece", resourceCulture);
             }
         }
+        
+        internal static string clap {
+            get {
+                return ResourceManager.GetString("clap", resourceCulture);
+            }
+        }
+        
+        internal static string lean {
+            get {
+                return ResourceManager.GetString("lean", resourceCulture);
+            }
+        }
+        
+        internal static string fingerguns {
+            get {
+                return ResourceManager.GetString("fingerguns", resourceCulture);
+            }
+        }
     }
 }

@@ -36,6 +36,7 @@ The following icons were used:
 - **breakdance:** <a href="https://www.flaticon.com/free-icons/hip-hop" title="hip hop icons">Hip hop icons created by Leremy - Flaticon</a>
 - **channel:** <a href="https://www.flaticon.com/free-icons/meditate" title="meditate icons">Meditate icons created by Leremy - Flaticon</a>
 - **cheer:** <a href="https://www.flaticon.com/free-icons/pom" title="pom icons">Pom icons created by Leremy - Flaticon</a>
+- **clap:** <a href="https://www.flaticon.com/free-icons/clap" title="clap icons">Clap icons created by Leremy - Flaticon</a>
 - **cower:** <a href="https://www.flaticon.com/free-icons/cringe" title="cringe icons">Cringe icons created by Leremy - Flaticon</a>
 - **crabdance:** <a href="https://www.flaticon.com/free-icons/crab" title="crab icons">Crab icons created by Freepik - Flaticon</a>
 - **crossarms:** <a href="https://www.flaticon.com/free-icons/crossarms" title="crossarms icons">Crossarms icons created by Leremy - Flaticon</a>
@@ -43,12 +44,14 @@ The following icons were used:
 - **dance:** <a href="https://www.flaticon.com/free-icons/dance" title="dance icons">Dance icons created by Leremy - Flaticon</a>
 - **drink:** <a href="https://www.flaticon.com/free-icons/tumbler" title="tumbler icons">Tumbler icons created by Leremy - Flaticon</a>
 - **facepalm:** <a href="https://www.flaticon.com/free-icons/regret" title="regret icons">Regret icons created by Leremy - Flaticon</a>
+- **fingerguns:** <a href="https://www.flaticon.com/free-icons/shoot" title="shoot icons">Shoot icons created by Haca Studio - Flaticon</a>
 - **geargrind:** <a href="https://www.flaticon.com/free-icons/runner" title="runner icons">Runner icons created by Leremy - Flaticon</a>
 - **happydance:** <a href="https://www.flaticon.com/free-icons/romp" title="romp icons">Romp icons created by Leremy - Flaticon</a>
 - **heroic:** <a href="https://www.flaticon.com/free-icons/superman" title="superman icons">Superman icons created by Leremy - Flaticon</a>
 - **hiss:** <a href="https://www.flaticon.com/free-icons/anaconda" title="anaconda icons">Anaconda icons created by Leremy - Flaticon</a>
 - **kneel:** <a href="https://www.flaticon.com/free-icons/servant" title="servant icons">Servant icons created by Leremy - Flaticon</a>
 - **laugh:** <a href="https://www.flaticon.com/free-icons/laugh" title="laugh icons">Laugh icons created by Leremy - Flaticon</a>
+- **lean:** <a href="https://www.flaticon.com/free-icons/leaning" title="leaning icons">Leaning icons created by Leremy - Flaticon</a>
 - **magicjuggle:** <a href="https://www.flaticon.com/free-icons/juggler" title="juggler icons">Juggler icons created by Leremy - Flaticon</a>
 - **magictrick:** <a href="https://www.flaticon.com/free-icons/illusion" title="illusion icons">Illusion icons created by Leremy - Flaticon</a>
 - **masterpiece:** <a href="https://www.flaticon.com/free-icons/reassure" title="reassure icons">Reassure icons created by Leremy - Flaticon</a>
