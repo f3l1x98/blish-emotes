@@ -309,4 +309,13 @@
   <data name="masterpiece" xml:space="preserve">
     <value>Masterpiece</value>
   </data>
+  <data name="clap" xml:space="preserve">
+    <value>Clap</value>
+  </data>
+  <data name="lean" xml:space="preserve">
+    <value>Lean</value>
+  </data>
+  <data name="fingerguns" xml:space="preserve">
+    <value>Fingerguns</value>
+  </data>
 </root>
